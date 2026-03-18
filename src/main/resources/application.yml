@@ -5,15 +5,22 @@ spring:
     password: 123456
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-    autoconfigure:
-      exclude:
-        - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+
+jwt:
+  secret: yourSecretKeyYourSecretKeyYourSecretKey123456
+  expiration: 86400000
+  refresh-expiration: 604800000

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --sidebar: #111111;
+            --card: #171717;
+            --line: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --muted: #a8a8a8;
+            --accent: #ffffff;
+            --success: #1db954;
+            --warning: #f5b301;
+            --danger: #ff4d4f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 270px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--line);
+            padding: 28px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .menu-title {
+            color: var(--muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 26px 0 10px;
+        }
+
+        .menu-link {
+            display: block;
+            color: #f1f1f1;
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: #fff;
+            color: #000;
+        }
+
+        .main {
+            flex: 1;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            margin-top: 6px;
+            margin-bottom: 0;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-ghost {
+            border: 1px solid var(--line);
+            background: transparent;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+        }
+
+        .btn-ghost:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #161616, #222222);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+
+        .hero h2 {
+            font-size: 2.1rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            margin-bottom: 0;
+            max-width: 700px;
+            line-height: 1.7;
+        }
+
+        .stats {
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 22px;
+            height: 100%;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stat-tag {
+            display: inline-block;
+            font-size: 0.85rem;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            color: #ddd;
+        }
+
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 24px;
+            height: 100%;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .quick-link {
+            display: block;
+            background: #111;
+            border: 1px solid var(--line);
+            color: #fff;
+            padding: 16px;
+            border-radius: 16px;
+            text-decoration: none;
+        }
+
+        .quick-link:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-label {
+            font-weight: 600;
+        }
+
+        .activity-time {
+            color: var(--muted);
+            font-size: 0.92rem;
+            white-space: nowrap;
+        }
+
+        .status-success { color: var(--success); }
+        .status-warning { color: var(--warning); }
+        .status-danger { color: var(--danger); }
+
+        @media (max-width: 991.98px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: start;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">ADMIN PANEL</div>
+
+        <div class="menu-title">Tổng quan</div>
+        <a href="/admin/dashboard" class="menu-link active">Dashboard</a>
+
+        <div class="menu-title">Quản lý</div>
+        <a href="/admin/motorbikes" class="menu-link">Sản phẩm</a>
+        <a href="#" class="menu-link">Đơn hàng</a>
+        <a href="#" class="menu-link">Người dùng</a>
+        <a href="/admin/categories" class="menu-link">Danh mục</a>
+
+        <div class="menu-title">Hệ thống</div>
+        <a href="/" class="menu-link">Về trang chủ</a>
+        <a href="/login" class="menu-link" onclick="logout()">Đăng xuất</a>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div>
+                <h1 class="page-title">Dashboard quản trị</h1>
+                <p class="page-subtitle">Theo dõi tình hình hệ thống, sản phẩm và doanh thu.</p>
+            </div>
+
+            <div class="top-actions">
+                <button class="btn-ghost" onclick="location.href='/admin/motorbikes'">Quản lý sản phẩm</button>
+                <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+            </div>
+        </div>
+
+        <section class="hero">
+            <h2>Control everything, elegantly.</h2>
+            <p>
+                Giao diện quản trị được thiết kế đồng bộ với client dashboard,
+                giúp bạn theo dõi dữ liệu hệ thống rõ ràng, tối giản và hiện đại.
+            </p>
+        </section>
+
+        <section class="stats">
+            <div class="row g-4">
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng người dùng</div>
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <span class="stat-tag">Đang hoạt động</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng sản phẩm</div>
+                        <div class="stat-value" id="totalMotorbikes">0</div>
+                        <span class="stat-tag">Xe trong hệ thống</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng đơn hàng</div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <span class="stat-tag">Tất cả đơn phát sinh</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Đơn chờ xử lý</div>
+                        <div class="stat-value status-warning" id="pendingOrders">0</div>
+                        <span class="stat-tag">Cần theo dõi</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Đơn hoàn thành</div>
+                        <div class="stat-value status-success" id="completedOrders">0</div>
+                        <span class="stat-tag">Đã giao thành công</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng doanh thu</div>
+                        <div class="stat-value" id="totalRevenue">0 đ</div>
+                        <span class="stat-tag">Doanh thu cộng dồn</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="section-card">
+                        <div class="section-title">Truy cập nhanh</div>
+                        <div class="quick-grid">
+                            <a class="quick-link" href="/admin/motorbikes">Quản lý sản phẩm</a>
+                            <a class="quick-link" href="#">Quản lý đơn hàng</a>
+                            <a class="quick-link" href="#">Quản lý người dùng</a>
+                            <a class="quick-link" href="/">Xem trang chủ</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="section-card">
+                        <div class="section-title">Tình trạng hệ thống</div>
+
+                        <div class="activity-item">
+                            <div class="activity-label">API dashboard admin</div>
+                            <div class="activity-time status-success">Đang hoạt động</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-label">Kết nối dữ liệu sản phẩm</div>
+                            <div class="activity-time status-success">Ổn định</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-label">Đơn hàng chờ xử lý</div>
+                            <div class="activity-time status-warning" id="pendingOrdersText">0 đơn</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-label">Hiệu suất giao diện quản trị</div>
+                            <div class="activity-time">Tối ưu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+        window.location.href = "/login";
+    }
+
+    fetch("/api/dashboard/admin", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(async res => {
+        if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            window.location.href = "/login";
+            return;
+        }
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || "Không tải được dashboard admin");
+        }
+
+        return res.json();
+    })
+    .then(data => {
+        if (!data) return;
+
+        document.getElementById("totalUsers").innerText = data.totalUsers ?? 0;
+        document.getElementById("totalMotorbikes").innerText = data.totalMotorbikes ?? 0;
+        document.getElementById("totalOrders").innerText = data.totalOrders ?? 0;
+        document.getElementById("pendingOrders").innerText = data.pendingOrders ?? 0;
+        document.getElementById("completedOrders").innerText = data.completedOrders ?? 0;
+        document.getElementById("totalRevenue").innerText =
+            Number(data.totalRevenue ?? 0).toLocaleString("vi-VN") + " đ";
+
+        document.getElementById("pendingOrdersText").innerText = (data.pendingOrders ?? 0) + " đơn";
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Không thể tải dashboard admin.");
+    });
+
+    function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+    }
+</script>
+</body>
+</html>

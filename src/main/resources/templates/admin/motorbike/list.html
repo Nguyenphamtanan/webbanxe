@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý xe máy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --honda-red: #c40000;
+            --honda-red-dark: #a80000;
+            --honda-dark: #1f1f1f;
+            --text-muted: #777;
+            --bg-light: #f7f7f7;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-light);
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, var(--honda-red), var(--honda-red-dark));
+            color: #fff;
+            padding: 24px 18px;
+            flex-shrink: 0;
+            box-shadow: 4px 0 14px rgba(0,0,0,0.08);
+        }
+
+        .sidebar-brand {
+            font-size: 26px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 28px;
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin: 18px 0 10px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            text-decoration: none;
+            color: #fff;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.16);
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topbar {
+            background: #fff;
+            border-bottom: 3px solid var(--honda-red);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topbar h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--honda-red);
+            text-transform: uppercase;
+        }
+
+        .topbar p {
+            margin: 4px 0 0;
+            color: var(--text-muted);
+        }
+
+        .content-body {
+            padding: 28px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--honda-red);
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .quick-badge {
+            display: inline-block;
+            background: #fff0f0;
+            color: var(--honda-red);
+            border: 1px solid #ffd6d6;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card-box {
+            background: #fff;
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+        }
+
+        .card-box .card-body {
+            padding: 22px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .toolbar-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .toolbar-subtitle {
+            margin: 4px 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+            background: #fff5f5;
+            color: var(--honda-red);
+            border-bottom: none;
+            font-size: 14px;
+            padding: 14px 12px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 14px 12px;
+            font-size: 14px;
+        }
+
+        .product-img {
+            width: 78px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .product-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .product-meta {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .price-text {
+            font-weight: 700;
+            color: var(--honda-red);
+        }
+
+        .badge-active {
+            background: #e8f8ee;
+            color: #179b4d;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-hidden {
+            background: #f1f1f1;
+            color: #666;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-action {
+            border: none;
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            line-height: 1;
+            min-width: 82px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-detail {
+            background: #eef5ff;
+            color: #0d6efd;
+            border: 1px solid #cfe2ff;
+        }
+
+        .btn-detail:hover {
+            background: #dbeafe;
+            color: #0b5ed7;
+        }
+
+        .btn-edit {
+            background: #fff4db;
+            color: #b77900;
+            border: 1px solid #ffe08a;
+        }
+
+        .btn-edit:hover {
+            background: #ffecb5;
+            color: #946200;
+        }
+
+        .btn-delete {
+            background: #ffe9e9;
+            color: #c40000;
+            border: 1px solid #ffc9c9;
+        }
+
+        .btn-delete:hover {
+            background: #ffd6d6;
+            color: #a80000;
+        }
+
+        .btn-create {
+            background: var(--honda-red);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 10px 18px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s ease;
+        }
+
+        .btn-create:hover {
+            background: var(--honda-red-dark);
+            color: #fff;
+        }
+
+        .btn-reload {
+            border: 1px solid var(--honda-red);
+            color: var(--honda-red);
+            background: #fff;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 10px 16px;
+            transition: 0.2s ease;
+        }
+
+        .btn-reload:hover {
+            background: var(--honda-red);
+            color: #fff;
+        }
+
+        .btn-back {
+            border: 1px solid var(--honda-red);
+            color: var(--honda-red);
+            background: #fff;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--honda-red);
+            color: #fff;
+        }
+
+        .empty-note {
+            color: var(--text-muted);
+            padding: 22px 0;
+        }
+
+        @media (max-width: 992px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-brand">Honda Admin</div>
+        <div class="sidebar-subtitle">Quản trị hệ thống bán xe máy</div>
+
+        <div class="sidebar-section-title">Điều hướng</div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/motorbike" class="active">Quản lý xe máy</a></li>
+            <li><a href="#">Quản lý đơn hàng</a></li>
+            <li><a href="#">Quản lý khách hàng</a></li>
+            <li><a href="#">Danh mục xe</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Tin tức</a></li>
+        </ul>
+
+        <div class="sidebar-section-title">Hệ thống</div>
+        <ul class="sidebar-menu">
+            <li><a href="#">Cài đặt</a></li>
+            <li><a href="#" onclick="logout()">Đăng xuất</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <div>
+                <span class="quick-badge">Quản lý sản phẩm</span>
+                <h2>Danh sách xe máy</h2>
+                <p>Quản lý toàn bộ xe đang hiển thị trong hệ thống showroom</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn-reload" onclick="loadMotorbikes()">↻ Tải lại</button>
+                <a href="/admin/motorbike/create" class="btn-create">＋ Thêm xe mới</a>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <div class="section-title">Quản lý xe</div>
+
+            <div class="card card-box">
+                <div class="card-body">
+                    <div class="toolbar">
+                        <div>
+                            <h5 class="toolbar-title">Danh sách sản phẩm</h5>
+                            <p class="toolbar-subtitle">Theo dõi thông tin xe, hãng, danh mục, giá bán và trạng thái hiển thị</p>
+                        </div>
+                        <div>
+                            <a href="/admin/dashboard" class="btn-back">← Về dashboard</a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ảnh</th>
+                                <th>Tên xe</th>
+                                <th>Slug</th>
+                                <th>SKU</th>
+                                <th>Giá</th>
+                                <th>Hãng</th>
+                                <th>Danh mục</th>
+                                <th>Trạng thái</th>
+                                <th>CRUD</th>
+                            </tr>
+                            </thead>
+                            <tbody id="motorbikeTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center empty-note">Đang tải dữ liệu...</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+        window.location.href = "/login";
+    }
+
+    async function loadMotorbikes() {
+        const tbody = document.getElementById("motorbikeTableBody");
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center empty-note">Đang tải dữ liệu...</td></tr>`;
+
+        try {
+            const response = await fetch("/api/admin/motorbikes", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                clearTokenAndRedirect();
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Không thể tải danh sách sản phẩm");
+            }
+
+            const data = await response.json();
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center empty-note">Chưa có sản phẩm nào</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id ?? ""}</td>
+                    <td>
+                        <img class="product-img"
+                             src="${item.primaryImageUrl || 'https://via.placeholder.com/78x56?text=No+Image'}"
+                             alt="${item.name || ''}">
+                    </td>
+                    <td>
+                        <div class="product-name">${item.name ?? ""}</div>
+                    </td>
+                    <td>${item.slug ?? ""}</td>
+                    <td>${item.sku ?? ""}</td>
+                    <td><span class="price-text">${Number(item.price ?? 0).toLocaleString("vi-VN")} đ</span></td>
+                    <td>${item.brandName ?? ""}</td>
+                    <td>${item.categoryName ?? ""}</td>
+                    <td>
+                        ${item.isActive
+                            ? '<span class="badge-active">Hiển thị</span>'
+                            : '<span class="badge-hidden">Ẩn</span>'}
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <a href="/admin/motorbike/detail/${item.id}" class="btn-action btn-detail">👁 Chi tiết</a>
+                            <a href="/admin/motorbike/edit/${item.id}" class="btn-action btn-edit">✎ Sửa</a>
+                            <button type="button" class="btn-action btn-delete"
+                                    onclick="deleteMotorbike(${item.id}, '${escapeJs(item.name ?? '')}')">🗑 Xóa</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        } catch (error) {
+            console.error(error);
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Lỗi tải dữ liệu</td></tr>`;
+        }
+    }
+
+    async function deleteMotorbike(id, name) {
+        const confirmed = confirm(`Bạn có chắc muốn xóa xe "${name}" không?`);
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(`/api/admin/motorbikes/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                clearTokenAndRedirect();
+                return;
+            }
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Xóa sản phẩm thất bại");
+            }
+
+            alert("Xóa sản phẩm thành công");
+            loadMotorbikes();
+        } catch (error) {
+            console.error(error);
+            alert(error.message || "Có lỗi khi xóa sản phẩm");
+        }
+    }
+
+    function escapeJs(str) {
+        return String(str)
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '&quot;')
+            .replace(/\n/g, ' ')
+            .replace(/\r/g, ' ');
+    }
+
+    function clearTokenAndRedirect() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+    }
+
+    function logout() {
+        clearTokenAndRedirect();
+    }
+
+    loadMotorbikes();
+</script>
+</body>
+</html>
