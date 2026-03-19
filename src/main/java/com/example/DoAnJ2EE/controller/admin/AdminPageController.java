@@ -45,4 +45,14 @@ public class AdminPageController {
     public String adminCategoryEditPage() {
         return "admin/category/edit";
     }
+
+    @GetMapping("/admin/users")
+    public String adminUserPage() {
+        return "admin/user/list";
+    }
+
+    @GetMapping("/admin/orders")
+    public String adminOrderPage() {
+        return "admin/order/list";
+    }
 }
