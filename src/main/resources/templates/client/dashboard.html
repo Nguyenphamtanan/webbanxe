@@ -106,9 +106,43 @@
             color: #fff;
             padding: 10px 16px;
             border-radius: 12px;
+            transition: 0.2s ease;
+            text-decoration: none;
         }
 
         .btn-ghost:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-profile {
+            border: 1px solid var(--line);
+            background: #fff;
+            color: #000;
+            padding: 10px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .btn-profile:hover {
+            background: transparent;
+            color: #fff;
+        }
+
+        .btn-order-history {
+            border: 1px solid var(--line);
+            background: #222;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .btn-order-history:hover {
             background: #fff;
             color: #000;
         }
@@ -129,7 +163,7 @@
 
         .hero p {
             color: var(--muted);
-            margin-bottom: 0;
+            margin-bottom: 18px;
             max-width: 720px;
             line-height: 1.7;
         }
@@ -196,11 +230,12 @@
 
         <div class="menu-title">Tài khoản</div>
         <a href="/customer/dashboard" class="menu-link active">Dashboard</a>
+        <a href="/customer/profile" class="menu-link">Profile</a>
 
         <div class="menu-title">Mua sắm</div>
         <a href="/" class="menu-link">Trang chủ</a>
-        <a href="#" class="menu-link">Giỏ hàng</a>
-        <a href="#" class="menu-link">Đơn hàng</a>
+        <a href="/customer/cart" class="menu-link">Giỏ hàng</a>
+        <a href="/customer/orders" class="menu-link">Đơn hàng</a>
 
         <div class="menu-title">Hệ thống</div>
         <a href="/login" class="menu-link" onclick="logout()">Đăng xuất</a>
@@ -213,7 +248,11 @@
                 <p class="page-subtitle">Theo dõi tài khoản và tình trạng đơn hàng của bạn.</p>
             </div>
 
-            <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/customer/orders" class="btn-order-history">Lịch sử đơn hàng</a>
+                <a href="/customer/profile" class="btn-profile">Profile</a>
+                <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+            </div>
         </div>
 
         <section class="hero">
@@ -222,6 +261,7 @@
                 Mọi thông tin cá nhân và trạng thái đơn hàng được hiển thị đồng bộ với giao diện quản trị,
                 tạo cảm giác chuyên nghiệp và hiện đại trong toàn hệ thống.
             </p>
+            <a href="/customer/orders" class="btn-profile">Xem lịch sử đơn hàng</a>
         </section>
 
         <section class="mb-4">

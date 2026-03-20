@@ -38,8 +38,6 @@ public class SecurityConfig {
                                 "/home",
                                 "/login",
                                 "/register",
-                                "/admin/dashboard",
-                                "/customer/dashboard",
                                 "/error",
                                 "/favicon.ico",
                                 "/css/**",
@@ -48,18 +46,31 @@ public class SecurityConfig {
                                 "/uploads/**"
                         ).permitAll()
 
+                        // giao diện client/admin
+                        .requestMatchers(
+                                "/customer/dashboard",
+                                "/customer/profile",
+                                "/customer/orders"
+                        ).permitAll()
+                        .requestMatchers("/admin/dashboard").permitAll()
+
                         // auth api
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // protected dashboard apis
+                        // dashboard api
                         .requestMatchers("/api/dashboard/admin").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/dashboard/customer").authenticated()
 
-                        // protected admin apis
+                        // admin api
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "STAFF")
 
-                        // protected customer apis
-                        .requestMatchers("/api/cart/**", "/api/orders/**", "/api/profile/**").authenticated()
+                        // customer api
+                        .requestMatchers(
+                                "/api/cart/**",
+                                "/api/orders/**",
+                                "/api/customer/profile",
+                                "/api/customer/orders"
+                        ).authenticated()
 
                         .anyRequest().permitAll()
                 )

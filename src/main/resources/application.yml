@@ -24,3 +24,8 @@ jwt:
   secret: yourSecretKeyYourSecretKeyYourSecretKey123456
   expiration: 86400000
   refresh-expiration: 604800000
+
+paypal:
+  base-url: https://api-m.sandbox.paypal.com
+  client-id: AVHP3Jm6_CTm_s9OK__L3Ja3cIi-Js3D68_Gbcl3c7USJyg7QgWCysqMx8jZmA0YoW9eI1LG_9kBuhHe
+  client-secret: EK_IOM3GVjQ9jDLIkpBEfuhM1ebSRk6x42KARQMj-a-DpGpBWx2eSTtYzybyLLpvGsSPxcPsjOVuuHBn

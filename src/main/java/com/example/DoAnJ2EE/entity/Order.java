@@ -47,6 +47,12 @@ public class Order {
     @Column(name = "note", length = 500)
     private String note;
 
+    @Column(name = "paypal_order_id", length = 100)
+    private String paypalOrderId;
+
+    @Column(name = "payment_transaction_id", length = 100)
+    private String paymentTransactionId;
+
     @Column(name = "total_amount", nullable = false, precision = 18, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
 

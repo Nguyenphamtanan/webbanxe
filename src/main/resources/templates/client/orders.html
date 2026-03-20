@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đơn hàng của tôi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+        --bg: #0b0b0b;
+        --sidebar: #111111;
+        --card: #171717;
+        --line: rgba(255,255,255,0.08);
+        --text: #ffffff;
+        --muted: #a8a8a8;
+        --success: #1db954;
+        --warning: #f5b301;
+        --danger: #ff4d4f;
+        --info: #4da6ff;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+    }
+
+    .layout {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        width: 270px;
+        background: var(--sidebar);
+        border-right: 1px solid var(--line);
+        padding: 28px 20px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .brand {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+    }
+
+    .menu-title {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 26px 0 10px;
+    }
+
+    .menu-link {
+        display: block;
+        color: #f1f1f1;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+    .menu-link:hover,
+    .menu-link.active {
+        background: #fff;
+        color: #000;
+    }
+
+    .main {
+        flex: 1;
+        padding: 28px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        gap: 16px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .page-subtitle {
+        color: var(--muted);
+        margin-top: 6px;
+        margin-bottom: 0;
+    }
+
+    .btn-ghost {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 12px;
+        transition: 0.2s ease;
+    }
+
+    .btn-ghost:hover {
+        background: #fff;
+        color: #000;
+    }
+
+    .btn-light-custom {
+        border: none;
+        background: #fff;
+        color: #000;
+        padding: 10px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .btn-light-custom:hover {
+        opacity: 0.9;
+        color: #000;
+    }
+
+    .hero {
+        background: linear-gradient(135deg, #161616, #202020);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 28px;
+        margin-bottom: 28px;
+    }
+
+    .hero h2 {
+        font-size: 2rem;
+        font-weight: 900;
+        margin-bottom: 10px;
+    }
+
+    .hero p {
+        color: var(--muted);
+        margin-bottom: 0;
+        max-width: 720px;
+        line-height: 1.7;
+    }
+
+    .card-box {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 22px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .table-dark-custom {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1100px;
+    }
+
+    .table-dark-custom thead th {
+        background: #101010;
+        color: #fff;
+        font-size: 0.95rem;
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+    }
+
+    .table-dark-custom tbody td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--line);
+        color: #e9e9e9;
+        vertical-align: top;
+    }
+
+    .table-dark-custom tbody tr:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .status-pending {
+        background: rgba(245,179,1,0.15);
+        color: var(--warning);
+    }
+
+    .status-completed,
+    .status-delivered {
+        background: rgba(29,185,84,0.15);
+        color: var(--success);
+    }
+
+    .status-cancelled {
+        background: rgba(255,77,79,0.15);
+        color: var(--danger);
+    }
+
+    .status-processing,
+    .status-confirmed,
+    .status-shipping {
+        background: rgba(77,166,255,0.15);
+        color: var(--info);
+    }
+
+    .status-unpaid {
+        background: rgba(255,77,79,0.15);
+        color: var(--danger);
+    }
+
+    .status-paid {
+        background: rgba(29,185,84,0.15);
+        color: var(--success);
+    }
+
+    .text-muted-custom {
+        color: var(--muted);
+    }
+
+    .price-text {
+        font-weight: 700;
+        color: #fff;
+    }
+
+    @media (max-width: 991.98px) {
+        .layout {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        .topbar {
+            flex-direction: column;
+            align-items: start;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">CLIENT PANEL</div>
+
+    <div class="menu-title">Tài khoản</div>
+    <a href="/customer/dashboard" class="menu-link">Dashboard</a>
+    <a href="/customer/profile" class="menu-link">Profile</a>
+
+    <div class="menu-title">Mua sắm</div>
+    <a href="/" class="menu-link">Trang chủ</a>
+    <a href="/customer/cart" class="menu-link">Giỏ hàng</a>
+    <a href="/customer/orders" class="menu-link active">Đơn hàng</a>
+
+    <div class="menu-title">Hệ thống</div>
+    <a href="/login" class="menu-link" onclick="logout()">Đăng xuất</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 class="page-title">Lịch sử mua hàng</h1>
+        <p class="page-subtitle">Theo dõi toàn bộ đơn hàng bạn đã đặt.</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a href="/customer/dashboard" class="btn-light-custom">Dashboard</a>
+        <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <h2>Your orders, clearly tracked.</h2>
+      <p>
+        Xem lại lịch sử mua hàng, tình trạng đơn, phương thức thanh toán
+        và thông tin nhận hàng một cách rõ ràng, hiện đại và dễ theo dõi.
+      </p>
+    </section>
+
+    <div id="errorBox" class="alert alert-danger d-none"></div>
+
+    <section class="card-box">
+      <div class="table-wrap">
+        <table class="table-dark-custom">
+          <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Người nhận</th>
+            <th>SĐT</th>
+            <th>Địa chỉ</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái đơn</th>
+            <th>Thanh toán</th>
+            <th>PTTT</th>
+            <th>Ghi chú</th>
+            <th>Ngày tạo</th>
+          </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <div id="emptyBox" class="empty-box d-none">
+        Bạn chưa có đơn hàng nào.
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const token = localStorage.getItem("accessToken");
+  const errorBox = document.getElementById("errorBox");
+  const ordersTableBody = document.getElementById("ordersTableBody");
+  const emptyBox = document.getElementById("emptyBox");
+
+  if (!token) {
+      window.location.href = "/login";
+  }
+
+  function logout() {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
+  }
+
+  function showError(message) {
+      errorBox.classList.remove("d-none");
+      errorBox.innerText = message;
+  }
+
+  function formatPrice(value) {
+      if (value === null || value === undefined || value === "") return "0 đ";
+      return Number(value).toLocaleString("vi-VN") + " đ";
+  }
+
+  function formatDate(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (isNaN(date)) return dateString;
+      return date.toLocaleString("vi-VN");
+  }
+
+  function getOrderStatusClass(status) {
+      const value = (status || "").toUpperCase();
+      if (value === "PENDING") return "status-pending";
+      if (value === "PROCESSING" || value === "CONFIRMED" || value === "SHIPPING") return "status-processing";
+      if (value === "COMPLETED" || value === "DELIVERED") return "status-completed";
+      if (value === "CANCELLED") return "status-cancelled";
+      return "status-processing";
+  }
+
+  function getPaymentStatusClass(status) {
+      const value = (status || "").toUpperCase();
+      if (value === "PAID") return "status-paid";
+      if (value === "UNPAID") return "status-unpaid";
+      return "status-pending";
+  }
+
+  function renderOrders(orders) {
+      ordersTableBody.innerHTML = "";
+
+      if (!orders || orders.length === 0) {
+          emptyBox.classList.remove("d-none");
+          return;
+      }
+
+      emptyBox.classList.add("d-none");
+
+      orders.forEach(order => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+              <td><strong>${order.orderCode ?? ""}</strong></td>
+              <td>${order.receiverName ?? ""}</td>
+              <td>${order.receiverPhone ?? ""}</td>
+              <td>${order.shippingAddress ?? ""}</td>
+              <td class="price-text">${formatPrice(order.totalAmount)}</td>
+              <td>
+                  <span class="badge-status ${getOrderStatusClass(order.status)}">
+                      ${order.status ?? ""}
+                  </span>
+              </td>
+              <td>
+                  <span class="badge-status ${getPaymentStatusClass(order.paymentStatus)}">
+                      ${order.paymentStatus ?? ""}
+                  </span>
+              </td>
+              <td>${order.paymentMethod ?? ""}</td>
+              <td>${order.note ?? ""}</td>
+              <td>${formatDate(order.createdAt)}</td>
+          `;
+
+          ordersTableBody.appendChild(tr);
+      });
+  }
+
+  async function loadOrders() {
+      try {
+          const response = await fetch("/api/customer/orders", {
+              method: "GET",
+              headers: {
+                  "Authorization": "Bearer " + token
+              }
+          });
+
+          if (response.status === 401 || response.status === 403) {
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              window.location.href = "/login";
+              return;
+          }
+
+          const data = await response.json();
+
+          if (!response.ok) {
+              throw new Error(data.message || "Không thể tải danh sách đơn hàng");
+          }
+
+          renderOrders(data);
+      } catch (error) {
+          console.error(error);
+          showError(error.message || "Có lỗi xảy ra khi tải đơn hàng");
+      }
+  }
+
+  loadOrders();
+</script>
+</body>
+</html>
