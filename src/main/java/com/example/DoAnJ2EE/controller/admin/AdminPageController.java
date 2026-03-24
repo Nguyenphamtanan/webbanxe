@@ -55,4 +55,14 @@ public class AdminPageController {
     public String adminOrderPage() {
         return "admin/order/list";
     }
+
+    @GetMapping("/admin/brands")
+    public String adminBrandPage() {
+        return "admin/brand/list";
+    }
+
+    @GetMapping("/admin/stocks")
+    public String stockPage() {
+        return "admin/stock/list";
+    }
 }
