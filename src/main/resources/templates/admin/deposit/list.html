@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đặt cọc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#0a0f14;
+            --card:#131a22;
+            --line:rgba(255,255,255,.08);
+            --muted:#9ca3af;
+        }
+        body{
+            background:var(--bg);
+            color:#fff;
+            font-family:"SF Pro Display", Inter, sans-serif;
+        }
+        .wrap{
+            max-width:1320px;
+            margin:40px auto;
+            padding:0 16px;
+        }
+        .title{
+            font-size:2.2rem;
+            font-weight:900;
+        }
+        .sub{
+            color:var(--muted);
+            margin-bottom:24px;
+        }
+        .cardx{
+            background:var(--card);
+            border:1px solid var(--line);
+            border-radius:20px;
+            padding:20px;
+        }
+        table{
+            width:100%;
+        }
+        th,td{
+            padding:14px;
+            border-bottom:1px solid var(--line);
+            vertical-align:top;
+        }
+        .bike-box{
+            display:flex;
+            gap:12px;
+            align-items:center;
+        }
+        .bike-box img{
+            width:70px;
+            height:55px;
+            object-fit:cover;
+            border-radius:10px;
+            border:1px solid var(--line);
+        }
+        .muted{
+            color:var(--muted);
+            font-size:.9rem;
+        }
+        .badge-lux{
+            padding:6px 10px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:.8rem;
+            display:inline-block;
+        }
+        .PENDING{
+            background:#92400e;
+            color:#fde68a;
+        }
+        .PAID{
+            background:#1d4ed8;
+            color:#bfdbfe;
+        }
+        .CONFIRMED{
+            background:#166534;
+            color:#bbf7d0;
+        }
+        .CANCELLED{
+            background:#991b1b;
+            color:#fecaca;
+        }
+        .REFUNDED{
+            background:#6b7280;
+            color:#e5e7eb;
+        }
+        .btnx{
+            padding:8px 12px;
+            border-radius:10px;
+            border:1px solid var(--line);
+            background:transparent;
+            color:#fff;
+            font-size:.85rem;
+        }
+        .btnx:hover{
+            background:#1f2937;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1 class="title">Quản lý đặt cọc</h1>
+    <p class="sub">Kiểm tra thanh toán cọc và xác nhận giữ chỗ.</p>
+
+    <div class="cardx">
+        <table>
+            <thead>
+            <tr>
+                <th>Xe</th>
+                <th>Mã cọc</th>
+                <th>Số tiền cọc</th>
+                <th>Phương thức</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem("accessToken");
+    const tbody = document.getElementById("tbody");
+
+    function formatCurrency(v){
+        if(v == null) return "-";
+        return new Intl.NumberFormat("vi-VN").format(Number(v)) + " đ";
+    }
+
+    function formatDate(v){
+        if(!v) return "-";
+        return new Date(v).toLocaleString("vi-VN");
+    }
+
+    function paymentMethodLabel(method){
+        const map = {
+            BANK_TRANSFER: "Chuyển khoản",
+            COD: "Tiền mặt",
+            MOMO: "MoMo",
+            VNPAY: "VNPay"
+        };
+        return map[method] || method || "-";
+    }
+
+    function paymentStatusLabel(status){
+        const map = {
+            UNPAID: "Chưa thanh toán",
+            DEPOSIT_PAID: "Đã thanh toán cọc",
+            PARTIALLY_PAID: "Đã thanh toán một phần",
+            PAID: "Đã thanh toán đủ",
+            REFUNDED: "Đã hoàn tiền"
+        };
+        return map[status] || status || "-";
+    }
+
+    async function loadDeposits(){
+        const res = await fetch("/api/admin/deposits", {
+            headers:{ Authorization:"Bearer " + token }
+        });
+
+        const text = await res.text();
+        if(!res.ok){
+            tbody.innerHTML = `<tr><td colspan="8">Không tải được dữ liệu</td></tr>`;
+            return;
+        }
+
+        const data = JSON.parse(text);
+
+        tbody.innerHTML = data.map(d => `
+            <tr>
+                <td>
+                    <div class="bike-box">
+                        <img src="${d.motorbikeImage || 'https://via.placeholder.com/120'}"
+                             onerror="this.src='https://via.placeholder.com/120'">
+                        <div>
+                            <div>${d.motorbikeName || "-"}</div>
+                            <div class="muted">${d.requestCode || ""}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>${d.depositCode}</div>
+                    <div class="muted">Request #${d.requestId}</div>
+                </td>
+                <td>${formatCurrency(d.depositAmount)}</td>
+                <td>${paymentMethodLabel(d.paymentMethod)}</td>
+                <td>${paymentStatusLabel(d.paymentStatus)}</td>
+                <td><span class="badge-lux ${d.status}">${d.status}</span></td>
+                <td class="muted">${formatDate(d.createdAt)}</td>
+                <td>
+                    ${d.status === "PAID"
+                        ? `<button class="btnx" onclick="confirmDeposit(${d.id})">Xác nhận cọc</button>`
+                        : ``}
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    async function confirmDeposit(id){
+        const res = await fetch(`/api/admin/deposits/${id}/confirm`, {
+            method:"PUT",
+            headers:{ Authorization:"Bearer " + token }
+        });
+
+        const text = await res.text();
+        if(!res.ok){
+            alert(text || "Không xác nhận được cọc");
+            return;
+        }
+
+        alert("Đã xác nhận cọc");
+        loadDeposits();
+    }
+
+    loadDeposits();
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>So sánh xe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+        --bg: #0a0f14;
+        --panel: #131a22;
+        --panel-2: #18212c;
+        --card: #111821;
+        --line: rgba(255,255,255,0.08);
+        --line-strong: rgba(255,255,255,0.14);
+        --text: #f8fafc;
+        --muted: #9ca3af;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --danger: #dc3545;
+        --success: #16a34a;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background:
+            radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 25%),
+            radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 22%),
+            linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+        color: var(--text);
+        font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+        min-height: 100vh;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .compare-shell {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 36px 16px 56px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+    }
+
+    .topbar-left h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+    .topbar-left p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+    }
+
+    .topbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-lux {
+        min-height: 46px;
+        padding: 10px 18px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        color: #fff;
+        font-weight: 700;
+        transition: 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .btn-lux:hover {
+        background: rgba(255,255,255,0.06);
+        border-color: var(--line-strong);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .btn-lux-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .btn-lux-primary:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+    }
+
+    .btn-lux-danger {
+        background: rgba(220,53,69,0.12);
+        border-color: rgba(220,53,69,0.32);
+        color: #fff;
+    }
+
+    .btn-lux-danger:hover {
+        background: rgba(220,53,69,0.20);
+        border-color: rgba(220,53,69,0.45);
+    }
+
+    .glass-box {
+        background: rgba(19,26,34,0.88);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+    }
+
+    .summary-bar {
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .summary-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .summary-label {
+        color: var(--muted);
+        font-size: 0.92rem;
+    }
+
+    .summary-value {
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .compare-wrapper {
+        overflow-x: auto;
+    }
+
+    .compare-table {
+        min-width: 1100px;
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .compare-table th,
+    .compare-table td {
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+    }
+
+    .compare-table th {
+        width: 220px;
+        min-width: 220px;
+        padding: 22px 18px;
+        color: #d9e2ec;
+        font-size: 0.96rem;
+        font-weight: 800;
+        background: rgba(255,255,255,0.02);
+    }
+
+    .compare-table td {
+        width: 320px;
+        min-width: 320px;
+        padding: 18px;
+        background: rgba(255,255,255,0.01);
+    }
+
+    .vehicle-top {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .vehicle-image {
+        width: 100%;
+        height: 220px;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: #0b1016;
+    }
+
+    .vehicle-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .vehicle-name {
+        font-size: 1.1rem;
+        font-weight: 900;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    .vehicle-sub {
+        color: var(--muted);
+        font-size: 0.92rem;
+    }
+
+    .vehicle-actions {
+        display: grid;
+        gap: 10px;
+    }
+
+    .value-main {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.7;
+    }
+
+    .value-muted {
+        color: var(--muted);
+        line-height: 1.75;
+    }
+
+    .price-value {
+        font-size: 1.18rem;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .highlight-best {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(22,163,74,0.14);
+        border: 1px solid rgba(22,163,74,0.30);
+        color: #dcfce7;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .empty-box,
+    .loading-box,
+    .error-box {
+        padding: 52px 20px;
+        border-radius: 18px;
+        text-align: center;
+        border: 1px dashed rgba(255,255,255,0.10);
+        color: var(--muted);
+    }
+
+    .error-box {
+        color: #ffb4b4;
+        border-color: rgba(220,53,69,0.30);
+    }
+
+    .note-box {
+        margin-top: 20px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+        color: var(--muted);
+        line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+        .compare-shell {
+            padding-top: 24px;
+        }
+
+        .summary-bar {
+            padding: 18px;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="compare-shell">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>So sánh xe</h1>
+      <p>Đặt các mẫu xe cạnh nhau để so sánh nhanh thông tin, giá và thông số cơ bản.</p>
+    </div>
+
+    <div class="topbar-actions">
+      <a href="/showroom" class="btn-lux">
+        <i class="bi bi-arrow-left"></i>
+        Quay lại showroom
+      </a>
+      <button class="btn-lux btn-lux-danger" type="button" onclick="clearCompare()">
+        <i class="bi bi-trash3"></i>
+        Xóa toàn bộ
+      </button>
+    </div>
+  </div>
+
+  <div class="glass-box summary-bar">
+    <div class="summary-text">
+      <div class="summary-label">Số xe đang so sánh</div>
+      <div class="summary-value"><span id="compareCount">0</span>/3 xe</div>
+    </div>
+
+    <div class="summary-text">
+      <div class="summary-label">Trạng thái</div>
+      <div class="summary-value" id="compareStatus">Đang tải...</div>
+    </div>
+  </div>
+
+  <div id="compareContainer">
+    <div class="loading-box">Đang tải dữ liệu so sánh...</div>
+  </div>
+
+  <div class="note-box">
+    Gợi ý: nên so sánh 2 hoặc 3 xe cùng phân khúc để nhìn ra chênh lệch về giá, động cơ và trọng lượng dễ hơn.
+  </div>
+</div>
+
+<script>
+  function getCompareList() {
+      return JSON.parse(localStorage.getItem("compareMotorbikes") || "[]");
+  }
+
+  function setCompareList(list) {
+      localStorage.setItem("compareMotorbikes", JSON.stringify(list));
+      updateCompareCount();
+  }
+
+  function updateCompareCount() {
+      document.getElementById("compareCount").innerText = getCompareList().length;
+  }
+
+  function updateCompareStatus(text) {
+      document.getElementById("compareStatus").innerText = text;
+  }
+
+  function clearCompare() {
+      setCompareList([]);
+      renderEmptyState("Danh sách so sánh đã được xóa");
+      updateCompareStatus("Chưa chọn xe");
+  }
+
+  function removeFromCompare(id) {
+      const compareList = getCompareList().filter(item => item !== id);
+      setCompareList(compareList);
+
+      if (compareList.length < 2) {
+          renderEmptyState("Hãy chọn ít nhất 2 xe để tiếp tục so sánh");
+          updateCompareStatus(compareList.length === 1 ? "Mới có 1 xe" : "Chưa chọn xe");
+          return;
+      }
+
+      loadCompareData();
+  }
+
+  function formatPrice(value) {
+      return Number(value ?? 0).toLocaleString("vi-VN") + " đ";
+  }
+
+  function formatText(value, fallback = "Chưa cập nhật") {
+      if (value === null || value === undefined || value === "") {
+          return fallback;
+      }
+      return value;
+  }
+
+  function escapeHtml(text) {
+      return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+  }
+
+  function renderEmptyState(message) {
+      const container = document.getElementById("compareContainer");
+      container.innerHTML = `
+          <div class="empty-box">
+              <div class="mb-3">${message}</div>
+              <a href="/showroom" class="btn-lux btn-lux-primary">
+                  <i class="bi bi-grid"></i>
+                  Đi tới showroom
+              </a>
+          </div>
+      `;
+  }
+
+  function renderErrorState() {
+      const container = document.getElementById("compareContainer");
+      container.innerHTML = `
+          <div class="error-box">
+              Không tải được dữ liệu so sánh
+          </div>
+      `;
+  }
+
+  function buildRow(label, items, renderFn) {
+      return `
+          <tr>
+              <th>${label}</th>
+              ${items.map(item => `<td>${renderFn(item)}</td>`).join("")}
+          </tr>
+      `;
+  }
+
+  function getBestPriceId(items) {
+      const validItems = items.filter(item => item.price !== null && item.price !== undefined);
+      if (!validItems.length) return null;
+
+      let best = validItems[0];
+      for (const item of validItems) {
+          if (Number(item.price) < Number(best.price)) {
+              best = item;
+          }
+      }
+      return best.id;
+  }
+
+  function getLightestId(items) {
+      const validItems = items.filter(item => item.weightKg !== null && item.weightKg !== undefined);
+      if (!validItems.length) return null;
+
+      let best = validItems[0];
+      for (const item of validItems) {
+          if (Number(item.weightKg) < Number(best.weightKg)) {
+              best = item;
+          }
+      }
+      return best.id;
+  }
+
+  function renderCompareTable(items) {
+      const container = document.getElementById("compareContainer");
+      const bestPriceId = getBestPriceId(items);
+      const lightestId = getLightestId(items);
+
+      container.innerHTML = `
+          <div class="glass-box compare-wrapper">
+              <table class="compare-table">
+                  <tbody>
+                      ${buildRow("Tổng quan", items, item => `
+                          <div class="vehicle-top">
+                              <div class="vehicle-image">
+                                  <img src="${escapeHtml(item.primaryImageUrl || 'https://via.placeholder.com/700x500?text=No+Image')}"
+                                       alt="${escapeHtml(item.name || '')}"
+                                       onerror="this.src='https://via.placeholder.com/700x500?text=No+Image'">
+                              </div>
+
+                              <div>
+                                  <h3 class="vehicle-name">${escapeHtml(item.name || "")}</h3>
+                                  <div class="vehicle-sub">
+                                      ${escapeHtml(item.brandName || "Chưa có hãng")} • ${escapeHtml(item.categoryName || "Chưa có danh mục")}
+                                  </div>
+                              </div>
+
+                              <div class="vehicle-actions">
+                                  <a class="btn-lux btn-lux-primary" href="/showroom/${escapeHtml(item.slug || '')}">
+                                      <i class="bi bi-arrow-right-circle"></i>
+                                      Xem chi tiết
+                                  </a>
+
+                                  <button class="btn-lux btn-lux-danger" type="button" onclick="removeFromCompare(${item.id})">
+                                      <i class="bi bi-x-circle"></i>
+                                      Bỏ khỏi so sánh
+                                  </button>
+                              </div>
+                          </div>
+                      `)}
+
+                      ${buildRow("Giá", items, item => `
+                          <div class="price-value">${formatPrice(item.price)}</div>
+                          ${bestPriceId === item.id ? `
+                              <div class="highlight-best">
+                                  <i class="bi bi-stars"></i>
+                                  Giá thấp nhất
+                              </div>
+                          ` : ``}
+                      `)}
+
+                      ${buildRow("Hãng xe", items, item => `
+                          <div class="value-main">${escapeHtml(formatText(item.brandName))}</div>
+                      `)}
+
+                      ${buildRow("Danh mục", items, item => `
+                          <div class="value-main">${escapeHtml(formatText(item.categoryName))}</div>
+                      `)}
+
+                      ${buildRow("SKU", items, item => `
+                          <div class="value-main">${escapeHtml(formatText(item.sku))}</div>
+                      `)}
+
+                      ${buildRow("Động cơ", items, item => `
+                          <div class="value-main">${escapeHtml(formatText(item.engine))}</div>
+                      `)}
+
+                      ${buildRow("Trọng lượng", items, item => `
+                          <div class="value-main">
+                              ${item.weightKg !== null && item.weightKg !== undefined
+                                  ? `${item.weightKg} kg`
+                                  : "Chưa cập nhật"}
+                          </div>
+                          ${lightestId === item.id ? `
+                              <div class="highlight-best">
+                                  <i class="bi bi-lightning-charge"></i>
+                                  Nhẹ nhất
+                              </div>
+                          ` : ``}
+                      `)}
+
+                      ${buildRow("Trạng thái", items, item => `
+                          <div class="value-main">${item.isActive ? "Đang kinh doanh" : "Ngừng kinh doanh"}</div>
+                      `)}
+
+                      ${buildRow("Mô tả", items, item => `
+                          <div class="value-muted">${escapeHtml(formatText(item.description, "Chưa có mô tả"))}</div>
+                      `)}
+                  </tbody>
+              </table>
+          </div>
+      `;
+  }
+
+  async function loadCompareData() {
+      const compareIds = getCompareList();
+      updateCompareCount();
+
+      if (compareIds.length < 2) {
+          renderEmptyState("Hãy chọn ít nhất 2 xe trong showroom để so sánh");
+          updateCompareStatus(compareIds.length === 1 ? "Mới có 1 xe" : "Chưa chọn xe");
+          return;
+      }
+
+      updateCompareStatus(`Đang so sánh ${compareIds.length} xe`);
+
+      const container = document.getElementById("compareContainer");
+      container.innerHTML = `<div class="loading-box">Đang tải dữ liệu so sánh...</div>`;
+
+      try {
+          const response = await fetch("/api/showroom/compare", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(compareIds)
+          });
+
+          if (!response.ok) {
+              throw new Error("Không tải được dữ liệu so sánh");
+          }
+
+          const data = await response.json();
+
+          if (!data || data.length < 2) {
+              renderEmptyState("Không đủ dữ liệu để so sánh");
+              updateCompareStatus("Không đủ dữ liệu");
+              return;
+          }
+
+          updateCompareStatus(`Đang so sánh ${data.length} xe`);
+          renderCompareTable(data);
+      } catch (error) {
+          console.error(error);
+          updateCompareStatus("Lỗi tải dữ liệu");
+          renderErrorState();
+      }
+  }
+
+  updateCompareCount();
+  loadCompareData();
+</script>
+</body>
+</html>

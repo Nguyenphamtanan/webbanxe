@@ -65,4 +65,17 @@ public class AdminPageController {
     public String stockPage() {
         return "admin/stock/list";
     }
+
+    @GetMapping("/admin/requests")
+    public String adminRequests() {
+        return "admin/request/list";
+    }
+    @GetMapping("/admin/requests/{id}")
+    public String adminRequestDetailPage(@PathVariable Long id) {
+        return "admin/request/detail";
+    }
+    @GetMapping("/admin/deposits")
+    public String adminDepositPage() {
+        return "admin/deposit/list";
+    }
 }

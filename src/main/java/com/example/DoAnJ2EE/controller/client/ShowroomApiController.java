@@ -4,6 +4,7 @@ import com.example.DoAnJ2EE.dto.motorbike.MotorbikeDetailResponse;
 import com.example.DoAnJ2EE.dto.motorbike.MotorbikeResponse;
 import com.example.DoAnJ2EE.service.ShowroomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,16 +17,26 @@ public class ShowroomApiController {
     private final ShowroomService showroomService;
 
     @GetMapping("/filter")
-    public List<MotorbikeResponse> filter(
+    public ResponseEntity<List<MotorbikeResponse>> filter(
             @RequestParam(required = false) Integer warehouseId,
             @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Integer brandId
+            @RequestParam(required = false) Integer brandId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir
     ) {
-        return showroomService.filter(warehouseId, categoryId, brandId);
+        return ResponseEntity.ok(
+                showroomService.filter(warehouseId, categoryId, brandId, keyword, sortBy, sortDir)
+        );
     }
 
     @GetMapping("/{slug}")
-    public MotorbikeDetailResponse detail(@PathVariable String slug) {
-        return showroomService.getDetailBySlug(slug);
+    public ResponseEntity<MotorbikeDetailResponse> detail(@PathVariable String slug) {
+        return ResponseEntity.ok(showroomService.getDetailBySlug(slug));
+    }
+
+    @PostMapping("/compare")
+    public ResponseEntity<List<MotorbikeDetailResponse>> compare(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(showroomService.getCompareItems(ids));
     }
 }

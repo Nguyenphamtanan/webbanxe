@@ -4,134 +4,617 @@
     <meta charset="UTF-8">
     <title>Showroom xe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        body { background:#0b0b0b; color:#fff; font-family:Arial,sans-serif; }
-        .wrapper { max-width:1280px; margin:40px auto; }
-        .filter-box, .card-box {
-            background:#151515;
-            border:1px solid rgba(255,255,255,0.08);
-            border-radius:20px;
-            padding:24px;
+        :root {
+            --bg: #0a0f14;
+            --panel: #131a22;
+            --panel-2: #18212c;
+            --card: #111821;
+            --line: rgba(255,255,255,0.08);
+            --line-strong: rgba(255,255,255,0.14);
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #dc3545;
         }
-        .product-card {
-            background:#111;
-            border:1px solid rgba(255,255,255,0.08);
-            border-radius:18px;
-            overflow:hidden;
-            height:100%;
+
+        * {
+            box-sizing: border-box;
         }
-        .product-card img {
-            width:100%;
-            height:220px;
-            object-fit:cover;
-            background:#000;
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 25%),
+                radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 22%),
+                linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+            color: var(--text);
+            font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
         }
-        .product-body { padding:18px; }
-        .product-name { font-size:1.05rem; font-weight:700; min-height:48px; }
-        .product-meta { color:#aaa; font-size:0.92rem; margin-bottom:10px; }
-        .product-price { font-size:1.2rem; font-weight:800; }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .showroom-shell {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 36px 16px 56px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .topbar-left h1 {
+            margin: 0 0 8px;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .topbar-left p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-lux {
+            min-height: 46px;
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-weight: 700;
+            transition: 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-lux:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--line-strong);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-lux-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-lux-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-lux-danger {
+            background: rgba(220,53,69,0.12);
+            border-color: rgba(220,53,69,0.32);
+            color: #fff;
+        }
+
+        .btn-lux-danger:hover {
+            background: rgba(220,53,69,0.20);
+            border-color: rgba(220,53,69,0.45);
+        }
+
+        .glass-box {
+            background: rgba(19,26,34,0.88);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+        }
+
+        .compare-bar {
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .compare-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .compare-label {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .compare-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .filter-box {
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            color: #dbe4ee;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
         .form-select {
-            background:#0f0f0f;
-            color:#fff;
-            border:1px solid rgba(255,255,255,0.12);
+            min-height: 50px;
+            border-radius: 14px;
+            background: #0d1319;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.10);
         }
+
+        .form-control::placeholder {
+            color: #7f8a98;
+        }
+
+        .form-control:focus,
         .form-select:focus {
-            border-color:#fff;
-            box-shadow:none;
+            background: #0d1319;
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.18rem rgba(37,99,235,0.18);
+        }
+
+        .results-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .results-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .results-sub {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .brand-block + .brand-block {
+            margin-top: 32px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand-title h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-title span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .product-card {
+            height: 100%;
+            background: linear-gradient(180deg, #121922 0%, #0f151d 100%);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.28s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(37,99,235,0.35);
+            box-shadow: 0 18px 34px rgba(0,0,0,0.26);
+        }
+
+        .product-media {
+            position: relative;
+            height: 230px;
+            overflow: hidden;
+            background: #090d12;
+        }
+
+        .product-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .product-card:hover .product-media img {
+            transform: scale(1.04);
+        }
+
+        .compare-chip {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(10,15,20,0.82);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #fff;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+
+        .product-body {
+            padding: 18px;
+        }
+
+        .product-name {
+            font-size: 1.06rem;
+            font-weight: 800;
+            min-height: 52px;
+            margin-bottom: 8px;
+            line-height: 1.45;
+        }
+
+        .product-meta {
+            color: var(--muted);
+            font-size: 0.93rem;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 14px;
+        }
+
+        .product-actions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .empty-box,
+        .loading-box,
+        .error-box {
+            padding: 48px 20px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.10);
+            color: var(--muted);
+        }
+
+        .error-box {
+            color: #ffb4b4;
+            border-color: rgba(220,53,69,0.30);
+        }
+
+        @media (max-width: 991.98px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .showroom-shell {
+                padding-top: 24px;
+            }
+
+            .compare-bar,
+            .filter-box {
+                padding: 18px;
+            }
+
+            .product-media {
+                height: 210px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="mb-4">
-        <h2 class="mb-2">Showroom xe</h2>
-        <p class="text-secondary mb-0">Lọc xe theo kho, danh mục và hãng xe</p>
+<div class="showroom-shell">
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Showroom xe</h1>
+            <p>Tìm kiếm, lọc, sắp xếp và so sánh các mẫu xe theo nhu cầu của bạn.</p>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="/" class="btn-lux">
+                <i class="bi bi-house-door"></i>
+                Về trang chủ
+            </a>
+            <a href="/customer/dashboard" class="btn-lux">
+                <i class="bi bi-grid-1x2"></i>
+                Dashboard
+            </a>
+        </div>
     </div>
 
-    <div class="filter-box mb-4">
+    <div class="glass-box compare-bar">
+        <div class="compare-left">
+            <div class="compare-label">Danh sách so sánh hiện tại</div>
+            <div class="compare-value"><span id="compareCount">0</span>/3 xe</div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn-lux btn-lux-danger" type="button" onclick="clearCompare()">
+                <i class="bi bi-trash3"></i>
+                Xóa so sánh
+            </button>
+            <button class="btn-lux btn-lux-primary" type="button" onclick="goToCompare()">
+                <i class="bi bi-columns-gap"></i>
+                So sánh ngay
+            </button>
+        </div>
+    </div>
+
+    <div class="glass-box filter-box">
         <div class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label">Chọn kho</label>
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label">Tìm tên xe</label>
+                <input id="keyword" class="form-control" placeholder="Nhập tên xe..." oninput="debouncedLoadProducts()">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label">Kho</label>
                 <select id="warehouseId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả kho</option>
                     <option th:each="w : ${warehouses}" th:value="${w.id}" th:text="${w.name}"></option>
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label">Chọn danh mục</label>
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label">Danh mục</label>
                 <select id="categoryId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả danh mục</option>
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label">Chọn hãng</label>
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label">Hãng xe</label>
                 <select id="brandId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả hãng</option>
                     <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}"></option>
                 </select>
             </div>
+
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label">Sắp xếp</label>
+                <select id="sortOption" class="form-select" onchange="loadProducts()">
+                    <option value="id-desc">Mới nhất</option>
+                    <option value="price-asc">Giá tăng dần</option>
+                    <option value="price-desc">Giá giảm dần</option>
+                    <option value="name-asc">Tên A-Z</option>
+                    <option value="name-desc">Tên Z-A</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <div class="card-box">
-        <div class="row g-4" id="productList">
-            <div class="col-12 text-center text-secondary">Đang tải dữ liệu...</div>
+    <div class="results-head">
+        <div>
+            <h2 class="results-title">Danh sách xe</h2>
+            <p class="results-sub" id="resultsSummary">Đang tải dữ liệu...</p>
         </div>
+    </div>
+
+    <div id="productList">
+        <div class="loading-box">Đang tải dữ liệu...</div>
     </div>
 </div>
 
 <script>
+    let searchTimeout = null;
+
+    function getCompareList() {
+        return JSON.parse(localStorage.getItem("compareMotorbikes") || "[]");
+    }
+
+    function setCompareList(list) {
+        localStorage.setItem("compareMotorbikes", JSON.stringify(list));
+        updateCompareCount();
+    }
+
+    function updateCompareCount() {
+        document.getElementById("compareCount").innerText = getCompareList().length;
+    }
+
+    function isCompared(id) {
+        return getCompareList().includes(id);
+    }
+
+    function addToCompare(id) {
+        const compareList = getCompareList();
+
+        if (compareList.includes(id)) {
+            alert("Xe này đã có trong danh sách so sánh");
+            return;
+        }
+
+        if (compareList.length >= 3) {
+            alert("Chỉ được so sánh tối đa 3 xe");
+            return;
+        }
+
+        compareList.push(id);
+        setCompareList(compareList);
+        loadProducts();
+        alert("Đã thêm vào danh sách so sánh");
+    }
+
+    function removeFromCompare(id) {
+        const compareList = getCompareList().filter(item => item !== id);
+        setCompareList(compareList);
+        loadProducts();
+    }
+
+    function clearCompare() {
+        setCompareList([]);
+        loadProducts();
+    }
+
+    function goToCompare() {
+        const compareList = getCompareList();
+        if (compareList.length < 2) {
+            alert("Hãy chọn ít nhất 2 xe để so sánh");
+            return;
+        }
+        window.location.href = "/showroom/compare";
+    }
+
+    function groupByBrand(items) {
+        return items.reduce((acc, item) => {
+            const brand = item.brandName || "Khác";
+            if (!acc[brand]) acc[brand] = [];
+            acc[brand].push(item);
+            return acc;
+        }, {});
+    }
+
+    function formatPrice(value) {
+        return Number(value ?? 0).toLocaleString("vi-VN") + " đ";
+    }
+
+    function debouncedLoadProducts() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            loadProducts();
+        }, 300);
+    }
+
     async function loadProducts() {
         const warehouseId = document.getElementById("warehouseId").value;
         const categoryId = document.getElementById("categoryId").value;
         const brandId = document.getElementById("brandId").value;
+        const keyword = document.getElementById("keyword").value || "";
+        const sortOption = document.getElementById("sortOption").value || "id-desc";
+
+        const [sortBy, sortDir] = sortOption.split("-");
 
         const params = new URLSearchParams();
         if (warehouseId) params.append("warehouseId", warehouseId);
         if (categoryId) params.append("categoryId", categoryId);
         if (brandId) params.append("brandId", brandId);
+        if (keyword.trim()) params.append("keyword", keyword.trim());
+        if (sortBy) params.append("sortBy", sortBy);
+        if (sortDir) params.append("sortDir", sortDir);
 
         const container = document.getElementById("productList");
-        container.innerHTML = `<div class="col-12 text-center text-secondary">Đang tải dữ liệu...</div>`;
+        const summary = document.getElementById("resultsSummary");
+
+        container.innerHTML = `<div class="loading-box">Đang tải dữ liệu...</div>`;
+        summary.innerText = "Đang tải dữ liệu...";
 
         try {
             const response = await fetch(`/api/showroom/filter?${params.toString()}`);
-            if (!response.ok) throw new Error("Không tải được danh sách xe");
+            if (!response.ok) {
+                throw new Error("Không tải được danh sách xe");
+            }
 
             const data = await response.json();
 
             if (!data.length) {
-                container.innerHTML = `<div class="col-12 text-center text-secondary">Không có xe phù hợp</div>`;
+                container.innerHTML = `<div class="empty-box">Không có xe phù hợp với bộ lọc hiện tại</div>`;
+                summary.innerText = "0 kết quả";
                 return;
             }
 
-            container.innerHTML = data.map(item => `
-                <div class="col-lg-3 col-md-6">
-                    <div class="product-card">
-                        <img src="${item.primaryImageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}"
-                             alt="${item.name || ''}"
-                             onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
-                        <div class="product-body">
-                            <div class="product-name">${item.name ?? ''}</div>
-                            <div class="product-meta">${item.brandName ?? ''} • ${item.categoryName ?? ''}</div>
-                            <div class="product-price">${Number(item.price ?? 0).toLocaleString("vi-VN")} đ</div>
-                            <a class="btn btn-outline-light w-100 mt-3" href="/showroom/${item.slug}">
-                                Xem chi tiết
-                            </a>
-                        </div>
+            const grouped = groupByBrand(data);
+            summary.innerText = `${data.length} xe • ${Object.keys(grouped).length} hãng`;
+
+            container.innerHTML = Object.entries(grouped).map(([brand, items]) => `
+                <div class="brand-block">
+                    <div class="brand-title">
+                        <h3>${brand}</h3>
+                        <span>${items.length} xe</span>
+                    </div>
+
+                    <div class="row g-4">
+                        ${items.map(item => `
+                            <div class="col-xl-3 col-md-6">
+                                <div class="product-card">
+                                    <div class="product-media">
+                                        <img src="${item.primaryImageUrl || 'https://via.placeholder.com/600x400?text=No+Image'}"
+                                             alt="${item.name || ''}"
+                                             onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+
+                                        ${isCompared(item.id) ? `<div class="compare-chip">Đang so sánh</div>` : ``}
+                                    </div>
+
+                                    <div class="product-body">
+                                        <div class="product-name">${item.name ?? ''}</div>
+                                        <div class="product-meta">${item.brandName ?? ''} • ${item.categoryName ?? ''}</div>
+                                        <div class="product-price">${formatPrice(item.price)}</div>
+
+                                        <div class="product-actions">
+                                            <a class="btn-lux" href="/showroom/${item.slug}">
+                                                <i class="bi bi-arrow-right-circle"></i>
+                                                Xem chi tiết
+                                            </a>
+
+                                            ${isCompared(item.id)
+                                                ? `<button class="btn-lux btn-lux-danger" type="button" onclick="removeFromCompare(${item.id})">
+                                                        <i class="bi bi-x-circle"></i>
+                                                        Bỏ so sánh
+                                                   </button>`
+                                                : `<button class="btn-lux btn-lux-primary" type="button" onclick="addToCompare(${item.id})">
+                                                        <i class="bi bi-plus-circle"></i>
+                                                        So sánh
+                                                   </button>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join("")}
                     </div>
                 </div>
             `).join("");
         } catch (error) {
             console.error(error);
-            container.innerHTML = `<div class="col-12 text-center text-danger">Lỗi tải dữ liệu</div>`;
+            container.innerHTML = `<div class="error-box">Lỗi tải dữ liệu</div>`;
+            summary.innerText = "Không thể tải dữ liệu";
         }
     }
 
+    updateCompareCount();
     loadProducts();
 </script>
 </body>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gửi yêu cầu báo giá</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#0b0b0b;
+            --card:#171717;
+            --line:rgba(255,255,255,0.08);
+            --muted:#a8a8a8;
+        }
+        body{background:var(--bg);color:#fff;font-family:Arial,sans-serif}
+        .wrap{max-width:1000px;margin:36px auto;padding:0 16px}
+        .box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px}
+        .title{font-size:2rem;font-weight:800;margin-bottom:6px}
+        .sub{color:var(--muted);margin-bottom:24px}
+        .form-control,.form-select,textarea{
+            background:#101010!important;
+            color:#fff!important;
+            border:1px solid var(--line)!important;
+            border-radius:14px!important;
+            padding:12px 14px!important;
+            box-shadow:none!important;
+        }
+        .form-label{font-weight:700;margin-bottom:8px}
+        .summary{
+            background:#101010;border:1px solid var(--line);
+            border-radius:16px;padding:18px;margin-top:24px
+        }
+        .row-line{display:flex;justify-content:space-between;margin-bottom:12px;color:var(--muted)}
+        .row-line.total{color:#fff;font-weight:800;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+        .btn-main,.btn-second{
+            border-radius:14px;padding:12px 16px;font-weight:700;text-decoration:none;
+            display:inline-block;text-align:center
+        }
+        .btn-main{background:#fff;color:#000;border:none;width:100%}
+        .btn-second{background:transparent;color:#fff;border:1px solid var(--line);width:100%}
+        .alert-box{display:none;border-radius:14px;padding:12px 14px;margin-bottom:16px}
+        .alert-error{background:rgba(255,77,79,.12);color:#ffb3b5;border:1px solid rgba(255,77,79,.3)}
+        .alert-success{background:rgba(29,185,84,.12);color:#9ef0b9;border:1px solid rgba(29,185,84,.3)}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="box">
+        <h1 class="title">Thông tin nhận báo giá / đặt cọc</h1>
+        <p class="sub">Điền thông tin để showroom liên hệ báo giá, tư vấn hoặc xác nhận cọc.</p>
+
+        <div id="errorBox" class="alert-box alert-error"></div>
+        <div id="successBox" class="alert-box alert-success"></div>
+
+        <form id="requestForm">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label" for="fullName">Họ và tên</label>
+                    <input id="fullName" class="form-control" type="text" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="phone">Điện thoại</label>
+                    <input id="phone" class="form-control" type="text" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="email">Email</label>
+                    <input id="email" class="form-control" type="email">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="regionId">Khu vực</label>
+                    <select id="regionId" class="form-select">
+                        <option value="">-- Chọn khu vực --</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="address">Địa chỉ</label>
+                    <input id="address" class="form-control" type="text">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="requestType">Nhu cầu</label>
+                    <select id="requestType" class="form-select" required>
+                        <option value="QUOTE">Nhận báo giá</option>
+                        <option value="DEPOSIT">Đặt cọc giữ xe</option>
+                        <option value="CONSULT">Tư vấn thêm</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="note">Ghi chú</label>
+                    <textarea id="note" rows="4" class="form-control" placeholder="Màu xe mong muốn, trả góp, thời gian nhận xe..."></textarea>
+                </div>
+            </div>
+
+            <div class="summary">
+                <div class="row-line">
+                    <span>Sản phẩm trong giỏ</span>
+                    <span id="totalItems">0</span>
+                </div>
+                <div class="row-line total">
+                    <span>Tạm tính</span>
+                    <span id="totalAmount">0 đ</span>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-6">
+                    <a href="/customer/cart" class="btn-second">Trở lại giỏ hàng</a>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" id="submitBtn" class="btn-main">Gửi yêu cầu</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem("accessToken");
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    const submitBtn = document.getElementById("submitBtn");
+    const totalItemsEl = document.getElementById("totalItems");
+    const totalAmountEl = document.getElementById("totalAmount");
+    const regionSelect = document.getElementById("regionId");
+
+    if (!token) window.location.href = "/login";
+
+    function showError(msg) {
+        errorBox.style.display = "block";
+        successBox.style.display = "none";
+        errorBox.innerText = msg;
+    }
+
+    function showSuccess(msg) {
+        successBox.style.display = "block";
+        errorBox.style.display = "none";
+        successBox.innerText = msg;
+    }
+
+    function formatCurrency(v) {
+        return new Intl.NumberFormat("vi-VN").format(Number(v || 0)) + " đ";
+    }
+
+    async function loadRegions() {
+        try {
+            const res = await fetch("/api/regions", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            if (!res.ok) throw new Error("Không tải được khu vực");
+            const data = await res.json();
+            regionSelect.innerHTML = `<option value="">-- Chọn khu vực --</option>`;
+            data.forEach(r => {
+                const op = document.createElement("option");
+                op.value = r.id;
+                op.textContent = r.name;
+                regionSelect.appendChild(op);
+            });
+        } catch (e) {
+            showError(e.message || "Không tải được khu vực");
+        }
+    }
+
+    async function loadCartSummary() {
+        try {
+            const res = await fetch("/api/cart", {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            if (!res.ok) throw new Error("Không tải được giỏ hàng");
+            const cart = await res.json();
+            totalItemsEl.innerText = cart.totalItems ?? 0;
+            totalAmountEl.innerText = formatCurrency(cart.totalAmount ?? 0);
+        } catch (e) {
+            totalItemsEl.innerText = "0";
+            totalAmountEl.innerText = "0 đ";
+        }
+    }
+
+    document.getElementById("requestForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const payload = {
+            regionId: regionSelect.value ? parseInt(regionSelect.value) : null,
+            fullName: document.getElementById("fullName").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            address: document.getElementById("address").value.trim(),
+            note: document.getElementById("note").value.trim(),
+            requestType: document.getElementById("requestType").value
+        };
+
+        if (!payload.fullName || !payload.phone || !payload.requestType) {
+            showError("Vui lòng nhập đầy đủ họ tên, điện thoại và nhu cầu.");
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Đang gửi...";
+
+            const res = await fetch("/api/requests", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Gửi yêu cầu thất bại");
+            }
+
+            const data = await res.json();
+            showSuccess("Gửi yêu cầu thành công. Mã yêu cầu: " + data.requestCode);
+
+            setTimeout(() => {
+                window.location.href = "/customer/requests";
+            }, 1200);
+        } catch (e) {
+            showError(e.message || "Có lỗi xảy ra");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Gửi yêu cầu";
+        }
+    });
+
+    loadRegions();
+    loadCartSummary();
+</script>
+</body>
+</html>

@@ -35,11 +35,6 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Transient
-    public BigDecimal getLineTotal() {
-        if (unitPrice == null || quantity == null) {
-            return BigDecimal.ZERO;
-        }
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
-    }
+    @Column(name = "line_total", precision = 18, scale = 2, insertable = false, updatable = false)
+    private BigDecimal lineTotal;
 }

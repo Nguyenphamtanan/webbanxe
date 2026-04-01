@@ -2,76 +2,703 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Chi tiết xe</title>
+    <title th:text="${bike.name} + ' | Chi tiết xe'">Chi tiết xe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        body { background:#0b0b0b; color:#fff; font-family:Arial,sans-serif; }
-        .wrapper { max-width:1200px; margin:40px auto; }
-        .box {
-            background:#151515;
-            border:1px solid rgba(255,255,255,0.08);
-            border-radius:20px;
-            padding:24px;
+        :root {
+            --bg: #0a0f14;
+            --panel: #131a22;
+            --panel-2: #18212c;
+            --card: #111821;
+            --line: rgba(255,255,255,0.08);
+            --line-strong: rgba(255,255,255,0.14);
+            --text: #f8fafc;
+            --muted: #9ca3af;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #dc3545;
+            --success: #16a34a;
+            --warning: #f59e0b;
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 24%),
+                radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 20%),
+                linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+            color: var(--text);
+            font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .detail-shell {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 34px 16px 60px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .btn-lux {
+            min-height: 48px;
+            padding: 11px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s ease;
+            cursor: pointer;
+        }
+
+        .btn-lux:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--line-strong);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-lux-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-lux-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-lux-danger {
+            background: rgba(220,53,69,0.12);
+            border-color: rgba(220,53,69,0.28);
+        }
+
+        .btn-lux-warning {
+            background: rgba(245,158,11,0.12);
+            border-color: rgba(245,158,11,0.30);
+        }
+
+        .glass-box {
+            background: rgba(19,26,34,0.88);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+        }
+
+        .alert-box {
+            display: none;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-error {
+            background: rgba(220,53,69,0.12);
+            color: #ffb4b4;
+            border-color: rgba(220,53,69,0.28);
+        }
+
+        .alert-success {
+            background: rgba(22,163,74,0.12);
+            color: #b7f7c7;
+            border-color: rgba(22,163,74,0.28);
+        }
+
+        .hero-detail {
+            padding: 24px;
+        }
+
+        .product-media-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .main-img-box {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #0b1016;
+            min-height: 500px;
+        }
+
         .main-img {
-            width:100%;
-            border-radius:16px;
-            object-fit:cover;
-            max-height:480px;
-            background:#000;
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            object-fit: cover;
+            display: block;
         }
-        .label { color:#aaa; margin-bottom:6px; }
-        .price { font-size:2rem; font-weight:800; }
+
+        .media-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(10,15,20,0.78);
+            border: 1px solid rgba(255,255,255,0.10);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            border-radius: 999px;
+            padding: 8px 13px;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .quick-note {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #c9d6e5;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .eyebrow .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 14px rgba(37,99,235,0.8);
+        }
+
+        .product-title {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.06;
+        }
+
+        .product-meta {
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .price-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(37,99,235,0.16), rgba(37,99,235,0.08));
+            border: 1px solid rgba(37,99,235,0.24);
+        }
+
+        .price-label {
+            color: #d9e6ff;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .price-value {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .price-note {
+            color: #c9d6e5;
+            font-size: 0.92rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 16px;
+            min-height: 102px;
+        }
+
+        .info-label {
+            color: var(--muted);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.6;
+        }
+
+        .action-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .desc-section,
+        .workflow-section {
+            margin-top: 24px;
+            padding: 22px;
+        }
+
+        .section-title {
+            margin: 0 0 14px;
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+
+        .desc-box {
+            white-space: pre-line;
+            line-height: 1.9;
+            color: #d8e0ea;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .workflow-step {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line);
+        }
+
+        .workflow-step .step-no {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .workflow-step h4 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0 0 8px;
+        }
+
+        .workflow-step p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.94rem;
+        }
+
+        .sticky-side {
+            position: sticky;
+            top: 20px;
+        }
+
+        .mini-panel {
+            margin-top: 18px;
+            padding: 18px;
+        }
+
+        .mini-panel h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .mini-panel p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 0.94rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .main-img,
+            .main-img-box {
+                min-height: 360px;
+            }
+
+            .sticky-side {
+                position: static;
+            }
+
+            .workflow-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .detail-shell {
+                padding-top: 24px;
+            }
+
+            .hero-detail {
+                padding: 18px;
+            }
+
+            .info-grid,
+            .action-group,
+            .workflow-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-lux {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="box">
+<div class="detail-shell">
+    <div class="top-actions">
+        <a href="/showroom" class="btn-lux">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại showroom
+        </a>
+        <a href="/" class="btn-lux">
+            <i class="bi bi-house-door"></i>
+            Trang chủ
+        </a>
+        <a href="/customer/dashboard" class="btn-lux">
+            <i class="bi bi-grid-1x2"></i>
+            Dashboard
+        </a>
+    </div>
+
+    <div id="errorBox" class="alert-box alert-error"></div>
+    <div id="successBox" class="alert-box alert-success"></div>
+
+    <div class="glass-box hero-detail">
         <div class="row g-4">
-            <div class="col-lg-6">
-                <img class="main-img"
-                     th:src="${bike.primaryImageUrl != null ? bike.primaryImageUrl : 'https://via.placeholder.com/800x500?text=No+Image'}"
-                     alt="motorbike">
+            <div class="col-lg-7">
+                <div class="product-media-wrap">
+                    <div class="main-img-box">
+                        <span class="media-badge">
+                            <i class="bi bi-shield-check"></i>
+                            Thông tin chi tiết xe
+                        </span>
+                        <img class="main-img"
+                             th:src="${bike.primaryImageUrl != null ? bike.primaryImageUrl : 'https://via.placeholder.com/1200x800?text=No+Image'}"
+                             alt="motorbike">
+                    </div>
+
+                    <div class="quick-note">
+                        Khách chưa đăng nhập vẫn có thể xem xe, xem thông số và so sánh.
+                        Khi thực hiện hành động như thêm vào giỏ, yêu cầu báo giá hoặc đặt lịch xem xe,
+                        hệ thống sẽ yêu cầu đăng nhập nếu cần.
+                    </div>
+                </div>
             </div>
 
-            <div class="col-lg-6">
-                <h2 th:text="${bike.name}">Tên xe</h2>
-                <div class="price mb-3"
-                     th:text="${#numbers.formatDecimal(bike.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
-                    0 đ
+            <div class="col-lg-5">
+                <div class="sticky-side">
+                    <div class="detail-info">
+                        <div class="eyebrow">
+                            <span class="dot"></span>
+                            Premium motorcycle detail
+                        </div>
+
+                        <h1 class="product-title" th:text="${bike.name}">Tên xe</h1>
+
+                        <div class="product-meta">
+                            <span th:text="${bike.brandName}">Brand</span>
+                            &nbsp;•&nbsp;
+                            <span th:text="${bike.categoryName}">Category</span>
+                            &nbsp;•&nbsp;
+                            SKU:
+                            <span th:text="${bike.sku}">SKU</span>
+                        </div>
+
+                        <div class="price-block">
+                            <div class="price-label">Giá tham khảo</div>
+                            <div class="price-value"
+                                 th:text="${#numbers.formatDecimal(bike.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                0 đ
+                            </div>
+                            <div class="price-note">
+                                Có thể tiếp tục bằng báo giá, đặt lịch xem xe hoặc thêm vào giỏ quan tâm.
+                            </div>
+                        </div>
+
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-label">Hãng xe</div>
+                                <div class="info-value" th:text="${bike.brandName}">Brand</div>
+                            </div>
+
+                            <div class="info-card">
+                                <div class="info-label">Danh mục</div>
+                                <div class="info-value" th:text="${bike.categoryName}">Category</div>
+                            </div>
+
+                            <div class="info-card">
+                                <div class="info-label">Động cơ</div>
+                                <div class="info-value" th:text="${bike.engine != null ? bike.engine : 'Chưa cập nhật'}">Engine</div>
+                            </div>
+
+                            <div class="info-card">
+                                <div class="info-label">Khối lượng</div>
+                                <div class="info-value"
+                                     th:text="${bike.weightKg != null ? bike.weightKg + ' kg' : 'Chưa cập nhật'}">
+                                    0 kg
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-group">
+                            <button class="btn-lux btn-lux-primary"
+                                    type="button"
+                                    th:attr="onclick='requestQuote(' + ${bike.id} + ')'">
+                                <i class="bi bi-chat-dots"></i>
+                                Yêu cầu báo giá
+                            </button>
+
+                            <button class="btn-lux btn-lux-warning"
+                                    type="button"
+                                    th:attr="onclick='scheduleViewing(' + ${bike.id} + ')'">
+                                <i class="bi bi-calendar-event"></i>
+                                Đặt lịch xem xe
+                            </button>
+
+                            <button class="btn-lux"
+                                    type="button"
+                                    th:attr="onclick='addToCart(' + ${bike.id} + ')'">
+                                <i class="bi bi-cart-plus"></i>
+                                Thêm vào giỏ
+                            </button>
+
+                            <button class="btn-lux"
+                                    type="button"
+                                    th:attr="onclick='addToCompare(' + ${bike.id} + ')'">
+                                <i class="bi bi-columns-gap"></i>
+                                So sánh
+                            </button>
+                        </div>
+
+                        <div class="mini-panel glass-box">
+                            <h3>Gợi ý workflow</h3>
+                            <p>
+                                Luồng hợp lý cho web bán xe là:
+                                xem chi tiết → yêu cầu báo giá / đặt lịch xem xe → nhân viên tư vấn →
+                                khách đồng ý → đặt cọc → hoàn tất giao dịch.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box desc-section">
+            <h2 class="section-title">Mô tả sản phẩm</h2>
+            <div class="desc-box" th:text="${bike.description != null ? bike.description : 'Chưa có mô tả cho sản phẩm này.'}">
+                Mô tả
+            </div>
+        </div>
+
+        <div class="glass-box workflow-section">
+            <h2 class="section-title">Quy trình dành cho khách hàng</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-no">1</div>
+                    <h4>Xem xe</h4>
+                    <p>Khách xem ảnh, thông số, mô tả và giá tham khảo trước khi đưa ra quyết định.</p>
                 </div>
 
-                <div class="mb-3">
-                    <div class="label">Hãng</div>
-                    <div th:text="${bike.brandName}">Brand</div>
+                <div class="workflow-step">
+                    <div class="step-no">2</div>
+                    <h4>Gửi yêu cầu</h4>
+                    <p>Khách chọn báo giá hoặc đặt lịch xem xe để được tư vấn đúng nhu cầu.</p>
                 </div>
 
-                <div class="mb-3">
-                    <div class="label">Danh mục</div>
-                    <div th:text="${bike.categoryName}">Category</div>
+                <div class="workflow-step">
+                    <div class="step-no">3</div>
+                    <h4>Tư vấn và xác nhận</h4>
+                    <p>Nhân viên liên hệ, xác nhận mẫu xe, điều kiện và hỗ trợ chốt phương án phù hợp.</p>
                 </div>
 
-                <div class="mb-3">
-                    <div class="label">Động cơ</div>
-                    <div th:text="${bike.engine}">Engine</div>
+                <div class="workflow-step">
+                    <div class="step-no">4</div>
+                    <h4>Đặt cọc / giao dịch</h4>
+                    <p>Sau khi đồng ý, khách có thể tiếp tục đặt cọc và hoàn thiện giao dịch ở bước sau.</p>
                 </div>
-
-                <div class="mb-3">
-                    <div class="label">Khối lượng</div>
-                    <div th:text="${bike.weightKg} + ' kg'">0 kg</div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="label">Mô tả</div>
-                    <div th:text="${bike.description}">Mô tả</div>
-                </div>
-
-                <button class="btn btn-light me-2">Mua ngay</button>
-                <button class="btn btn-outline-light">Thêm giỏ hàng</button>
             </div>
         </div>
     </div>
 </div>
+
+<script th:inline="javascript">
+    const token = localStorage.getItem("accessToken");
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    const bikeId = [[${bike.id}]];
+    const bikeSlug = /*[[${bike.slug}]]*/ "";
+
+    function showError(message) {
+        errorBox.style.display = "block";
+        successBox.style.display = "none";
+        errorBox.innerText = message;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showSuccess(message) {
+        successBox.style.display = "block";
+        errorBox.style.display = "none";
+        successBox.innerText = message;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clearAlert() {
+        errorBox.style.display = "none";
+        successBox.style.display = "none";
+        errorBox.innerText = "";
+        successBox.innerText = "";
+    }
+
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    async function addToCart(motorbikeId) {
+        clearAlert();
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/cart/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    motorbikeId: Number(motorbikeId),
+                    quantity: 1
+                })
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                redirectToLogin();
+                return;
+            }
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Không thể thêm vào giỏ hàng");
+            }
+
+            await response.json();
+            showSuccess("Đã thêm xe vào giỏ hàng");
+        } catch (err) {
+            console.error(err);
+            showError(err.message || "Có lỗi xảy ra khi thêm vào giỏ hàng");
+        }
+    }
+
+    function requestQuote(motorbikeId) {
+        clearAlert();
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        window.location.href = "/customer/requests/quote?motorbikeId=" + motorbikeId;
+    }
+
+    function scheduleViewing(motorbikeId) {
+        clearAlert();
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        showSuccess("Chức năng đặt lịch xem xe sẽ làm ở bước tiếp theo.");
+        // sau này đổi thành:
+        // window.location.href = "/customer/requests/viewing?motorbikeId=" + motorbikeId;
+    }
+
+    function getCompareList() {
+        return JSON.parse(localStorage.getItem("compareMotorbikes") || "[]");
+    }
+
+    function setCompareList(list) {
+        localStorage.setItem("compareMotorbikes", JSON.stringify(list));
+    }
+
+    function addToCompare(id) {
+        clearAlert();
+
+        let compareList = getCompareList();
+
+        if (compareList.includes(id)) {
+            showError("Xe này đã có trong danh sách so sánh");
+            return;
+        }
+
+        if (compareList.length >= 3) {
+            showError("Chỉ được so sánh tối đa 3 xe");
+            return;
+        }
+
+        compareList.push(id);
+        setCompareList(compareList);
+        showSuccess("Đã thêm xe vào danh sách so sánh");
+    }
+</script>
 </body>
 </html>
