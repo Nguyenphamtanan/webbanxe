@@ -5,73 +5,576 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý danh mục</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        body { background: #0b0b0b; color: white; font-family: Arial, sans-serif; }
-        .wrapper { max-width: 1100px; margin: 40px auto; }
-        .card-box {
-            background: #151515;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 24px;
+        :root{
+            --bg:#0f172a;
+            --card:#1f2937;
+            --line:#374151;
+            --text:#f9fafb;
+            --muted:#d1d5db;
+            --accent:#2563eb;
+            --accent-hover:#1d4ed8;
+            --danger:#dc2626;
+            --warning:#d97706;
+            --shadow:0 18px 40px rgba(0,0,0,.28);
+            --radius:18px;
         }
-        .table {
-            color: white;
+
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            background:linear-gradient(180deg,#0b1220 0%, #0f172a 100%);
+            color:var(--text);
+            font-family:Inter,"Segoe UI",Arial,sans-serif;
         }
-        .table thead th {
-            color: #ddd;
-            border-bottom-color: rgba(255,255,255,0.1);
+
+        .page{
+            max-width:1360px;
+            margin:0 auto;
+            padding:32px 20px 40px;
         }
-        .table td {
-            border-bottom-color: rgba(255,255,255,0.06);
+
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            margin-bottom:24px;
+            flex-wrap:wrap;
         }
-        .btn-custom {
-            border-radius: 10px;
+
+        .title{
+            margin:0;
+            font-size:2rem;
+            font-weight:800;
+            color:#fff;
+        }
+
+        .subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            line-height:1.7;
+            max-width:820px;
+            font-size:1rem;
+        }
+
+        .actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn-main,
+        .btn-outline-light2,
+        .btn-soft,
+        .btn-danger-soft{
+            min-height:46px;
+            padding:10px 16px;
+            border-radius:12px;
+            border:1px solid transparent;
+            font-weight:700;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            transition:.2s ease;
+            cursor:pointer;
+            text-decoration:none;
+        }
+
+        .btn-main{
+            background:var(--accent);
+            color:#fff;
+            box-shadow:0 10px 24px rgba(37,99,235,.28);
+        }
+
+        .btn-main:hover{
+            background:var(--accent-hover);
+            color:#fff;
+            transform:translateY(-1px);
+        }
+
+        .btn-outline-light2{
+            background:#1e293b;
+            color:#fff;
+            border-color:#475569;
+        }
+
+        .btn-outline-light2:hover{
+            background:#334155;
+            color:#fff;
+        }
+
+        .btn-soft{
+            background:#78350f;
+            color:#fff;
+            border-color:#a16207;
+        }
+
+        .btn-soft:hover{
+            background:#92400e;
+        }
+
+        .btn-danger-soft{
+            background:#7f1d1d;
+            color:#fff;
+            border-color:#b91c1c;
+        }
+
+        .btn-danger-soft:hover{
+            background:#991b1b;
+        }
+
+        .hero{
+            background:linear-gradient(135deg,#1d4ed8 0%, #1e3a8a 100%);
+            border-radius:22px;
+            padding:24px;
+            box-shadow:var(--shadow);
+            margin-bottom:24px;
+        }
+
+        .hero h3{
+            margin:0 0 8px;
+            font-size:1.45rem;
+            font-weight:800;
+            color:#fff;
+        }
+
+        .hero p{
+            margin:0;
+            color:#e5e7eb;
+            line-height:1.8;
+        }
+
+        .summary-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:18px;
+            margin-bottom:24px;
+        }
+
+        .summary-card,
+        .panel{
+            background:var(--card);
+            border:1px solid var(--line);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
+        }
+
+        .summary-card{
+            padding:20px;
+        }
+
+        .summary-label{
+            color:#cbd5e1;
+            font-weight:600;
+            margin-bottom:8px;
+        }
+
+        .summary-value{
+            font-size:1.9rem;
+            font-weight:800;
+            color:#fff;
+        }
+
+        .panel{
+            padding:22px;
+        }
+
+        .panel-title{
+            margin:0 0 18px;
+            font-size:1.08rem;
+            font-weight:800;
+            color:#fff;
+        }
+
+        .form-label{
+            color:#f3f4f6;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .form-control{
+            background:#0f172a;
+            border:1px solid #4b5563;
+            color:#fff;
+            border-radius:12px;
+            min-height:46px;
+        }
+
+        .form-control:focus{
+            background:#0f172a;
+            color:#fff;
+            border-color:#60a5fa;
+            box-shadow:0 0 0 0.2rem rgba(96,165,250,.18);
+        }
+
+        .form-control::placeholder{
+            color:#94a3b8;
+        }
+
+        .table-wrap{
+            overflow:auto;
+        }
+
+        .table-custom{
+            width:100%;
+            border-collapse:collapse;
+            min-width:860px;
+        }
+
+        .table-custom thead th{
+            background:#243041;
+            color:#f8fafc;
+            font-weight:800;
+            font-size:.92rem;
+            padding:14px 12px;
+            border-bottom:1px solid #475569;
+            white-space:nowrap;
+        }
+
+        .table-custom tbody td{
+            padding:14px 12px;
+            border-bottom:1px solid #374151;
+            vertical-align:middle;
+            color:#e5e7eb;
+        }
+
+        .table-custom tbody tr:hover{
+            background:rgba(255,255,255,.03);
+        }
+
+        .category-name{
+            font-weight:800;
+            color:#fff;
+        }
+
+        .category-slug{
+            color:#cbd5e1;
+            font-size:.9rem;
+        }
+
+        .action-group{
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+
+        .action-btn{
+            min-height:38px;
+            padding:8px 12px;
+            border-radius:10px;
+            font-size:.88rem;
+            font-weight:700;
+            border:1px solid #475569;
+            background:#1e293b;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            cursor:pointer;
+        }
+
+        .action-btn:hover{
+            background:#334155;
+        }
+
+        .action-btn.warn{
+            border-color:#a16207;
+            background:#78350f;
+        }
+
+        .action-btn.warn:hover{
+            background:#92400e;
+        }
+
+        .action-btn.danger{
+            border-color:#b91c1c;
+            background:#7f1d1d;
+        }
+
+        .action-btn.danger:hover{
+            background:#991b1b;
+        }
+
+        .empty-state{
+            text-align:center;
+            padding:36px 20px;
+            color:#cbd5e1;
+        }
+
+        .error-box{
+            margin-top:12px;
+            color:#fecaca;
+            background:rgba(127,29,29,.35);
+            border:1px solid rgba(239,68,68,.35);
+            border-radius:12px;
+            padding:12px 14px;
+            display:none;
+            white-space:pre-wrap;
+        }
+
+        .modal-content{
+            background:#1f2937;
+            color:#fff;
+            border:1px solid #374151;
+            border-radius:18px;
+        }
+
+        .modal-header,
+        .modal-footer{
+            border-color:#374151;
+        }
+
+        .btn-close{
+            filter:invert(1);
+        }
+
+        @media (max-width: 900px){
+            .summary-grid{
+                grid-template-columns:1fr;
+            }
         }
     </style>
 </head>
 <body>
-<div class="wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page">
+    <div class="topbar">
         <div>
-            <h2>Quản lý danh mục</h2>
-            <p class="text-secondary mb-0">Danh sách các danh mục sản phẩm</p>
+            <h1 class="title">Quản lý danh mục</h1>
+            <div class="subtitle">
+                Danh sách các danh mục sản phẩm. Bạn có thể thêm mới, chỉnh sửa, xóa
+                và tìm kiếm nhanh theo tên hoặc slug.
+            </div>
         </div>
-        <div class="d-flex gap-2">
-            <a href="/admin/dashboard" class="btn btn-outline-light btn-custom">Về dashboard</a>
-            <button class="btn btn-light btn-custom" onclick="openCreateForm()">+ Thêm danh mục</button>
+
+        <div class="actions">
+            <a href="/admin/dashboard" class="btn-outline-light2">
+                <i class="bi bi-arrow-left"></i>
+                Dashboard
+            </a>
+            <button class="btn-main" onclick="openCreateModal()">
+                <i class="bi bi-plus-circle"></i>
+                Thêm danh mục
+            </button>
         </div>
     </div>
 
-    <div class="card-box">
-        <div class="table-responsive">
-            <table class="table align-middle">
+    <section class="hero">
+        <h3>Quản lý danh mục dễ nhìn hơn</h3>
+        <p>
+            Giao diện đã được đồng bộ với khu admin mới, thao tác CRUD được đưa vào modal
+            để gọn và mượt hơn so với dùng prompt().
+        </p>
+    </section>
+
+    <section class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-label">Tổng danh mục</div>
+            <div class="summary-value" id="totalCategories">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Kết quả lọc</div>
+            <div class="summary-value" id="filteredCategories">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Từ khóa</div>
+            <div class="summary-value" id="searchKeyword">--</div>
+        </div>
+    </section>
+
+    <section class="panel" style="margin-bottom:24px;">
+        <h2 class="panel-title">Bộ lọc dữ liệu</h2>
+
+        <div class="row g-3 align-items-end">
+            <div class="col-lg-8">
+                <label class="form-label">Tìm theo tên hoặc slug</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Ví dụ: xe ga, xe-con-tay...">
+            </div>
+
+            <div class="col-lg-4 d-flex gap-2 flex-wrap">
+                <button class="btn-main" onclick="applyFilter()">
+                    <i class="bi bi-funnel"></i>
+                    Lọc
+                </button>
+                <button class="btn-outline-light2" onclick="resetFilter()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <div id="errorBox" class="error-box"></div>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Danh sách danh mục</h2>
+
+        <div class="table-wrap">
+            <table class="table-custom">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Tên danh mục</th>
                     <th>Slug</th>
-                    <th width="220">CRUD</th>
+                    <th width="240">Thao tác</th>
                 </tr>
                 </thead>
                 <tbody id="categoryTableBody">
                 <tr>
-                    <td colspan="4" class="text-center text-secondary">Đang tải dữ liệu...</td>
+                    <td colspan="4" class="empty-state">Đang tải dữ liệu...</td>
                 </tr>
                 </tbody>
             </table>
         </div>
+    </section>
+</div>
+
+<!-- Modal Create/Edit -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="categoryForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalTitle">Thêm danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="categoryId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục</label>
+                        <input type="text" id="categoryName" class="form-control" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Slug</label>
+                        <input type="text" id="categorySlug" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline-light2" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn-main">Lưu</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const token = localStorage.getItem("accessToken");
-
     if (!token) {
         window.location.href = "/login";
     }
 
-    async function loadCategories() {
+    let categories = [];
+    let filteredCategories = [];
+    let categoryModal;
+
+    function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+    }
+
+    function showError(message) {
+        const box = document.getElementById("errorBox");
+        box.style.display = "block";
+        box.innerText = message;
+    }
+
+    function clearError() {
+        const box = document.getElementById("errorBox");
+        box.style.display = "none";
+        box.innerText = "";
+    }
+
+    function safeText(value, fallback = "--") {
+        return value === null || value === undefined || value === "" ? fallback : value;
+    }
+
+    function normalizeListResponse(data) {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.content)) return data.content;
+        if (Array.isArray(data.data)) return data.data;
+        if (Array.isArray(data.items)) return data.items;
+        return [];
+    }
+
+    function renderSummary() {
+        const keyword = document.getElementById("searchInput").value.trim() || "--";
+        document.getElementById("totalCategories").innerText = categories.length;
+        document.getElementById("filteredCategories").innerText = filteredCategories.length;
+        document.getElementById("searchKeyword").innerText = keyword;
+    }
+
+    function renderTable(list) {
         const tbody = document.getElementById("categoryTableBody");
+
+        if (!list.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="empty-state">Không có danh mục phù hợp.</td>
+                </tr>
+            `;
+            renderSummary();
+            return;
+        }
+
+        tbody.innerHTML = list.map(item => `
+            <tr>
+                <td>${item.id}</td>
+                <td>
+                    <div class="category-name">${safeText(item.name, "Chưa có tên")}</div>
+                </td>
+                <td>
+                    <div class="category-slug">${safeText(item.slug)}</div>
+                </td>
+                <td>
+                    <div class="action-group">
+                        <button class="action-btn warn" onclick="openEditModal(${item.id}, '${String(item.name || "").replace(/'/g, "\\'")}', '${String(item.slug || "").replace(/'/g, "\\'")}')">
+                            <i class="bi bi-pencil-square"></i>
+                            Sửa
+                        </button>
+                        <button class="action-btn danger" onclick="deleteCategory(${item.id}, '${String(item.name || "").replace(/'/g, "\\'")}')">
+                            <i class="bi bi-trash"></i>
+                            Xóa
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+
+        renderSummary();
+    }
+
+    function applyFilter() {
+        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+        filteredCategories = categories.filter(item => {
+            return !keyword ||
+                String(item.name || "").toLowerCase().includes(keyword) ||
+                String(item.slug || "").toLowerCase().includes(keyword);
+        });
+
+        renderTable(filteredCategories);
+    }
+
+    function resetFilter() {
+        document.getElementById("searchInput").value = "";
+        filteredCategories = [...categories];
+        renderTable(filteredCategories);
+    }
+
+    async function loadCategories() {
+        clearError();
 
         try {
             const response = await fetch("/api/admin/categories", {
@@ -81,96 +584,102 @@
             });
 
             if (response.status === 401 || response.status === 403) {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                window.location.href = "/login";
+                logout();
                 return;
             }
 
-            if (!response.ok) throw new Error("Không tải được danh mục");
+            const rawText = await response.text();
 
-            const data = await response.json();
-
-            if (!data.length) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-secondary">Chưa có danh mục</td></tr>`;
-                return;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}\n${rawText}`);
             }
 
-            tbody.innerHTML = data.map(item => `
+            let jsonData;
+            try {
+                jsonData = JSON.parse(rawText);
+            } catch (e) {
+                throw new Error("Response không phải JSON hợp lệ:\n" + rawText);
+            }
+
+            categories = normalizeListResponse(jsonData);
+            filteredCategories = [...categories];
+            renderTable(filteredCategories);
+        } catch (error) {
+            console.error("loadCategories error:", error);
+            showError("Không tải được dữ liệu danh mục.\n\n" + error.message);
+            document.getElementById("categoryTableBody").innerHTML = `
                 <tr>
-                    <td>${item.id}</td>
-                    <td>${item.name}</td>
-                    <td>${item.slug}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-warning me-2 btn-custom" onclick="editCategory(${item.id}, '${item.name}', '${item.slug}')">Sửa</button>
-                        <button class="btn btn-sm btn-outline-danger btn-custom" onclick="deleteCategory(${item.id})">Xóa</button>
-                    </td>
+                    <td colspan="4" class="empty-state">Không tải được dữ liệu danh mục.</td>
                 </tr>
-            `).join("");
+            `;
+        }
+    }
+
+    function openCreateModal() {
+        document.getElementById("categoryModalTitle").innerText = "Thêm danh mục";
+        document.getElementById("categoryId").value = "";
+        document.getElementById("categoryName").value = "";
+        document.getElementById("categorySlug").value = "";
+        categoryModal.show();
+    }
+
+    function openEditModal(id, name, slug) {
+        document.getElementById("categoryModalTitle").innerText = "Cập nhật danh mục";
+        document.getElementById("categoryId").value = id;
+        document.getElementById("categoryName").value = name;
+        document.getElementById("categorySlug").value = slug;
+        categoryModal.show();
+    }
+
+    document.getElementById("categoryForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById("categoryId").value;
+        const name = document.getElementById("categoryName").value.trim();
+        const slug = document.getElementById("categorySlug").value.trim();
+
+        const isEdit = !!id;
+        const url = isEdit ? `/api/admin/categories/${id}` : "/api/admin/categories";
+        const method = isEdit ? "PUT" : "POST";
+
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ name, slug })
+            });
+
+            const rawText = await response.text();
+
+            if (response.status === 401 || response.status === 403) {
+                logout();
+                return;
+            }
+
+            if (!response.ok) {
+                let errorMessage = rawText;
+                try {
+                    const json = JSON.parse(rawText);
+                    errorMessage = json.message || rawText;
+                } catch (_) {}
+                throw new Error(errorMessage || (isEdit ? "Cập nhật thất bại" : "Thêm danh mục thất bại"));
+            }
+
+            categoryModal.hide();
+            await loadCategories();
+            alert(isEdit ? "Cập nhật danh mục thành công" : "Thêm danh mục thành công");
         } catch (error) {
             console.error(error);
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Lỗi tải dữ liệu</td></tr>`;
+            alert(error.message || "Có lỗi xảy ra");
         }
-    }
+    });
 
-    async function openCreateForm() {
-        const name = prompt("Nhập tên danh mục:");
-        if (!name) return;
-
-        const slug = prompt("Nhập slug danh mục:");
-        if (!slug) return;
-
-        try {
-            const response = await fetch("/api/admin/categories", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ name, slug })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) throw new Error(data.message || "Thêm danh mục thất bại");
-
-            alert("Thêm danh mục thành công");
-            loadCategories();
-        } catch (error) {
-            alert(error.message);
-        }
-    }
-
-    async function editCategory(id, oldName, oldSlug) {
-        const name = prompt("Sửa tên danh mục:", oldName);
-        if (!name) return;
-
-        const slug = prompt("Sửa slug danh mục:", oldSlug);
-        if (!slug) return;
-
-        try {
-            const response = await fetch(`/api/admin/categories/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ name, slug })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) throw new Error(data.message || "Cập nhật thất bại");
-
-            alert("Cập nhật thành công");
-            loadCategories();
-        } catch (error) {
-            alert(error.message);
-        }
-    }
-
-    async function deleteCategory(id) {
-        if (!confirm("Bạn có chắc muốn xóa danh mục này?")) return;
+    async function deleteCategory(id, name) {
+        const ok = confirm(`Bạn có chắc muốn xóa danh mục "${name}" không?`);
+        if (!ok) return;
 
         try {
             const response = await fetch(`/api/admin/categories/${id}`, {
@@ -180,17 +689,39 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Xóa thất bại");
+            const rawText = await response.text();
 
-            alert("Xóa thành công");
-            loadCategories();
+            if (response.status === 401 || response.status === 403) {
+                logout();
+                return;
+            }
+
+            if (!response.ok) {
+                let errorMessage = rawText;
+                try {
+                    const json = JSON.parse(rawText);
+                    errorMessage = json.message || rawText;
+                } catch (_) {}
+                throw new Error(errorMessage || "Xóa thất bại");
+            }
+
+            await loadCategories();
+            alert("Xóa danh mục thành công");
         } catch (error) {
-            alert(error.message);
+            console.error(error);
+            alert(error.message || "Có lỗi xảy ra");
         }
     }
 
+    document.getElementById("searchInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            applyFilter();
+        }
+    });
+
+    categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));
     loadCategories();
 </script>
 </body>
-</html>
 </html>

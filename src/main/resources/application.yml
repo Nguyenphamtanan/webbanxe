@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=QLVehicles;encrypt=true;trustServerCertificate=true
-    username: sa
+    username: thu
     password: 123456
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 

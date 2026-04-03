@@ -3,287 +3,846 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Dashboard</title>
+    <title>Dashboard khách hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0b0b;
-            --sidebar: #111111;
-            --card: #171717;
+            --bg: #080b11;
+            --bg-soft: #0c1220;
+            --bg-card: rgba(17, 24, 39, 0.82);
+            --bg-card-2: rgba(13, 18, 30, 0.9);
             --line: rgba(255,255,255,0.08);
-            --text: #ffffff;
-            --muted: #a8a8a8;
-            --success: #1db954;
-            --warning: #f5b301;
-            --danger: #ff4d4f;
+            --line-strong: rgba(255,255,255,0.14);
+            --text: #f8fafc;
+            --muted: #a7b0bf;
+            --accent: #2f6bff;
+            --accent-2: #6fa2ff;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Arial, sans-serif;
-        }
-
-        .layout {
-            display: flex;
             min-height: 100vh;
+            color: var(--text);
+            font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(47,107,255,0.18), transparent 25%),
+                radial-gradient(circle at top right, rgba(70,130,255,0.10), transparent 22%),
+                radial-gradient(circle at bottom right, rgba(47,107,255,0.12), transparent 28%),
+                linear-gradient(180deg, #070a10 0%, #0a0f18 40%, #070a10 100%);
         }
 
-        .sidebar {
-            width: 270px;
-            background: var(--sidebar);
-            border-right: 1px solid var(--line);
-            padding: 28px 20px;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-        }
-
-        .brand {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-        }
-
-        .menu-title {
-            color: var(--muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 26px 0 10px;
-        }
-
-        .menu-link {
-            display: block;
-            color: #f1f1f1;
-            padding: 12px 14px;
-            border-radius: 12px;
-            margin-bottom: 8px;
+        a {
+            color: inherit;
             text-decoration: none;
-            transition: 0.2s ease;
         }
 
-        .menu-link:hover,
-        .menu-link.active {
-            background: #fff;
-            color: #000;
-        }
-
-        .main {
-            flex: 1;
-            padding: 28px;
+        .container-page {
+            width: min(1400px, calc(100% - 40px));
+            margin: 0 auto;
         }
 
         .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(8, 11, 17, 0.78);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .topbar-inner {
+            width: min(1400px, calc(100% - 40px));
+            margin: 0 auto;
+            min-height: 78px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            justify-content: space-between;
             gap: 16px;
         }
 
-        .page-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin: 0;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        .page-subtitle {
-            color: var(--muted);
-            margin-top: 6px;
-            margin-bottom: 0;
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 18px rgba(47,107,255,0.85);
         }
 
-        .btn-ghost {
-            border: 1px solid var(--line);
-            background: transparent;
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link-pill {
+            padding: 11px 16px;
+            border-radius: 999px;
+            color: #e5e7eb;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            transition: all 0.25s ease;
+            font-weight: 600;
+        }
+
+        .nav-link-pill:hover {
+            background: rgba(47,107,255,0.10);
+            border-color: rgba(47,107,255,0.25);
             color: #fff;
-            padding: 10px 16px;
-            border-radius: 12px;
         }
 
-        .btn-ghost:hover {
-            background: #fff;
-            color: #000;
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-weight: 700;
         }
 
         .hero {
-            background: linear-gradient(135deg, #161616, #202020);
+            position: relative;
+            overflow: hidden;
+            margin-top: 28px;
             border: 1px solid var(--line);
-            border-radius: 22px;
-            padding: 28px;
+            border-radius: var(--radius-xl);
+            background:
+                linear-gradient(120deg, rgba(18, 31, 63, 0.98) 0%, rgba(21, 34, 63, 0.96) 45%, rgba(9, 13, 22, 0.96) 100%);
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 440px;
+            height: 440px;
+            right: -120px;
+            top: -110px;
+            background: radial-gradient(circle, rgba(47,107,255,0.28), transparent 60%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            right: 8%;
+            bottom: -120px;
+            background: radial-gradient(circle, rgba(111,162,255,0.18), transparent 62%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 28px;
+            align-items: center;
+            padding: 42px;
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #e8edf7;
+            font-size: 0.84rem;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero-chip .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 12px rgba(47,107,255,0.85);
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 4.6vw, 4.4rem);
+            line-height: 1.02;
+            font-weight: 950;
+            letter-spacing: -1.6px;
+            margin: 0 0 16px;
+        }
+
+        .hero-title .accent {
+            color: #9fc0ff;
+        }
+
+        .hero-text {
+            color: #c6d0df;
+            font-size: 1.05rem;
+            line-height: 1.9;
+            max-width: 760px;
             margin-bottom: 28px;
         }
 
-        .hero h2 {
-            font-size: 2rem;
-            font-weight: 900;
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .btn-main,
+        .btn-outline-dark {
+            min-height: 52px;
+            padding: 13px 22px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 800;
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .btn-main {
+            color: white;
+            background: linear-gradient(135deg, var(--accent), #5e8fff);
+            box-shadow: 0 16px 36px rgba(47,107,255,0.28);
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-dark {
+            color: white;
+            border-color: rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .btn-outline-dark:hover {
+            background: rgba(47,107,255,0.10);
+            border-color: rgba(47,107,255,0.24);
+        }
+
+        .hero-side {
+            display: grid;
+            gap: 16px;
+        }
+
+        .glass-mini {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .mini-title {
+            font-size: 0.9rem;
+            color: #a8b3c7;
             margin-bottom: 10px;
         }
 
-        .hero p {
-            color: var(--muted);
-            margin-bottom: 0;
-            max-width: 720px;
+        .mini-value {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .mini-text {
+            color: #c3ccdb;
             line-height: 1.7;
+            font-size: 0.94rem;
         }
 
-        .card-box {
-            background: var(--card);
+        .section {
+            margin-top: 34px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .section-kicker {
+            color: #88a4db;
+            text-transform: uppercase;
+            letter-spacing: 1.7px;
+            font-weight: 800;
+            font-size: 0.84rem;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+            font-weight: 900;
+            letter-spacing: -0.8px;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
             border: 1px solid var(--line);
-            border-radius: 20px;
+            border-radius: var(--radius-lg);
             padding: 22px;
-            height: 100%;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
         }
 
-        .card-title-small {
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(47,107,255,0.14);
+            border: 1px solid rgba(47,107,255,0.18);
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
             color: var(--muted);
             font-size: 0.95rem;
-            margin-bottom: 12px;
         }
 
         .stat-value {
             font-size: 2rem;
-            font-weight: 800;
+            font-weight: 900;
+            margin: 0;
         }
 
-        .profile-row p {
-            margin-bottom: 10px;
+        .stat-note {
+            margin-top: 10px;
+            color: #c4cfdf;
+            font-size: 0.92rem;
+            line-height: 1.7;
         }
 
-        .profile-label {
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .shortcut-card {
+            display: block;
+            background: var(--bg-card-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            transition: all 0.25s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .shortcut-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(47,107,255,0.28);
+            background: rgba(18, 28, 46, 0.98);
+        }
+
+        .shortcut-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(47,107,255,0.14);
+            margin-bottom: 16px;
+            font-size: 1.15rem;
+        }
+
+        .shortcut-card h5 {
+            font-weight: 850;
+            margin-bottom: 8px;
+        }
+
+        .shortcut-card p {
             color: var(--muted);
-            min-width: 120px;
-            display: inline-block;
+            margin: 0;
+            line-height: 1.75;
+            font-size: 0.95rem;
         }
 
-        .status-success { color: var(--success); }
-        .status-warning { color: var(--warning); }
-        .status-danger { color: var(--danger); }
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
 
-        @media (max-width: 991.98px) {
-            .layout {
+        .car-card {
+            overflow: hidden;
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            background: rgba(10, 15, 24, 0.94);
+            box-shadow: var(--shadow);
+            transition: all 0.28s ease;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(47,107,255,0.24);
+        }
+
+        .car-thumb-wrap {
+            position: relative;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            background: linear-gradient(180deg, #101828, #0a101b);
+        }
+
+        .car-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
+        }
+
+        .car-card:hover .car-thumb {
+            transform: scale(1.05);
+        }
+
+        .car-badge {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(8, 12, 18, 0.72);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            backdrop-filter: blur(8px);
+        }
+
+        .car-body {
+            padding: 20px;
+        }
+
+        .car-brand {
+            color: #8ba7db;
+            font-size: 0.84rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 8px;
+        }
+
+        .car-name {
+            font-size: 1.2rem;
+            font-weight: 850;
+            line-height: 1.35;
+            min-height: 58px;
+            margin-bottom: 12px;
+        }
+
+        .car-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .meta-pill {
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: #d7deea;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .car-price {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .car-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-car-primary,
+        .btn-car-secondary {
+            flex: 1;
+            min-height: 44px;
+            border-radius: 13px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-car-primary {
+            color: white;
+            background: linear-gradient(135deg, var(--accent), #5e8fff);
+        }
+
+        .btn-car-primary:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-car-secondary {
+            color: white;
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.09);
+        }
+
+        .btn-car-secondary:hover {
+            background: rgba(47,107,255,0.10);
+            border-color: rgba(47,107,255,0.22);
+        }
+
+        .empty-state {
+            padding: 32px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.12);
+            border-radius: 24px;
+            color: var(--muted);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .footer-space {
+            height: 40px;
+        }
+
+        @media (max-width: 1199.98px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid,
+            .shortcut-grid,
+            .cars-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .topbar-inner,
+            .container-page {
+                width: min(100% - 24px, 100%);
+            }
+
+            .topbar-inner {
+                padding: 12px 0;
+                align-items: flex-start;
                 flex-direction: column;
             }
 
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
+            .hero-inner {
+                padding: 24px;
             }
 
-            .main {
-                padding: 20px;
+            .hero-title {
+                font-size: 2.1rem;
             }
 
-            .topbar {
+            .stats-grid,
+            .shortcut-grid,
+            .cars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                align-items: flex-start;
                 flex-direction: column;
-                align-items: start;
             }
         }
     </style>
 </head>
 <body>
-<div class="layout">
-    <aside class="sidebar">
-        <div class="brand">CLIENT PANEL</div>
 
-        <div class="menu-title">Tài khoản</div>
-        <a href="/customer/dashboard" class="menu-link active">Dashboard</a>
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="/" class="brand">
+            <span class="brand-dot"></span>
+            <span>Auto Space</span>
+        </a>
 
+        <div class="nav-links">
+            <span class="user-badge">
+                <i class="bi bi-person-circle"></i>
+                <span id="navUserName">Khách hàng</span>
+            </span>
 
-        <div class="menu-title">Mua sắm</div>
-        <a href="/showroom" class="menu-link">Product</a>
-        <a href="#" class="menu-link">Giỏ hàng</a>
-        <a href="#" class="menu-link">Đơn hàng</a>
+            <a href="/" class="nav-link-pill">
+                <i class="bi bi-house-door"></i> Trang chủ
+            </a>
+            <a href="/showroom" class="nav-link-pill">
+                <i class="bi bi-car-front"></i> Showroom
+            </a>
+            <a href="/customer/cart" class="nav-link-pill">
+                <i class="bi bi-cart3"></i> Giỏ hàng
+            </a>
+            <a href="/customer/orders" class="nav-link-pill">
+                <i class="bi bi-receipt"></i> Đơn hàng
+            </a>
+            <a href="/customer/requests" class="nav-link-pill">
+                <i class="bi bi-chat-square-text"></i> Yêu cầu
+            </a>
+            <a href="javascript:void(0)" class="nav-link-pill" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+</header>
 
-        <div class="menu-title">Hệ thống</div>
-        <a href="/login" class="menu-link" onclick="logout()">Đăng xuất</a>
-    </aside>
-
-    <main class="main">
-        <div class="topbar">
+<main class="container-page">
+    <section class="hero">
+        <div class="hero-inner">
             <div>
-                <h1 class="page-title">Dashboard khách hàng</h1>
-                <p class="page-subtitle">Theo dõi tài khoản và tình trạng đơn hàng của bạn.</p>
+                <div class="hero-chip">
+                    <span class="dot"></span>
+                    Dashboard cá nhân hóa
+                </div>
+
+                <h1 class="hero-title">
+                    Chào mừng quay lại, <span class="accent" id="heroUserName">bạn</span>
+                </h1>
+
+                <p class="hero-text">
+                    Theo dõi nhanh đơn hàng, giỏ hàng và khám phá những mẫu xe nổi bật dành cho bạn.
+                    Đây là phiên bản dashboard được làm theo phong cách showroom, gần với home hơn thay vì kiểu panel quản trị.
+                </p>
+
+                <div class="hero-actions">
+                    <button class="btn-main" onclick="location.href='/showroom'">
+                        <i class="bi bi-car-front-fill"></i>
+                        Khám phá showroom
+                    </button>
+
+                    <button class="btn-outline-dark" onclick="location.href='/customer/orders'">
+                        <i class="bi bi-receipt-cutoff"></i>
+                        Đơn hàng của tôi
+                    </button>
+
+                    <button class="btn-outline-dark" onclick="location.href='/customer/cart'">
+                        <i class="bi bi-cart-fill"></i>
+                        Mở giỏ hàng
+                    </button>
+                </div>
             </div>
 
-            <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+            <div class="hero-side">
+                <div class="glass-mini">
+                    <div class="mini-title">Thông tin tài khoản</div>
+                    <div class="mini-value" id="profileFullName">...</div>
+                    <div class="mini-text">
+                        <div id="profileEmail">...</div>
+                        <div id="profilePhone">...</div>
+                    </div>
+                </div>
+
+                <div class="glass-mini">
+                    <div class="mini-title">Trạng thái hiện tại</div>
+                    <div class="mini-value" style="color: var(--success)">Active</div>
+                    <div class="mini-text">
+                        Bạn đang đăng nhập thành công. Hệ thống sẽ gợi ý các mẫu xe để bạn tham khảo nhanh ngay bên dưới.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <div class="section-kicker">My activity</div>
+                <h2 class="section-title">Theo dõi nhanh hoạt động của bạn</h2>
+                <div class="section-subtitle">
+                    Tóm tắt ngắn gọn những gì bạn quan tâm nhất khi mua xe.
+                </div>
+            </div>
         </div>
 
-        <section class="hero">
-            <h2>Your account, clearly organized.</h2>
-            <p>
-                Mọi thông tin cá nhân và trạng thái đơn hàng được hiển thị đồng bộ với giao diện quản trị,
-                tạo cảm giác chuyên nghiệp và hiện đại trong toàn hệ thống.
-            </p>
-        </section>
-
-        <section class="mb-4">
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Thông tin cá nhân</div>
-
-                        <div class="profile-row">
-                            <p><span class="profile-label">Họ tên:</span> <strong id="fullName"></strong></p>
-                            <p><span class="profile-label">Email:</span> <strong id="email"></strong></p>
-                            <p><span class="profile-label">Điện thoại:</span> <strong id="phone"></strong></p>
-                        </div>
-                    </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="bi bi-receipt-cutoff"></i></div>
                 </div>
+                <div class="stat-label">Tổng đơn hàng</div>
+                <p class="stat-value" id="totalOrders">0</p>
+                <div class="stat-note">Tất cả đơn hàng bạn đã tạo trên hệ thống.</div>
+            </div>
 
-                <div class="col-lg-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Trạng thái tài khoản</div>
-                        <div class="stat-value">Active</div>
-                        <p class="mt-3 mb-0 text-light-emphasis" style="color:#a8a8a8;">
-                            Bạn đang đăng nhập và có thể tiếp tục mua sắm, theo dõi đơn hàng hoặc cập nhật tài khoản.
-                        </p>
-                    </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+                </div>
+                <div class="stat-label">Đang xử lý</div>
+                <p class="stat-value" id="pendingOrders" style="color: var(--warning)">0</p>
+                <div class="stat-note">Các đơn đang chờ xác nhận hoặc xử lý.</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                </div>
+                <div class="stat-label">Hoàn thành</div>
+                <p class="stat-value" id="completedOrders" style="color: var(--success)">0</p>
+                <div class="stat-note">Các đơn đã xử lý xong thành công.</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="bi bi-x-circle"></i></div>
+                </div>
+                <div class="stat-label">Đã hủy</div>
+                <p class="stat-value" id="cancelledOrders" style="color: var(--danger)">0</p>
+                <div class="stat-note">Các đơn đã bị hủy hoặc không tiếp tục.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <div class="section-kicker">Quick access</div>
+                <h2 class="section-title">Đi nhanh tới chức năng bạn cần</h2>
+                <div class="section-subtitle">
+                    Thay vì sidebar nặng, phần này giúp người dùng thao tác nhanh như một trang home sau đăng nhập.
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section>
-            <div class="row g-4">
-                <div class="col-xl-3 col-md-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Tổng đơn hàng</div>
-                        <div class="stat-value" id="totalOrders">0</div>
-                    </div>
-                </div>
+        <div class="shortcut-grid">
+            <a href="/showroom" class="shortcut-card">
+                <div class="shortcut-icon"><i class="bi bi-car-front-fill"></i></div>
+                <h5>Xem showroom</h5>
+                <p>Khám phá toàn bộ xe đang mở bán với giao diện giống trang chủ.</p>
+            </a>
 
-                <div class="col-xl-3 col-md-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Đang xử lý</div>
-                        <div class="stat-value status-warning" id="pendingOrders">0</div>
-                    </div>
-                </div>
+            <a href="/customer/cart" class="shortcut-card">
+                <div class="shortcut-icon"><i class="bi bi-cart-fill"></i></div>
+                <h5>Giỏ hàng</h5>
+                <p>Kiểm tra những xe bạn đã thêm và tiếp tục thao tác mua hàng.</p>
+            </a>
 
-                <div class="col-xl-3 col-md-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Hoàn thành</div>
-                        <div class="stat-value status-success" id="completedOrders">0</div>
-                    </div>
-                </div>
+            <a href="/customer/orders" class="shortcut-card">
+                <div class="shortcut-icon"><i class="bi bi-receipt-cutoff"></i></div>
+                <h5>Đơn hàng của tôi</h5>
+                <p>Theo dõi chi tiết trạng thái đơn hàng đang xử lý hoặc đã hoàn tất.</p>
+            </a>
 
-                <div class="col-xl-3 col-md-6">
-                    <div class="card-box">
-                        <div class="card-title-small">Đã hủy</div>
-                        <div class="stat-value status-danger" id="cancelledOrders">0</div>
-                    </div>
+            <a href="/customer/requests" class="shortcut-card">
+                <div class="shortcut-icon"><i class="bi bi-chat-square-text-fill"></i></div>
+                <h5>Yêu cầu tư vấn</h5>
+                <p>Xem lại các yêu cầu tư vấn, báo giá hoặc mua xe bạn đã gửi.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <div class="section-kicker">Featured collection</div>
+                <h2 class="section-title">Xe tham khảo dành cho bạn</h2>
+                <div class="section-subtitle">
+                    Danh sách xe nổi bật được lấy trực tiếp từ hệ thống để người dùng tham khảo nhanh ngay trong dashboard.
                 </div>
             </div>
-        </section>
-    </main>
-</div>
+
+            <div>
+                <a href="/showroom" class="nav-link-pill">
+                    Xem tất cả <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div id="featuredCars" class="cars-grid"></div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div>
+                <div class="section-kicker">New arrival</div>
+                <h2 class="section-title">Mẫu xe mới hoặc đáng chú ý</h2>
+                <div class="section-subtitle">
+                    Một hàng xe khác để trang dashboard trông phong phú hơn và gần home hơn.
+                </div>
+            </div>
+        </div>
+
+        <div id="moreCars" class="cars-grid"></div>
+    </section>
+
+    <div class="footer-space"></div>
+</main>
 
 <script>
     const token = localStorage.getItem("accessToken");
@@ -292,48 +851,219 @@
         window.location.href = "/login";
     }
 
-    fetch("/api/dashboard/customer", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + token
+        const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80";
+
+        function safeText(value, fallback = "") {
+            return value === null || value === undefined || value === "" ? fallback : value;
         }
-    })
-    .then(async res => {
-        if (res.status === 401 || res.status === 403) {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            window.location.href = "/login";
+
+        function formatPrice(price) {
+            const num = Number(price || 0);
+            return num.toLocaleString("vi-VN") + " đ";
+        }
+
+        function normalizeImagePath(path) {
+            if (!path) return "";
+
+            const value = String(path).trim();
+            if (!value) return "";
+
+            if (value.startsWith("http://") || value.startsWith("https://")) return value;
+            if (value.startsWith("/")) return value;
+
+            return "/" + value;
+        }
+
+        function getImageUrl(item) {
+            const candidates = [
+                item.primaryImageUrl,
+                item.image,
+                item.imageUrl,
+                item.thumbnail,
+                item.photo,
+                item.avatar,
+                item.motorbikeImage,
+                Array.isArray(item.images) ? item.images[0] : null
+            ];
+
+            for (const img of candidates) {
+                const normalized = normalizeImagePath(img);
+                if (normalized) return normalized;
+            }
+
+            return FALLBACK_IMAGE;
+        }
+
+        function getBrand(item) {
+            if (item.brandName) return item.brandName;
+            if (typeof item.brand === "string") return item.brand;
+            if (item.brand && item.brand.name) return item.brand.name;
+            return "Premium";
+        }
+
+        function getCategory(item) {
+            if (item.categoryName) return item.categoryName;
+            if (typeof item.category === "string") return item.category;
+            if (item.category && item.category.name) return item.category.name;
+            return "Xe";
+        }
+
+        function getYear(item) {
+            return item.year || item.modelYear || "Mới";
+        }
+
+        function getDetailUrl(item) {
+            if (item.slug) return "/san-pham/" + item.slug;
+            if (item.id) return "/motorbikes/" + item.id;
+            return "/showroom";
+        }
+
+    function renderCars(list, containerId) {
+        const container = document.getElementById(containerId);
+
+        if (!Array.isArray(list) || list.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    Hiện chưa có dữ liệu xe để hiển thị.
+                </div>
+            `;
             return;
         }
 
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(text || "Không tải được dashboard khách hàng");
-        }
+        container.innerHTML = list.map(item => {
+            const image = getImageUrl(item);
+            const brand = safeText(getBrand(item), "Premium");
+            const category = safeText(getCategory(item), "Xe");
+            const year = safeText(getYear(item), "Mới");
+            const name = safeText(item.name, "Tên xe đang cập nhật");
+            const price = formatPrice(item.price);
+            const detailUrl = getDetailUrl(item);
 
-        return res.json();
-    })
-    .then(data => {
-        if (!data) return;
+            return `
+                <div class="car-card">
+                    <div class="car-thumb-wrap">
+                        <img class="car-thumb" src="${image}" alt="${name}"
+                             onerror="this.src='${FALLBACK_IMAGE}'">
+                        <div class="car-badge">${category}</div>
+                    </div>
 
-        document.getElementById("fullName").innerText = data.fullName ?? "";
-        document.getElementById("email").innerText = data.email ?? "";
-        document.getElementById("phone").innerText = data.phone ?? "";
-        document.getElementById("totalOrders").innerText = data.totalOrders ?? 0;
-        document.getElementById("pendingOrders").innerText = data.pendingOrders ?? 0;
-        document.getElementById("completedOrders").innerText = data.completedOrders ?? 0;
-        document.getElementById("cancelledOrders").innerText = data.cancelledOrders ?? 0;
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Không thể tải dashboard khách hàng.");
-    });
+                    <div class="car-body">
+                        <div class="car-brand">${brand}</div>
+                        <div class="car-name">${name}</div>
 
-    function logout() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+                        <div class="car-meta">
+                            <span class="meta-pill"><i class="bi bi-calendar3"></i> ${year}</span>
+                            <span class="meta-pill"><i class="bi bi-award"></i> ${brand}</span>
+                        </div>
+
+                        <div class="car-price">${price}</div>
+
+                        <div class="car-actions">
+                            <a class="btn-car-primary" href="${detailUrl}">
+                                <i class="bi bi-eye-fill"></i>
+                                Xem chi tiết
+                            </a>
+                            <a class="btn-car-secondary" href="/showroom">
+                                <i class="bi bi-grid"></i>
+                                Showroom
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
     }
+
+    async function loadCustomerDashboard() {
+        try {
+            const res = await fetch("/api/dashboard/customer", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                logout();
+                return;
+            }
+
+            if (!res.ok) {
+                throw new Error("Không tải được dashboard khách hàng");
+            }
+
+            const data = await res.json();
+
+            const fullName = safeText(data.fullName, "Khách hàng");
+            document.getElementById("navUserName").innerText = fullName;
+            document.getElementById("heroUserName").innerText = fullName;
+            document.getElementById("profileFullName").innerText = fullName;
+            document.getElementById("profileEmail").innerText = safeText(data.email, "Chưa cập nhật email");
+            document.getElementById("profilePhone").innerText = safeText(data.phone, "Chưa cập nhật số điện thoại");
+
+            document.getElementById("totalOrders").innerText = data.totalOrders ?? 0;
+            document.getElementById("pendingOrders").innerText = data.pendingOrders ?? 0;
+            document.getElementById("completedOrders").innerText = data.completedOrders ?? 0;
+            document.getElementById("cancelledOrders").innerText = data.cancelledOrders ?? 0;
+        } catch (err) {
+            console.error(err);
+            alert("Không thể tải dữ liệu dashboard khách hàng.");
+        }
+    }
+
+    async function loadCars() {
+        try {
+            const res = await fetch("/api/motorbikes", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                logout();
+                return;
+            }
+
+            if (!res.ok) {
+                throw new Error("Không tải được danh sách xe");
+            }
+
+            let data = await res.json();
+
+            if (Array.isArray(data)) {
+                data = data;
+            } else if (Array.isArray(data.content)) {
+                data = data.content;
+            } else if (Array.isArray(data.data)) {
+                data = data.data;
+            } else {
+                data = [];
+            }
+
+            const featured = data.slice(0, 4);
+            const more = data.slice(4, 8);
+
+            renderCars(featured, "featuredCars");
+            renderCars(more.length > 0 ? more : data.slice(0, 4), "moreCars");
+        } catch (err) {
+            console.error(err);
+            document.getElementById("featuredCars").innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    Không tải được danh sách xe tham khảo.
+                </div>
+            `;
+            document.getElementById("moreCars").innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    Không tải được thêm dữ liệu xe.
+                </div>
+            `;
+        }
+    }
+
+    loadCustomerDashboard();
+    loadCars();
 </script>
+
 </body>
 </html>

@@ -5,30 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0b0b;
-            --sidebar: #111111;
-            --card: #171717;
+            --bg: #0A0D12;
+            --bg-soft: #10151D;
+            --bg-elevated: #131A24;
+            --card: rgba(19, 26, 36, 0.88);
+
             --line: rgba(255,255,255,0.08);
-            --text: #ffffff;
-            --muted: #a8a8a8;
-            --accent: #ffffff;
-            --success: #1db954;
-            --warning: #f5b301;
-            --danger: #ff4d4f;
+            --line-strong: rgba(255,255,255,0.16);
+
+            --text: #F8FAFC;
+            --muted: #9CA3AF;
+            --muted-2: #C7CDD6;
+
+            --accent: #2F6BFF;
+            --accent-hover: #5D8DFF;
+            --accent-soft: rgba(47,107,255,0.18);
+
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            --shadow-soft: 0 16px 40px rgba(0,0,0,0.28);
+            --shadow-strong: 0 24px 60px rgba(0,0,0,0.40);
+
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            background: var(--bg);
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(47,107,255,0.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47,107,255,0.10), transparent 24%),
+                linear-gradient(180deg, #0A0D12 0%, #0C1016 45%, #0A0D12 100%);
             color: var(--text);
-            font-family: Arial, sans-serif;
+            font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
         }
+
+        a { text-decoration: none; color: inherit; }
 
         .layout {
             display: flex;
@@ -36,8 +57,10 @@
         }
 
         .sidebar {
-            width: 270px;
-            background: var(--sidebar);
+            width: 290px;
+            background: rgba(10,13,18,0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border-right: 1px solid var(--line);
             padding: 28px 20px;
             position: sticky;
@@ -46,34 +69,50 @@
         }
 
         .brand {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             margin-bottom: 30px;
+        }
+
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 18px rgba(47,107,255,0.8);
         }
 
         .menu-title {
             color: var(--muted);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 26px 0 10px;
+            letter-spacing: 1.8px;
+            margin: 24px 0 12px;
         }
 
         .menu-link {
-            display: block;
-            color: #f1f1f1;
-            padding: 12px 14px;
-            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #E5E7EB;
+            padding: 13px 15px;
+            border-radius: 16px;
             margin-bottom: 8px;
-            text-decoration: none;
-            transition: 0.2s ease;
+            border: 1px solid transparent;
+            transition: all 0.25s ease;
         }
 
         .menu-link:hover,
         .menu-link.active {
-            background: #fff;
-            color: #000;
+            background: rgba(47,107,255,0.14);
+            border-color: rgba(47,107,255,0.25);
+            color: #fff;
+            transform: translateX(3px);
         }
 
         .main {
@@ -84,21 +123,23 @@
         .topbar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
+            align-items: flex-start;
             gap: 16px;
+            margin-bottom: 28px;
         }
 
         .page-title {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 900;
             margin: 0;
+            letter-spacing: -0.8px;
         }
 
         .page-subtitle {
             color: var(--muted);
-            margin-top: 6px;
-            margin-bottom: 0;
+            margin: 8px 0 0;
+            max-width: 720px;
+            line-height: 1.7;
         }
 
         .top-actions {
@@ -107,50 +148,125 @@
             flex-wrap: wrap;
         }
 
-        .btn-ghost {
-            border: 1px solid var(--line);
-            background: transparent;
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 12px;
+        .btn-lux,
+        .btn-lux-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 48px;
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.10);
+            font-weight: 700;
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
 
-        .btn-ghost:hover {
-            background: #fff;
-            color: #000;
+        .btn-lux {
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            color: #fff;
+            box-shadow: 0 14px 30px rgba(47,107,255,0.28);
+        }
+
+        .btn-lux:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-lux-outline {
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+        }
+
+        .btn-lux-outline:hover {
+            background: rgba(47,107,255,0.12);
+            border-color: rgba(47,107,255,0.30);
         }
 
         .hero {
-            background: linear-gradient(135deg, #161616, #222222);
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(47,107,255,0.18), rgba(19,26,36,0.92)),
+                rgba(19, 26, 36, 0.92);
             border: 1px solid var(--line);
-            border-radius: 22px;
-            padding: 28px;
+            border-radius: var(--radius-lg);
+            padding: 30px;
             margin-bottom: 28px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(47,107,255,0.16);
+            filter: blur(10px);
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #E5E7EB;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 18px;
+        }
+
+        .hero-chip .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 12px rgba(47,107,255,0.8);
         }
 
         .hero h2 {
-            font-size: 2.1rem;
+            position: relative;
+            z-index: 2;
+            font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 900;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
         }
 
         .hero p {
-            color: var(--muted);
-            margin-bottom: 0;
-            max-width: 700px;
-            line-height: 1.7;
+            position: relative;
+            z-index: 2;
+            color: var(--muted-2);
+            max-width: 760px;
+            line-height: 1.85;
+            margin-bottom: 24px;
         }
 
-        .stats {
-            margin-bottom: 28px;
+        .hero-actions {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        .stat-card {
+        .stat-card,
+        .section-card {
             background: var(--card);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--line);
-            border-radius: 20px;
+            border-radius: var(--radius-lg);
             padding: 22px;
             height: 100%;
+            box-shadow: var(--shadow-soft);
         }
 
         .stat-label {
@@ -161,30 +277,25 @@
 
         .stat-value {
             font-size: 2rem;
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 8px;
         }
 
         .stat-tag {
-            display: inline-block;
-            font-size: 0.85rem;
-            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            padding: 8px 12px;
             border-radius: 999px;
-            background: rgba(255,255,255,0.06);
-            color: #ddd;
-        }
-
-        .section-card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            padding: 24px;
-            height: 100%;
+            background: rgba(255,255,255,0.05);
+            color: #D1D5DB;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
         .section-title {
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.08rem;
+            font-weight: 800;
             margin-bottom: 18px;
         }
 
@@ -196,33 +307,64 @@
 
         .quick-link {
             display: block;
-            background: #111;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--line);
-            color: #fff;
-            padding: 16px;
-            border-radius: 16px;
-            text-decoration: none;
+            border-radius: 18px;
+            padding: 18px;
+            transition: all 0.25s ease;
         }
 
         .quick-link:hover {
-            background: #fff;
-            color: #000;
+            transform: translateY(-4px);
+            border-color: rgba(47,107,255,0.30);
+            background: rgba(47,107,255,0.10);
+        }
+
+        .quick-link .icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(47,107,255,0.14);
+            color: #fff;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+        }
+
+        .quick-link h6 {
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .quick-link p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.93rem;
+            line-height: 1.65;
         }
 
         .activity-item {
             display: flex;
             justify-content: space-between;
-            gap: 12px;
+            align-items: center;
+            gap: 14px;
             padding: 14px 0;
             border-bottom: 1px solid var(--line);
         }
 
         .activity-item:last-child {
             border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .activity-item:first-child {
+            padding-top: 0;
         }
 
         .activity-label {
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .activity-time {
@@ -252,7 +394,6 @@
 
             .topbar {
                 flex-direction: column;
-                align-items: start;
             }
 
             .quick-grid {
@@ -264,50 +405,120 @@
 <body>
 <div class="layout">
     <aside class="sidebar">
-        <div class="brand">ADMIN PANEL</div>
+        <div class="brand">
+            <span class="brand-dot"></span>
+            <span>Admin Panel</span>
+        </div>
 
         <div class="menu-title">Tổng quan</div>
-        <a href="/admin/dashboard" class="menu-link active">Dashboard</a>
+        <a href="/admin/dashboard" class="menu-link active">
+            <i class="bi bi-grid-1x2-fill"></i>
+            Dashboard
+        </a>
 
-        <div class="menu-title">Quản lý</div>
-        <a href="/admin/motorbikes" class="menu-link">Sản phẩm</a>
-        <a href="/admin/orders" class="menu-link">Đơn hàng</a>
-        <a href="/admin/users" class="menu-link">Người dùng</a>
-        <a href="/admin/categories" class="menu-link">Danh mục</a>
+        <div class="menu-title">Quản lý chính</div>
+        <a href="/admin/motorbikes" class="menu-link">
+            <i class="bi bi-car-front-fill"></i>
+            Quản lý xe
+        </a>
+        <a href="/admin/orders" class="menu-link">
+            <i class="bi bi-receipt-cutoff"></i>
+            Quản lý đơn hàng
+        </a>
+        <a href="/admin/users" class="menu-link">
+            <i class="bi bi-people-fill"></i>
+            Quản lý người dùng
+        </a>
+        <a href="/admin/categories" class="menu-link">
+            <i class="bi bi-tags-fill"></i>
+            Quản lý danh mục
+        </a>
+        <a href="/admin/brands" class="menu-link">
+            <i class="bi bi-award-fill"></i>
+            Quản lý thương hiệu
+        </a>
+
+        <div class="menu-title">Nghiệp vụ</div>
+        <a href="/admin/stocks" class="menu-link">
+            <i class="bi bi-box-seam-fill"></i>
+            Quản lý tồn kho
+        </a>
+        <a href="/admin/requests" class="menu-link">
+            <i class="bi bi-chat-square-text-fill"></i>
+            Yêu cầu mua xe
+        </a>
+        <a href="/admin/deposits" class="menu-link">
+            <i class="bi bi-wallet2"></i>
+            Quản lý đặt cọc
+        </a>
 
         <div class="menu-title">Hệ thống</div>
-        <a href="/" class="menu-link">Về trang chủ</a>
-        <a href="/login" class="menu-link" onclick="logout()">Đăng xuất</a>
+        <a href="/" class="menu-link">
+            <i class="bi bi-house-door-fill"></i>
+            Về trang chủ
+        </a>
+        <a href="javascript:void(0)" class="menu-link" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            Đăng xuất
+        </a>
     </aside>
 
     <main class="main">
         <div class="topbar">
             <div>
                 <h1 class="page-title">Dashboard quản trị</h1>
-                <p class="page-subtitle">Theo dõi tình hình hệ thống, sản phẩm và doanh thu.</p>
+                <p class="page-subtitle">
+                    Theo dõi tổng quan hệ thống, quản lý xe, đơn hàng, người dùng và các nghiệp vụ chính
+                    trên một giao diện đồng bộ với trang chủ.
+                </p>
             </div>
 
             <div class="top-actions">
-                <button class="btn-ghost" onclick="location.href='/admin/motorbikes'">Quản lý sản phẩm</button>
-                <button class="btn-ghost" onclick="logout()">Đăng xuất</button>
+                <button class="btn-lux" onclick="location.href='/admin/motorbikes'">
+                    <i class="bi bi-car-front-fill"></i>
+                    Quản lý xe
+                </button>
+                <button class="btn-lux-outline" onclick="location.href='/admin/orders'">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    Đơn hàng
+                </button>
+                <button class="btn-lux-outline" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Đăng xuất
+                </button>
             </div>
         </div>
 
         <section class="hero">
+            <div class="hero-chip">
+                <span class="dot"></span>
+                Admin workspace
+            </div>
             <h2>Control everything, elegantly.</h2>
             <p>
-                Giao diện quản trị được thiết kế đồng bộ với client dashboard,
-                giúp bạn theo dõi dữ liệu hệ thống rõ ràng, tối giản và hiện đại.
+                Từ dashboard này bạn có thể đi nhanh tới mọi chức năng quan trọng:
+                xe, đơn hàng, người dùng, danh mục, thương hiệu, tồn kho, yêu cầu mua xe và đặt cọc.
             </p>
+
+            <div class="hero-actions">
+                <button class="btn-lux" onclick="location.href='/admin/users'">
+                    <i class="bi bi-people-fill"></i>
+                    Người dùng
+                </button>
+                <button class="btn-lux-outline" onclick="location.href='/admin/deposits'">
+                    <i class="bi bi-wallet2"></i>
+                    Đặt cọc
+                </button>
+            </div>
         </section>
 
-        <section class="stats">
+        <section class="mb-4">
             <div class="row g-4">
                 <div class="col-xl-4 col-md-6">
                     <div class="stat-card">
                         <div class="stat-label">Tổng người dùng</div>
                         <div class="stat-value" id="totalUsers">0</div>
-                        <span class="stat-tag">Đang hoạt động</span>
+                        <span class="stat-tag">Tài khoản toàn hệ thống</span>
                     </div>
                 </div>
 
@@ -315,7 +526,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Tổng sản phẩm</div>
                         <div class="stat-value" id="totalMotorbikes">0</div>
-                        <span class="stat-tag">Xe trong hệ thống</span>
+                        <span class="stat-tag">Số xe hiện có</span>
                     </div>
                 </div>
 
@@ -323,7 +534,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Tổng đơn hàng</div>
                         <div class="stat-value" id="totalOrders">0</div>
-                        <span class="stat-tag">Tất cả đơn phát sinh</span>
+                        <span class="stat-tag">Đơn phát sinh toàn hệ thống</span>
                     </div>
                 </div>
 
@@ -331,7 +542,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Đơn chờ xử lý</div>
                         <div class="stat-value status-warning" id="pendingOrders">0</div>
-                        <span class="stat-tag">Cần theo dõi</span>
+                        <span class="stat-tag">Cần kiểm tra ngay</span>
                     </div>
                 </div>
 
@@ -339,7 +550,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Đơn hoàn thành</div>
                         <div class="stat-value status-success" id="completedOrders">0</div>
-                        <span class="stat-tag">Đã giao thành công</span>
+                        <span class="stat-tag">Đã xử lý xong</span>
                     </div>
                 </div>
 
@@ -355,19 +566,62 @@
 
         <section>
             <div class="row g-4">
-                <div class="col-lg-6">
+                <div class="col-lg-7">
                     <div class="section-card">
                         <div class="section-title">Truy cập nhanh</div>
                         <div class="quick-grid">
-                            <a class="quick-link" href="/admin/motorbikes">Quản lý sản phẩm</a>
-                            <a class="quick-link" href="#">Quản lý đơn hàng</a>
-                            <a class="quick-link" href="#">Quản lý người dùng</a>
-                            <a class="quick-link" href="/">Xem trang chủ</a>
+                            <a class="quick-link" href="/admin/motorbikes">
+                                <div class="icon"><i class="bi bi-car-front-fill"></i></div>
+                                <h6>Quản lý xe</h6>
+                                <p>Xem danh sách, thêm, sửa và theo dõi sản phẩm.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/orders">
+                                <div class="icon"><i class="bi bi-receipt-cutoff"></i></div>
+                                <h6>Quản lý đơn hàng</h6>
+                                <p>Kiểm tra đơn, trạng thái xử lý và giao dịch.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/users">
+                                <div class="icon"><i class="bi bi-people-fill"></i></div>
+                                <h6>Người dùng</h6>
+                                <p>Quản lý tài khoản khách hàng và nhân sự.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/categories">
+                                <div class="icon"><i class="bi bi-tags-fill"></i></div>
+                                <h6>Danh mục</h6>
+                                <p>Sắp xếp nhóm sản phẩm để hiển thị rõ ràng hơn.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/brands">
+                                <div class="icon"><i class="bi bi-award-fill"></i></div>
+                                <h6>Thương hiệu</h6>
+                                <p>Quản lý hãng xe và dữ liệu liên quan.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/stocks">
+                                <div class="icon"><i class="bi bi-box-seam-fill"></i></div>
+                                <h6>Tồn kho</h6>
+                                <p>Theo dõi số lượng xe còn trong kho.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/requests">
+                                <div class="icon"><i class="bi bi-chat-square-text-fill"></i></div>
+                                <h6>Yêu cầu mua xe</h6>
+                                <p>Tiếp nhận và xử lý yêu cầu báo giá, tư vấn.</p>
+                            </a>
+
+                            <a class="quick-link" href="/admin/deposits">
+                                <div class="icon"><i class="bi bi-wallet2"></i></div>
+                                <h6>Đặt cọc</h6>
+                                <p>Kiểm tra các yêu cầu đặt cọc và xác nhận.</p>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-6">
+                <div class="col-lg-5">
                     <div class="section-card">
                         <div class="section-title">Tình trạng hệ thống</div>
 
@@ -377,18 +631,25 @@
                         </div>
 
                         <div class="activity-item">
-                            <div class="activity-label">Kết nối dữ liệu sản phẩm</div>
+                            <div class="activity-label">Dữ liệu sản phẩm</div>
                             <div class="activity-time status-success">Ổn định</div>
                         </div>
 
                         <div class="activity-item">
-                            <div class="activity-label">Đơn hàng chờ xử lý</div>
+                            <div class="activity-label">Đơn chờ xử lý</div>
                             <div class="activity-time status-warning" id="pendingOrdersText">0 đơn</div>
                         </div>
 
                         <div class="activity-item">
-                            <div class="activity-label">Hiệu suất giao diện quản trị</div>
-                            <div class="activity-time">Tối ưu</div>
+                            <div class="activity-label">Doanh thu hiện có</div>
+                            <div class="activity-time" id="totalRevenueText">0 đ</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-label">Đi tới trang chủ</div>
+                            <div class="activity-time">
+                                <a href="/" style="color:#5D8DFF;">Mở ngay</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -433,9 +694,10 @@
         document.getElementById("totalOrders").innerText = data.totalOrders ?? 0;
         document.getElementById("pendingOrders").innerText = data.pendingOrders ?? 0;
         document.getElementById("completedOrders").innerText = data.completedOrders ?? 0;
-        document.getElementById("totalRevenue").innerText =
-            Number(data.totalRevenue ?? 0).toLocaleString("vi-VN") + " đ";
 
+        const revenue = Number(data.totalRevenue ?? 0).toLocaleString("vi-VN") + " đ";
+        document.getElementById("totalRevenue").innerText = revenue;
+        document.getElementById("totalRevenueText").innerText = revenue;
         document.getElementById("pendingOrdersText").innerText = (data.pendingOrders ?? 0) + " đơn";
     })
     .catch(err => {
@@ -446,6 +708,7 @@
     function logout() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
     }
 </script>
 </body>

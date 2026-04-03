@@ -10,32 +10,45 @@
 
     <style>
         :root {
-            --bg: #0a0f14;
-            --panel: #131a22;
-            --panel-2: #18212c;
-            --card: #111821;
+            --bg: #071019;
+            --bg-2: #0b1420;
+            --panel: rgba(15, 23, 34, 0.88);
+            --panel-2: rgba(20, 31, 46, 0.95);
+            --card: #111a26;
+            --card-2: #162231;
             --line: rgba(255,255,255,0.08);
-            --line-strong: rgba(255,255,255,0.14);
+            --line-strong: rgba(255,255,255,0.16);
             --text: #f8fafc;
             --muted: #9ca3af;
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --danger: #dc3545;
+            --success: #16a34a;
+            --shadow: 0 22px 50px rgba(0,0,0,0.30);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
+            min-height: 100vh;
             background:
-                radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 25%),
-                radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 22%),
-                linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+                radial-gradient(circle at top left, rgba(37,99,235,0.14), transparent 24%),
+                radial-gradient(circle at top right, rgba(37,99,235,0.08), transparent 22%),
+                radial-gradient(circle at bottom right, rgba(37,99,235,0.09), transparent 26%),
+                linear-gradient(180deg, #071019 0%, #0b1420 48%, #071019 100%);
             color: var(--text);
             font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
-            min-height: 100vh;
         }
 
         a {
@@ -44,9 +57,9 @@
         }
 
         .showroom-shell {
-            max-width: 1360px;
+            max-width: 1380px;
             margin: 0 auto;
-            padding: 36px 16px 56px;
+            padding: 30px 16px 56px;
         }
 
         .topbar {
@@ -54,20 +67,26 @@
             justify-content: space-between;
             align-items: center;
             gap: 16px;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
         }
 
-        .topbar-left h1 {
-            margin: 0 0 8px;
-            font-size: clamp(2rem, 4vw, 3rem);
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             font-weight: 900;
-            letter-spacing: -1px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.95rem;
         }
 
-        .topbar-left p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.8;
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 16px rgba(37,99,235,0.8);
         }
 
         .topbar-actions {
@@ -87,7 +106,9 @@
             transition: 0.25s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .btn-lux:hover {
@@ -119,11 +140,116 @@
         }
 
         .glass-box {
-            background: rgba(19,26,34,0.88);
+            background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 22px;
+            border-radius: var(--radius-lg);
             backdrop-filter: blur(10px);
-            box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            margin-bottom: 24px;
+            background:
+                linear-gradient(135deg, rgba(37,99,235,0.22), rgba(15,23,34,0.96)),
+                rgba(15,23,34,0.95);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -80px;
+            top: -70px;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(37,99,235,0.16);
+            filter: blur(8px);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .hero-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #e5edf8;
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 18px;
+        }
+
+        .hero-chip .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(37,99,235,0.85);
+        }
+
+        .hero-title {
+            margin: 0 0 14px;
+            font-size: clamp(2.1rem, 4.6vw, 4rem);
+            font-weight: 950;
+            line-height: 1.02;
+            letter-spacing: -1.5px;
+        }
+
+        .hero-title .accent {
+            color: #9ec5ff;
+        }
+
+        .hero-text {
+            margin: 0 0 22px;
+            color: #c7d1de;
+            line-height: 1.9;
+            max-width: 760px;
+            font-size: 1.02rem;
+        }
+
+        .hero-side {
+            display: grid;
+            gap: 14px;
+        }
+
+        .mini-stat {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .mini-stat-label {
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin-bottom: 8px;
+        }
+
+        .mini-stat-value {
+            font-size: 1.7rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .mini-stat-text {
+            color: #d3dbe7;
+            font-size: 0.92rem;
+            line-height: 1.7;
         }
 
         .compare-bar {
@@ -148,18 +274,19 @@
         }
 
         .compare-value {
-            font-size: 1.1rem;
+            font-size: 1.12rem;
             font-weight: 800;
         }
 
         .filter-box {
             padding: 24px;
             margin-bottom: 28px;
+            background: var(--panel-2);
         }
 
         .form-label {
             color: #dbe4ee;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
@@ -167,7 +294,7 @@
         .form-select {
             min-height: 50px;
             border-radius: 14px;
-            background: #0d1319;
+            background: #0c131c;
             color: #fff;
             border: 1px solid rgba(255,255,255,0.10);
         }
@@ -178,35 +305,35 @@
 
         .form-control:focus,
         .form-select:focus {
-            background: #0d1319;
+            background: #0c131c;
             color: #fff;
             border-color: var(--accent);
             box-shadow: 0 0 0 0.18rem rgba(37,99,235,0.18);
         }
 
-        .results-head {
+        .section-head {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: end;
             gap: 14px;
             margin-bottom: 18px;
             flex-wrap: wrap;
         }
 
-        .results-title {
+        .section-title {
             margin: 0;
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 1.16rem;
+            font-weight: 900;
         }
 
-        .results-sub {
-            margin: 0;
+        .section-sub {
+            margin: 6px 0 0;
             color: var(--muted);
             font-size: 0.95rem;
         }
 
         .brand-block + .brand-block {
-            margin-top: 32px;
+            margin-top: 34px;
         }
 
         .brand-title {
@@ -214,14 +341,14 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--line);
         }
 
         .brand-title h3 {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 900;
             letter-spacing: -0.3px;
         }
@@ -233,22 +360,23 @@
 
         .product-card {
             height: 100%;
-            background: linear-gradient(180deg, #121922 0%, #0f151d 100%);
+            background: linear-gradient(180deg, #111a26 0%, #0e1620 100%);
             border: 1px solid var(--line);
-            border-radius: 20px;
+            border-radius: 22px;
             overflow: hidden;
             transition: 0.28s ease;
+            box-shadow: 0 16px 30px rgba(0,0,0,0.18);
         }
 
         .product-card:hover {
             transform: translateY(-6px);
             border-color: rgba(37,99,235,0.35);
-            box-shadow: 0 18px 34px rgba(0,0,0,0.26);
+            box-shadow: 0 20px 38px rgba(0,0,0,0.28);
         }
 
         .product-media {
             position: relative;
-            height: 230px;
+            height: 240px;
             overflow: hidden;
             background: #090d12;
         }
@@ -262,6 +390,22 @@
 
         .product-card:hover .product-media img {
             transform: scale(1.04);
+        }
+
+        .product-badge {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(8,13,18,0.74);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            backdrop-filter: blur(8px);
         }
 
         .compare-chip {
@@ -283,9 +427,9 @@
         }
 
         .product-name {
-            font-size: 1.06rem;
-            font-weight: 800;
-            min-height: 52px;
+            font-size: 1.08rem;
+            font-weight: 850;
+            min-height: 54px;
             margin-bottom: 8px;
             line-height: 1.45;
         }
@@ -293,11 +437,11 @@
         .product-meta {
             color: var(--muted);
             font-size: 0.93rem;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .product-price {
-            font-size: 1.25rem;
+            font-size: 1.28rem;
             font-weight: 900;
             margin-bottom: 14px;
         }
@@ -315,6 +459,7 @@
             text-align: center;
             border: 1px dashed rgba(255,255,255,0.10);
             color: var(--muted);
+            background: rgba(255,255,255,0.02);
         }
 
         .error-box {
@@ -323,6 +468,10 @@
         }
 
         @media (max-width: 991.98px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+            }
+
             .topbar {
                 flex-direction: column;
                 align-items: flex-start;
@@ -331,9 +480,10 @@
 
         @media (max-width: 575.98px) {
             .showroom-shell {
-                padding-top: 24px;
+                padding-top: 22px;
             }
 
+            .hero,
             .compare-bar,
             .filter-box {
                 padding: 18px;
@@ -349,9 +499,9 @@
 <div class="showroom-shell">
 
     <div class="topbar">
-        <div class="topbar-left">
-            <h1>Showroom xe</h1>
-            <p>Tìm kiếm, lọc, sắp xếp và so sánh các mẫu xe theo nhu cầu của bạn.</p>
+        <div class="brand-mark">
+            <span class="brand-dot"></span>
+            <span>Auto Space Showroom</span>
         </div>
 
         <div class="topbar-actions">
@@ -366,10 +516,56 @@
         </div>
     </div>
 
+    <section class="glass-box hero">
+        <div class="hero-inner">
+            <div>
+                <div class="hero-chip">
+                    <span class="dot"></span>
+                    Premium showroom
+                </div>
+
+                <h1 class="hero-title">
+                    Khám phá những mẫu xe <span class="accent">phù hợp với bạn</span>
+                </h1>
+
+                <p class="hero-text">
+                    Tìm kiếm, lọc, sắp xếp và so sánh các mẫu xe trong showroom theo hãng, danh mục,
+                    kho trưng bày và mức giá. Giao diện này được làm lại để gần với home hơn, premium hơn
+                    và tập trung vào trải nghiệm xem xe.
+                </p>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn-lux btn-lux-primary" type="button" onclick="document.getElementById('keyword').focus()">
+                        <i class="bi bi-search"></i>
+                        Bắt đầu tìm xe
+                    </button>
+                    <button class="btn-lux" type="button" onclick="goToCompare()">
+                        <i class="bi bi-columns-gap"></i>
+                        Mở so sánh
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-side">
+                <div class="mini-stat">
+                    <div class="mini-stat-label">So sánh hiện tại</div>
+                    <div class="mini-stat-value"><span id="compareCount">0</span>/3 xe</div>
+                    <div class="mini-stat-text">Chọn từ 2 đến 3 xe để mở bảng so sánh chi tiết.</div>
+                </div>
+
+                <div class="mini-stat">
+                    <div class="mini-stat-label">Trải nghiệm</div>
+                    <div class="mini-stat-value">Showroom Mode</div>
+                    <div class="mini-stat-text">Lọc nhanh, duyệt theo hãng và xem xe nổi bật ngay trong cùng một không gian.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="glass-box compare-bar">
         <div class="compare-left">
             <div class="compare-label">Danh sách so sánh hiện tại</div>
-            <div class="compare-value"><span id="compareCount">0</span>/3 xe</div>
+            <div class="compare-value"><span id="compareCountBar">0</span>/3 xe</div>
         </div>
 
         <div class="d-flex gap-2 flex-wrap">
@@ -428,10 +624,10 @@
         </div>
     </div>
 
-    <div class="results-head">
+    <div class="section-head">
         <div>
-            <h2 class="results-title">Danh sách xe</h2>
-            <p class="results-sub" id="resultsSummary">Đang tải dữ liệu...</p>
+            <h2 class="section-title">Danh sách xe trong showroom</h2>
+            <p class="section-sub" id="resultsSummary">Đang tải dữ liệu...</p>
         </div>
     </div>
 
@@ -453,7 +649,9 @@
     }
 
     function updateCompareCount() {
-        document.getElementById("compareCount").innerText = getCompareList().length;
+        const count = getCompareList().length;
+        document.getElementById("compareCount").innerText = count;
+        document.getElementById("compareCountBar").innerText = count;
     }
 
     function isCompared(id) {
@@ -519,6 +717,11 @@
         }, 300);
     }
 
+        function getDetailUrl(item) {
+            if (item.slug) return `/san-pham/${item.slug}`;
+            if (item.id) return `/showroom/${item.id}`;
+            return "/showroom";
+        }
     async function loadProducts() {
         const warehouseId = document.getElementById("warehouseId").value;
         const categoryId = document.getElementById("categoryId").value;
@@ -575,6 +778,7 @@
                                              alt="${item.name || ''}"
                                              onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
 
+                                        <div class="product-badge">${item.categoryName || 'Xe'}</div>
                                         ${isCompared(item.id) ? `<div class="compare-chip">Đang so sánh</div>` : ``}
                                     </div>
 
@@ -584,7 +788,7 @@
                                         <div class="product-price">${formatPrice(item.price)}</div>
 
                                         <div class="product-actions">
-                                            <a class="btn-lux" href="/showroom/${item.slug}">
+                                            <a class="btn-lux" href="${getDetailUrl(item)}">
                                                 <i class="bi bi-arrow-right-circle"></i>
                                                 Xem chi tiết
                                             </a>

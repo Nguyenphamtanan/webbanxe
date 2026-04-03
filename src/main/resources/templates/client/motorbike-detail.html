@@ -10,12 +10,14 @@
 
     <style>
         :root {
-            --bg: #0a0f14;
-            --panel: #131a22;
-            --panel-2: #18212c;
-            --card: #111821;
+            --bg: #071019;
+            --bg-2: #0b1420;
+            --panel: rgba(15, 23, 34, 0.88);
+            --panel-2: rgba(20, 31, 46, 0.95);
+            --card: #111a26;
+            --card-2: #162231;
             --line: rgba(255,255,255,0.08);
-            --line-strong: rgba(255,255,255,0.14);
+            --line-strong: rgba(255,255,255,0.16);
             --text: #f8fafc;
             --muted: #9ca3af;
             --accent: #2563eb;
@@ -23,6 +25,11 @@
             --danger: #dc3545;
             --success: #16a34a;
             --warning: #f59e0b;
+            --shadow: 0 22px 50px rgba(0,0,0,0.30);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
         }
 
         * {
@@ -32,9 +39,10 @@
         body {
             margin: 0;
             background:
-                radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 24%),
-                radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 20%),
-                linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+                radial-gradient(circle at top left, rgba(37,99,235,0.12), transparent 24%),
+                radial-gradient(circle at top right, rgba(37,99,235,0.08), transparent 20%),
+                radial-gradient(circle at bottom right, rgba(37,99,235,0.08), transparent 26%),
+                linear-gradient(180deg, #071019 0%, #0b1420 45%, #071019 100%);
             color: var(--text);
             font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
             min-height: 100vh;
@@ -46,16 +54,42 @@
         }
 
         .detail-shell {
-            max-width: 1360px;
+            max-width: 1380px;
             margin: 0 auto;
-            padding: 34px 16px 60px;
+            padding: 28px 16px 60px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 16px rgba(37,99,235,0.8);
         }
 
         .top-actions {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 22px;
         }
 
         .btn-lux {
@@ -68,6 +102,7 @@
             font-weight: 700;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: 0.25s ease;
             cursor: pointer;
@@ -105,7 +140,7 @@
             border: 1px solid var(--line);
             border-radius: 24px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+            box-shadow: var(--shadow);
         }
 
         .alert-box {
@@ -130,7 +165,21 @@
         }
 
         .hero-detail {
+            position: relative;
+            overflow: hidden;
             padding: 24px;
+        }
+
+        .hero-detail::after {
+            content: "";
+            position: absolute;
+            right: -70px;
+            top: -60px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: rgba(37,99,235,0.14);
+            filter: blur(8px);
         }
 
         .product-media-wrap {
@@ -141,17 +190,18 @@
 
         .main-img-box {
             position: relative;
-            border-radius: 22px;
+            border-radius: 24px;
             overflow: hidden;
             border: 1px solid var(--line);
             background: #0b1016;
-            min-height: 500px;
+            min-height: 520px;
+            box-shadow: 0 18px 34px rgba(0,0,0,0.24);
         }
 
         .main-img {
             width: 100%;
             height: 100%;
-            min-height: 500px;
+            min-height: 520px;
             object-fit: cover;
             display: block;
         }
@@ -186,6 +236,8 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
+            position: relative;
+            z-index: 2;
         }
 
         .eyebrow {
@@ -209,10 +261,10 @@
 
         .product-title {
             margin: 0;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 900;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 950;
             letter-spacing: -1px;
-            line-height: 1.06;
+            line-height: 1.04;
         }
 
         .product-meta {
@@ -259,7 +311,7 @@
             border: 1px solid var(--line);
             border-radius: 18px;
             padding: 16px;
-            min-height: 102px;
+            min-height: 104px;
         }
 
         .info-label {
@@ -275,14 +327,31 @@
             line-height: 1.6;
         }
 
-        .action-group {
+        .action-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
-        .desc-section,
-        .workflow-section {
+        .mini-panel {
+            margin-top: 4px;
+            padding: 18px;
+        }
+
+        .mini-panel h3 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .mini-panel p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 0.94rem;
+        }
+
+        .section {
             margin-top: 24px;
             padding: 22px;
         }
@@ -297,6 +366,44 @@
             white-space: pre-line;
             line-height: 1.9;
             color: #d8e0ea;
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .highlight-card {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line);
+        }
+
+        .highlight-card .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(37,99,235,0.14);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .highlight-card h4 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .highlight-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.75;
+            font-size: 0.94rem;
         }
 
         .workflow-steps {
@@ -342,24 +449,6 @@
             top: 20px;
         }
 
-        .mini-panel {
-            margin-top: 18px;
-            padding: 18px;
-        }
-
-        .mini-panel h3 {
-            margin: 0 0 10px;
-            font-size: 1rem;
-            font-weight: 900;
-        }
-
-        .mini-panel p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.8;
-            font-size: 0.94rem;
-        }
-
         @media (max-width: 991.98px) {
             .main-img,
             .main-img-box {
@@ -370,48 +459,58 @@
                 position: static;
             }
 
-            .workflow-steps {
+            .workflow-steps,
+            .highlight-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 575.98px) {
             .detail-shell {
-                padding-top: 24px;
+                padding-top: 22px;
             }
 
-            .hero-detail {
+            .hero-detail,
+            .section {
                 padding: 18px;
             }
 
             .info-grid,
-            .action-group,
-            .workflow-steps {
+            .action-grid,
+            .workflow-steps,
+            .highlight-grid {
                 grid-template-columns: 1fr;
             }
 
             .btn-lux {
                 width: 100%;
-                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
 <div class="detail-shell">
-    <div class="top-actions">
-        <a href="/showroom" class="btn-lux">
-            <i class="bi bi-arrow-left"></i>
-            Quay lại showroom
-        </a>
-        <a href="/" class="btn-lux">
-            <i class="bi bi-house-door"></i>
-            Trang chủ
-        </a>
-        <a href="/customer/dashboard" class="btn-lux">
-            <i class="bi bi-grid-1x2"></i>
-            Dashboard
-        </a>
+
+    <div class="topbar">
+        <div class="brand-mark">
+            <span class="brand-dot"></span>
+            <span>Auto Space Detail</span>
+        </div>
+
+        <div class="top-actions">
+            <a href="/showroom" class="btn-lux">
+                <i class="bi bi-arrow-left"></i>
+                Quay lại showroom
+            </a>
+            <a href="/" class="btn-lux">
+                <i class="bi bi-house-door"></i>
+                Trang chủ
+            </a>
+            <a href="/customer/dashboard" class="btn-lux">
+                <i class="bi bi-grid-1x2"></i>
+                Dashboard
+            </a>
+        </div>
     </div>
 
     <div id="errorBox" class="alert-box alert-error"></div>
@@ -423,8 +522,8 @@
                 <div class="product-media-wrap">
                     <div class="main-img-box">
                         <span class="media-badge">
-                            <i class="bi bi-shield-check"></i>
-                            Thông tin chi tiết xe
+                            <i class="bi bi-stars"></i>
+                            Chi tiết xe
                         </span>
                         <img class="main-img"
                              th:src="${bike.primaryImageUrl != null ? bike.primaryImageUrl : 'https://via.placeholder.com/1200x800?text=No+Image'}"
@@ -432,9 +531,8 @@
                     </div>
 
                     <div class="quick-note">
-                        Khách chưa đăng nhập vẫn có thể xem xe, xem thông số và so sánh.
-                        Khi thực hiện hành động như thêm vào giỏ, yêu cầu báo giá hoặc đặt lịch xem xe,
-                        hệ thống sẽ yêu cầu đăng nhập nếu cần.
+                        Bạn có thể xem thông tin xe ngay cả khi chưa đăng nhập.
+                        Khi thêm vào giỏ, yêu cầu báo giá hoặc đặt lịch xem xe, hệ thống sẽ yêu cầu đăng nhập nếu cần.
                     </div>
                 </div>
             </div>
@@ -494,7 +592,7 @@
                             </div>
                         </div>
 
-                        <div class="action-group">
+                        <div class="action-grid">
                             <button class="btn-lux btn-lux-primary"
                                     type="button"
                                     th:attr="onclick='requestQuote(' + ${bike.id} + ')'">
@@ -525,10 +623,9 @@
                         </div>
 
                         <div class="mini-panel glass-box">
-                            <h3>Gợi ý workflow</h3>
+                            <h3>Gợi ý hành trình mua xe</h3>
                             <p>
-                                Luồng hợp lý cho web bán xe là:
-                                xem chi tiết → yêu cầu báo giá / đặt lịch xem xe → nhân viên tư vấn →
+                                Xem xe → yêu cầu báo giá hoặc đặt lịch xem xe → nhân viên tư vấn →
                                 khách đồng ý → đặt cọc → hoàn tất giao dịch.
                             </p>
                         </div>
@@ -537,14 +634,38 @@
             </div>
         </div>
 
-        <div class="glass-box desc-section">
+        <div class="glass-box section">
+            <h2 class="section-title">Điểm nhấn của mẫu xe này</h2>
+
+            <div class="highlight-grid">
+                <div class="highlight-card">
+                    <div class="icon"><i class="bi bi-award"></i></div>
+                    <h4>Thiết kế nổi bật</h4>
+                    <p>Mẫu xe được trình bày theo phong cách premium, phù hợp để tham khảo và so sánh nhanh trong showroom.</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="icon"><i class="bi bi-speedometer2"></i></div>
+                    <h4>Thông tin rõ ràng</h4>
+                    <p>Hiển thị nhanh các dữ liệu cốt lõi như giá, hãng, danh mục, động cơ và khối lượng.</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="icon"><i class="bi bi-chat-heart"></i></div>
+                    <h4>Dễ tiếp tục giao dịch</h4>
+                    <p>Từ trang này khách có thể thêm giỏ, yêu cầu báo giá, đặt lịch xem xe hoặc thêm vào so sánh.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-box section">
             <h2 class="section-title">Mô tả sản phẩm</h2>
             <div class="desc-box" th:text="${bike.description != null ? bike.description : 'Chưa có mô tả cho sản phẩm này.'}">
                 Mô tả
             </div>
         </div>
 
-        <div class="glass-box workflow-section">
+        <div class="glass-box section">
             <h2 class="section-title">Quy trình dành cho khách hàng</h2>
             <div class="workflow-steps">
                 <div class="workflow-step">
@@ -556,7 +677,7 @@
                 <div class="workflow-step">
                     <div class="step-no">2</div>
                     <h4>Gửi yêu cầu</h4>
-                    <p>Khách chọn báo giá hoặc đặt lịch xem xe để được tư vấn đúng nhu cầu.</p>
+                    <p>Khách chọn báo giá hoặc đặt lịch xem xe để được tư vấn theo nhu cầu thực tế.</p>
                 </div>
 
                 <div class="workflow-step">
@@ -580,7 +701,6 @@
     const errorBox = document.getElementById("errorBox");
     const successBox = document.getElementById("successBox");
     const bikeId = [[${bike.id}]];
-    const bikeSlug = /*[[${bike.slug}]]*/ "";
 
     function showError(message) {
         errorBox.style.display = "block";
@@ -668,8 +788,6 @@
         }
 
         showSuccess("Chức năng đặt lịch xem xe sẽ làm ở bước tiếp theo.");
-        // sau này đổi thành:
-        // window.location.href = "/customer/requests/viewing?motorbikeId=" + motorbikeId;
     }
 
     function getCompareList() {

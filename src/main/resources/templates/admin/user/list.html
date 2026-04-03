@@ -2,134 +2,710 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý người dùng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    body {
-        background: #0b0b0b;
-        color: white;
-        font-family: Arial;
+    :root{
+        --bg:#0f172a;
+        --card:#1f2937;
+        --line:#374151;
+        --text:#f9fafb;
+        --muted:#d1d5db;
+        --accent:#2563eb;
+        --accent-hover:#1d4ed8;
+        --success:#16a34a;
+        --danger:#dc2626;
+        --warning:#d97706;
+        --shadow:0 18px 40px rgba(0,0,0,.28);
+        --radius:18px;
     }
 
-    .wrapper {
-        max-width: 1200px;
-        margin: 40px auto;
+    *{box-sizing:border-box}
+
+    body{
+        margin:0;
+        min-height:100vh;
+        background:linear-gradient(180deg,#0b1220 0%, #0f172a 100%);
+        color:var(--text);
+        font-family:Inter,"Segoe UI",Arial,sans-serif;
     }
 
-    .card-box {
-        background: #151515;
-        border-radius: 16px;
-        padding: 24px;
+    .page{
+        max-width:1360px;
+        margin:0 auto;
+        padding:32px 20px 40px;
     }
 
-    .table {
-        color: white;
+    .topbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:16px;
+        margin-bottom:24px;
+        flex-wrap:wrap;
     }
 
-    .badge-active {
-        color: #7CFC98;
+    .title{
+        margin:0;
+        font-size:2rem;
+        font-weight:800;
+        color:#fff;
     }
 
-    .badge-lock {
-        color: #ff6b6b;
+    .subtitle{
+        margin-top:8px;
+        color:var(--muted);
+        line-height:1.7;
+        max-width:820px;
+        font-size:1rem;
+    }
+
+    .actions{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+    }
+
+    .btn-main,
+    .btn-outline-light2{
+        min-height:46px;
+        padding:10px 16px;
+        border-radius:12px;
+        border:1px solid transparent;
+        font-weight:700;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        transition:.2s ease;
+        cursor:pointer;
+        text-decoration:none;
+    }
+
+    .btn-main{
+        background:var(--accent);
+        color:#fff;
+        box-shadow:0 10px 24px rgba(37,99,235,.28);
+    }
+
+    .btn-main:hover{
+        background:var(--accent-hover);
+        color:#fff;
+        transform:translateY(-1px);
+    }
+
+    .btn-outline-light2{
+        background:#1e293b;
+        color:#fff;
+        border-color:#475569;
+    }
+
+    .btn-outline-light2:hover{
+        background:#334155;
+        color:#fff;
+    }
+
+    .hero{
+        background:linear-gradient(135deg,#1d4ed8 0%, #1e3a8a 100%);
+        border-radius:22px;
+        padding:24px;
+        box-shadow:var(--shadow);
+        margin-bottom:24px;
+    }
+
+    .hero h3{
+        margin:0 0 8px;
+        font-size:1.45rem;
+        font-weight:800;
+        color:#fff;
+    }
+
+    .hero p{
+        margin:0;
+        color:#e5e7eb;
+        line-height:1.8;
+    }
+
+    .summary-grid{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:18px;
+        margin-bottom:24px;
+    }
+
+    .summary-card,
+    .panel{
+        background:var(--card);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+    }
+
+    .summary-card{
+        padding:20px;
+    }
+
+    .summary-label{
+        color:#cbd5e1;
+        font-weight:600;
+        margin-bottom:8px;
+    }
+
+    .summary-value{
+        font-size:1.9rem;
+        font-weight:800;
+        color:#fff;
+    }
+
+    .panel{
+        padding:22px;
+    }
+
+    .panel-title{
+        margin:0 0 18px;
+        font-size:1.08rem;
+        font-weight:800;
+        color:#fff;
+    }
+
+    .form-label{
+        color:#f3f4f6;
+        font-weight:700;
+        margin-bottom:8px;
+    }
+
+    .form-control,
+    .form-select{
+        background:#0f172a;
+        border:1px solid #4b5563;
+        color:#fff;
+        border-radius:12px;
+        min-height:46px;
+    }
+
+    .form-control:focus,
+    .form-select:focus{
+        background:#0f172a;
+        color:#fff;
+        border-color:#60a5fa;
+        box-shadow:0 0 0 0.2rem rgba(96,165,250,.18);
+    }
+
+    .form-control::placeholder{
+        color:#94a3b8;
+    }
+
+    .table-wrap{
+        overflow:auto;
+    }
+
+    .table-custom{
+        width:100%;
+        border-collapse:collapse;
+        min-width:980px;
+    }
+
+    .table-custom thead th{
+        background:#243041;
+        color:#f8fafc;
+        font-weight:800;
+        font-size:.92rem;
+        padding:14px 12px;
+        border-bottom:1px solid #475569;
+        white-space:nowrap;
+    }
+
+    .table-custom tbody td{
+        padding:14px 12px;
+        border-bottom:1px solid #374151;
+        vertical-align:middle;
+        color:#e5e7eb;
+    }
+
+    .table-custom tbody tr:hover{
+        background:rgba(255,255,255,.03);
+    }
+
+    .user-box{
+        min-width:220px;
+    }
+
+    .user-name{
+        font-weight:800;
+        color:#fff;
+        margin-bottom:4px;
+    }
+
+    .user-email{
+        color:#cbd5e1;
+        font-size:.9rem;
+    }
+
+    .badge-status,
+    .badge-role{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:90px;
+        padding:7px 12px;
+        border-radius:999px;
+        font-size:.83rem;
+        font-weight:800;
+        white-space:nowrap;
+    }
+
+    .status-active{
+        background:rgba(22,163,74,.16);
+        color:#86efac;
+        border:1px solid rgba(22,163,74,.3);
+    }
+
+    .status-lock{
+        background:rgba(220,38,38,.16);
+        color:#fca5a5;
+        border:1px solid rgba(220,38,38,.3);
+    }
+
+    .role-admin{
+        background:rgba(37,99,235,.18);
+        color:#93c5fd;
+        border:1px solid rgba(37,99,235,.28);
+    }
+
+    .role-staff{
+        background:rgba(217,119,6,.16);
+        color:#fdba74;
+        border:1px solid rgba(217,119,6,.3);
+    }
+
+    .role-customer{
+        background:rgba(255,255,255,.06);
+        color:#e5e7eb;
+        border:1px solid rgba(255,255,255,.1);
+    }
+
+    .action-group{
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+    }
+
+    .action-btn{
+        min-height:38px;
+        padding:8px 12px;
+        border-radius:10px;
+        font-size:.88rem;
+        font-weight:700;
+        border:1px solid #475569;
+        background:#1e293b;
+        color:#fff;
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        cursor:pointer;
+    }
+
+    .action-btn:hover{
+        background:#334155;
+    }
+
+    .action-btn.warn{
+        border-color:#a16207;
+        background:#78350f;
+    }
+
+    .action-btn.warn:hover{
+        background:#92400e;
+    }
+
+    .action-btn.info{
+        border-color:#2563eb;
+        background:#1e3a8a;
+    }
+
+    .action-btn.info:hover{
+        background:#1d4ed8;
+    }
+
+    .empty-state{
+        text-align:center;
+        padding:36px 20px;
+        color:#cbd5e1;
+    }
+
+    .error-box{
+        margin-top:12px;
+        color:#fecaca;
+        background:rgba(127,29,29,.35);
+        border:1px solid rgba(239,68,68,.35);
+        border-radius:12px;
+        padding:12px 14px;
+        display:none;
+        white-space:pre-wrap;
+    }
+
+    @media (max-width: 1100px){
+        .summary-grid{
+            grid-template-columns:repeat(2,1fr);
+        }
+    }
+
+    @media (max-width: 768px){
+        .summary-grid{
+            grid-template-columns:1fr;
+        }
     }
   </style>
 </head>
-
 <body>
+<div class="page">
+  <div class="topbar">
+    <div>
+      <h1 class="title">Quản lý người dùng</h1>
+      <div class="subtitle">
+        Theo dõi tài khoản, lọc nhanh theo email/username/role, khóa hoặc mở tài khoản
+        và cập nhật vai trò trực tiếp từ danh sách.
+      </div>
+    </div>
 
-<div class="wrapper">
-
-  <div class="d-flex justify-content-between mb-4">
-    <h2>Quản lý người dùng</h2>
-    <a href="/admin/dashboard" class="btn btn-outline-light">Dashboard</a>
+    <div class="actions">
+      <a href="/admin/dashboard" class="btn-outline-light2">
+        <i class="bi bi-arrow-left"></i>
+        Dashboard
+      </a>
+    </div>
   </div>
 
-  <div class="card-box">
-    <table class="table">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Email</th>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Trạng thái</th>
-        <th>Hành động</th>
-      </tr>
-      </thead>
+  <section class="hero">
+    <h3>Quản lý tài khoản rõ ràng hơn</h3>
+    <p>
+      Giao diện đã được đồng bộ với khu admin mới: tương phản tốt hơn, badge rõ hơn
+      và thao tác khóa/mở, đổi role nhanh hơn.
+    </p>
+  </section>
 
-      <tbody id="userTable">
-      <tr><td colspan="6">Loading...</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <section class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-label">Tổng người dùng</div>
+      <div class="summary-value" id="totalUsers">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Đang hoạt động</div>
+      <div class="summary-value" id="activeUsers">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Đã khóa</div>
+      <div class="summary-value" id="lockedUsers">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Kết quả lọc</div>
+      <div class="summary-value" id="filteredUsers">0</div>
+    </div>
+  </section>
 
+  <section class="panel" style="margin-bottom:24px;">
+    <h2 class="panel-title">Bộ lọc dữ liệu</h2>
+
+    <div class="row g-3 align-items-end">
+      <div class="col-lg-6">
+        <label class="form-label">Tìm theo email / username / role</label>
+        <input type="text" id="searchInput" class="form-control" placeholder="Ví dụ: admin, staff, gmail...">
+      </div>
+
+      <div class="col-lg-3">
+        <label class="form-label">Trạng thái</label>
+        <select id="statusFilter" class="form-select">
+          <option value="all">Tất cả</option>
+          <option value="active">Hoạt động</option>
+          <option value="locked">Đã khóa</option>
+        </select>
+      </div>
+
+      <div class="col-lg-3 d-flex gap-2 flex-wrap">
+        <button class="btn-main" onclick="applyFilter()">
+          <i class="bi bi-funnel"></i>
+          Lọc
+        </button>
+        <button class="btn-outline-light2" onclick="resetFilter()">
+          <i class="bi bi-arrow-clockwise"></i>
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">Danh sách người dùng</h2>
+
+    <div class="table-wrap">
+      <table class="table-custom">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tài khoản</th>
+          <th>Role</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody id="userTable">
+        <tr>
+          <td colspan="5" class="empty-state">Đang tải dữ liệu...</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <script>
   const token = localStorage.getItem("accessToken");
-
   if (!token) {
       window.location.href = "/login";
   }
 
-  async function loadUsers() {
-      const res = await fetch("/api/admin/users", {
-          headers: { Authorization: "Bearer " + token }
-      });
+  let users = [];
+  let filteredUsers = [];
 
-      const data = await res.json();
+  function logout() {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
+  }
 
-      const html = data.map(u => `
+  function showError(message) {
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.innerText = message;
+  }
+
+  function clearError() {
+      const box = document.getElementById("errorBox");
+      box.style.display = "none";
+      box.innerText = "";
+  }
+
+  function safeText(value, fallback = "--") {
+      return value === null || value === undefined || value === "" ? fallback : value;
+  }
+
+  function normalizeListResponse(data) {
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data.content)) return data.content;
+      if (Array.isArray(data.data)) return data.data;
+      if (Array.isArray(data.items)) return data.items;
+      return [];
+  }
+
+  function roleClass(role) {
+      const r = String(role || "").toUpperCase();
+      if (r === "ADMIN") return "role-admin";
+      if (r === "STAFF") return "role-staff";
+      return "role-customer";
+  }
+
+  function renderSummary() {
+      document.getElementById("totalUsers").innerText = users.length;
+      document.getElementById("activeUsers").innerText = users.filter(x => x.isActive).length;
+      document.getElementById("lockedUsers").innerText = users.filter(x => !x.isActive).length;
+      document.getElementById("filteredUsers").innerText = filteredUsers.length;
+  }
+
+  function renderTable(list) {
+      const tbody = document.getElementById("userTable");
+
+      if (!list.length) {
+          tbody.innerHTML = `
+              <tr>
+                  <td colspan="5" class="empty-state">Không có người dùng phù hợp.</td>
+              </tr>
+          `;
+          renderSummary();
+          return;
+      }
+
+      tbody.innerHTML = list.map(u => `
           <tr>
               <td>${u.id}</td>
-              <td>${u.email ?? ''}</td>
-              <td>${u.username}</td>
-              <td>${u.role}</td>
               <td>
-                  ${u.isActive
-                      ? '<span class="badge-active">Hoạt động</span>'
-                      : '<span class="badge-lock">Đã khóa</span>'}
+                  <div class="user-box">
+                      <div class="user-name">${safeText(u.username, "Chưa có username")}</div>
+                      <div class="user-email">${safeText(u.email, "Chưa có email")}</div>
+                  </div>
               </td>
               <td>
-                  <button onclick="toggle(${u.id}, ${u.isActive})" class="btn btn-sm btn-warning">
-                      ${u.isActive ? 'Khóa' : 'Mở'}
-                  </button>
+                  <span class="badge-role ${roleClass(u.role)}">${safeText(u.role)}</span>
+              </td>
+              <td>
+                  ${u.isActive
+                      ? '<span class="badge-status status-active">Hoạt động</span>'
+                      : '<span class="badge-status status-lock">Đã khóa</span>'}
+              </td>
+              <td>
+                  <div class="action-group">
+                      <button onclick="toggleStatus(${u.id}, ${u.isActive})" class="action-btn warn">
+                          <i class="bi bi-shield-lock"></i>
+                          ${u.isActive ? 'Khóa' : 'Mở khóa'}
+                      </button>
 
-                  <button onclick="changeRole(${u.id})" class="btn btn-sm btn-info">
-                      Đổi role
-                  </button>
+                      <button onclick="changeRole(${u.id}, '${String(u.role || "").replace(/'/g, "\\'")}')" class="action-btn info">
+                          <i class="bi bi-person-gear"></i>
+                          Đổi role
+                      </button>
+                  </div>
               </td>
           </tr>
       `).join("");
 
-      document.getElementById("userTable").innerHTML = html;
+      renderSummary();
   }
 
-  async function toggle(id, current) {
-      await fetch(`/api/admin/users/${id}/status?isActive=${!current}`, {
-          method: "PUT",
-          headers: { Authorization: "Bearer " + token }
+  function applyFilter() {
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+
+      filteredUsers = users.filter(u => {
+          const matchesKeyword =
+              !keyword ||
+              String(u.email || "").toLowerCase().includes(keyword) ||
+              String(u.username || "").toLowerCase().includes(keyword) ||
+              String(u.role || "").toLowerCase().includes(keyword);
+
+          const matchesStatus =
+              status === "all" ||
+              (status === "active" && u.isActive) ||
+              (status === "locked" && !u.isActive);
+
+          return matchesKeyword && matchesStatus;
       });
-      loadUsers();
+
+      renderTable(filteredUsers);
   }
 
-  async function changeRole(id) {
-      const role = prompt("Nhập role (ADMIN / STAFF / CUSTOMER):");
+  function resetFilter() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("statusFilter").value = "all";
+      filteredUsers = [...users];
+      renderTable(filteredUsers);
+  }
+
+  async function loadUsers() {
+      clearError();
+
+      try {
+          const res = await fetch("/api/admin/users", {
+              headers: { Authorization: "Bearer " + token }
+          });
+
+          if (res.status === 401 || res.status === 403) {
+              logout();
+              return;
+          }
+
+          const rawText = await res.text();
+
+          if (!res.ok) {
+              throw new Error(`HTTP ${res.status}\n${rawText}`);
+          }
+
+          let jsonData;
+          try {
+              jsonData = JSON.parse(rawText);
+          } catch (e) {
+              throw new Error("Response không phải JSON hợp lệ:\n" + rawText);
+          }
+
+          users = normalizeListResponse(jsonData);
+          filteredUsers = [...users];
+          renderTable(filteredUsers);
+      } catch (error) {
+          console.error("loadUsers error:", error);
+          showError("Không tải được dữ liệu người dùng.\n\n" + error.message);
+          document.getElementById("userTable").innerHTML = `
+              <tr>
+                  <td colspan="5" class="empty-state">Không tải được dữ liệu người dùng.</td>
+              </tr>
+          `;
+      }
+  }
+
+  async function toggleStatus(id, current) {
+      const actionText = current ? "khóa" : "mở khóa";
+      const ok = confirm(`Bạn có chắc muốn ${actionText} tài khoản này không?`);
+      if (!ok) return;
+
+      try {
+          const res = await fetch(`/api/admin/users/${id}/status?isActive=${!current}`, {
+              method: "PUT",
+              headers: { Authorization: "Bearer " + token }
+          });
+
+          const rawText = await res.text();
+
+          if (res.status === 401 || res.status === 403) {
+              logout();
+              return;
+          }
+
+          if (!res.ok) {
+              throw new Error(rawText || "Cập nhật trạng thái thất bại");
+          }
+
+          await loadUsers();
+      } catch (error) {
+          console.error(error);
+          alert("Không thể cập nhật trạng thái.\n" + error.message);
+      }
+  }
+
+  async function changeRole(id, currentRole) {
+      const role = prompt("Nhập role mới (ADMIN / STAFF / CUSTOMER):", currentRole || "CUSTOMER");
 
       if (!role) return;
 
-      await fetch(`/api/admin/users/${id}/role?role=${role}`, {
-          method: "PUT",
-          headers: { Authorization: "Bearer " + token }
-      });
+      const normalizedRole = role.trim().toUpperCase();
+      if (!["ADMIN", "STAFF", "CUSTOMER"].includes(normalizedRole)) {
+          alert("Role không hợp lệ. Chỉ được nhập ADMIN, STAFF hoặc CUSTOMER.");
+          return;
+      }
 
-      loadUsers();
+      try {
+          const res = await fetch(`/api/admin/users/${id}/role?role=${normalizedRole}`, {
+              method: "PUT",
+              headers: { Authorization: "Bearer " + token }
+          });
+
+          const rawText = await res.text();
+
+          if (res.status === 401 || res.status === 403) {
+              logout();
+              return;
+          }
+
+          if (!res.ok) {
+              throw new Error(rawText || "Đổi role thất bại");
+          }
+
+          await loadUsers();
+      } catch (error) {
+          console.error(error);
+          alert("Không thể đổi role.\n" + error.message);
+      }
   }
+
+  document.getElementById("searchInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+          e.preventDefault();
+          applyFilter();
+      }
+  });
 
   loadUsers();
 </script>
-
 </body>
 </html>

@@ -1,27 +1,30 @@
 package com.example.DoAnJ2EE.controller.client;
 
-import com.example.DoAnJ2EE.service.BrandService;
-import com.example.DoAnJ2EE.service.CategoryService;
-import com.example.DoAnJ2EE.service.ShowroomService;
-import com.example.DoAnJ2EE.service.WarehouseService;
-import lombok.RequiredArgsConstructor;
+import com.example.DoAnJ2EE.dto.motorbike.MotorbikeDetailResponse;
+import com.example.DoAnJ2EE.service.MotorbikeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-@RequiredArgsConstructor
 public class ShowroomController {
 
-    private final WarehouseService warehouseService;
-    private final CategoryService categoryService;
-    private final BrandService brandService;
+    private final MotorbikeService motorbikeService;
+
+    public ShowroomController(MotorbikeService motorbikeService) {
+        this.motorbikeService = motorbikeService;
+    }
 
     @GetMapping("/showroom")
-    public String showroomPage(Model model) {
-        model.addAttribute("warehouses", warehouseService.getAll());
-        model.addAttribute("categories", categoryService.getAll());
-        model.addAttribute("brands", brandService.getAll());
+    public String showroomPage() {
         return "client/showroom";
+    }
+
+    @GetMapping("/san-pham/{slug}")
+    public String showroomDetailPage(@PathVariable String slug, Model model) {
+        MotorbikeDetailResponse bike = motorbikeService.getDetailBySlug(slug);
+        model.addAttribute("bike", bike);
+        return "client/motorbike-detail";
     }
 }

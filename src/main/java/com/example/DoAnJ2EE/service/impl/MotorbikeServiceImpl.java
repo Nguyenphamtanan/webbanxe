@@ -112,6 +112,13 @@ public class MotorbikeServiceImpl implements MotorbikeService {
 
         motorbikeRepository.delete(motorbike);
     }
+    @Override
+    public MotorbikeDetailResponse getDetailBySlug(String slug) {
+        Motorbike motorbike = motorbikeRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy xe với slug: " + slug));
+
+        return mapToDetailResponse(motorbike);
+    }
 
     private MotorbikeResponse mapToResponse(Motorbike motorbike) {
         return MotorbikeResponse.builder()
@@ -138,8 +145,10 @@ public class MotorbikeServiceImpl implements MotorbikeService {
                 .engine(motorbike.getEngine())
                 .weightKg(motorbike.getWeightKg())
                 .primaryImageUrl(motorbike.getPrimaryImageUrl())
-                .brandName(motorbike.getBrand().getName())
-                .categoryName(motorbike.getCategory().getName())
+                .brandId(motorbike.getBrand() != null ? motorbike.getBrand().getId() : null)
+                .brandName(motorbike.getBrand() != null ? motorbike.getBrand().getName() : null)
+                .categoryId(motorbike.getCategory() != null ? motorbike.getCategory().getId() : null)
+                .categoryName(motorbike.getCategory() != null ? motorbike.getCategory().getName() : null)
                 .isActive(motorbike.getIsActive())
                 .build();
     }

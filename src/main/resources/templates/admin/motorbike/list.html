@@ -3,519 +3,632 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý xe máy</title>
+    <title>Quản lý xe</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --honda-red: #c40000;
-            --honda-red-dark: #a80000;
-            --honda-dark: #1f1f1f;
-            --text-muted: #777;
-            --bg-light: #f7f7f7;
+        :root{
+            --bg:#0f172a;
+            --card:#1f2937;
+            --line:#374151;
+            --text:#f9fafb;
+            --muted:#d1d5db;
+            --accent:#2563eb;
+            --accent-hover:#1d4ed8;
+            --shadow:0 18px 40px rgba(0,0,0,.28);
+            --radius:18px;
         }
 
-        * {
-            box-sizing: border-box;
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            min-height:100vh;
+            background:linear-gradient(180deg,#0b1220 0%, #0f172a 100%);
+            color:var(--text);
+            font-family:Inter,"Segoe UI",Arial,sans-serif;
         }
 
-        body {
-            margin: 0;
-            background: var(--bg-light);
-            font-family: Arial, sans-serif;
-            color: #222;
+        .page{
+            max-width:1360px;
+            margin:0 auto;
+            padding:32px 20px 40px;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            margin-bottom:24px;
+            flex-wrap:wrap;
         }
 
-        .sidebar {
-            width: 270px;
-            background: linear-gradient(180deg, var(--honda-red), var(--honda-red-dark));
-            color: #fff;
-            padding: 24px 18px;
-            flex-shrink: 0;
-            box-shadow: 4px 0 14px rgba(0,0,0,0.08);
+        .title{
+            margin:0;
+            font-size:2rem;
+            font-weight:800;
+            color:#fff;
         }
 
-        .sidebar-brand {
-            font-size: 26px;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+        .subtitle{
+            margin-top:8px;
+            color:var(--muted);
+            line-height:1.7;
+            max-width:820px;
+            font-size:1rem;
         }
 
-        .sidebar-subtitle {
-            font-size: 14px;
-            opacity: 0.85;
-            margin-bottom: 28px;
+        .actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
         }
 
-        .sidebar-section-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            opacity: 0.75;
-            margin: 18px 0 10px;
-            letter-spacing: 1px;
+        .btn-main,
+        .btn-outline-light2{
+            min-height:46px;
+            padding:10px 16px;
+            border-radius:12px;
+            border:1px solid transparent;
+            font-weight:700;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            transition:.2s ease;
+            cursor:pointer;
+            text-decoration:none;
         }
 
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .btn-main{
+            background:var(--accent);
+            color:#fff;
+            box-shadow:0 10px 24px rgba(37,99,235,.28);
         }
 
-        .sidebar-menu li {
-            margin-bottom: 10px;
+        .btn-main:hover{
+            background:var(--accent-hover);
+            color:#fff;
+            transform:translateY(-1px);
         }
 
-        .sidebar-menu a {
-            display: block;
-            text-decoration: none;
-            color: #fff;
-            padding: 12px 14px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: 0.2s ease;
+        .btn-outline-light2{
+            background:#1e293b;
+            color:#fff;
+            border-color:#475569;
         }
 
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: rgba(255,255,255,0.16);
+        .btn-outline-light2:hover{
+            background:#334155;
+            color:#fff;
         }
 
-        .main-content {
-            flex: 1;
-            min-width: 0;
+        .hero{
+            background:linear-gradient(135deg,#1d4ed8 0%, #1e3a8a 100%);
+            border-radius:22px;
+            padding:24px;
+            box-shadow:var(--shadow);
+            margin-bottom:24px;
         }
 
-        .topbar {
-            background: #fff;
-            border-bottom: 3px solid var(--honda-red);
-            padding: 20px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
+        .hero h3{
+            margin:0 0 8px;
+            font-size:1.45rem;
+            font-weight:800;
+            color:#fff;
         }
 
-        .topbar h2 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--honda-red);
-            text-transform: uppercase;
+        .hero p{
+            margin:0;
+            color:#e5e7eb;
+            line-height:1.8;
         }
 
-        .topbar p {
-            margin: 4px 0 0;
-            color: var(--text-muted);
+        .summary-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:18px;
+            margin-bottom:24px;
         }
 
-        .content-body {
-            padding: 28px;
+        .summary-card,
+        .panel{
+            background:var(--card);
+            border:1px solid var(--line);
+            border-radius:var(--radius);
+            box-shadow:var(--shadow);
         }
 
-        .section-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--honda-red);
-            text-transform: uppercase;
-            margin-bottom: 18px;
+        .summary-card{
+            padding:20px;
         }
 
-        .quick-badge {
-            display: inline-block;
-            background: #fff0f0;
-            color: var(--honda-red);
-            border: 1px solid #ffd6d6;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .summary-label{
+            color:#cbd5e1;
+            font-weight:600;
+            margin-bottom:8px;
         }
 
-        .card-box {
-            background: #fff;
-            border: none;
-            border-radius: 14px;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+        .summary-value{
+            font-size:1.9rem;
+            font-weight:800;
+            color:#fff;
         }
 
-        .card-box .card-body {
-            padding: 22px;
+        .panel{
+            padding:22px;
         }
 
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
+        .panel-title{
+            margin:0 0 18px;
+            font-size:1.08rem;
+            font-weight:800;
+            color:#fff;
         }
 
-        .toolbar-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
+        .form-label{
+            color:#f3f4f6;
+            font-weight:700;
+            margin-bottom:8px;
         }
 
-        .toolbar-subtitle {
-            margin: 4px 0 0;
-            color: var(--text-muted);
-            font-size: 14px;
+        .form-control,
+        .form-select{
+            background:#0f172a;
+            border:1px solid #4b5563;
+            color:#fff;
+            border-radius:12px;
+            min-height:46px;
         }
 
-        .table {
-            margin-bottom: 0;
+        .form-control:focus,
+        .form-select:focus{
+            background:#0f172a;
+            color:#fff;
+            border-color:#60a5fa;
+            box-shadow:0 0 0 0.2rem rgba(96,165,250,.18);
         }
 
-        .table thead th {
-            white-space: nowrap;
-            background: #fff5f5;
-            color: var(--honda-red);
-            border-bottom: none;
-            font-size: 14px;
-            padding: 14px 12px;
+        .form-control::placeholder{
+            color:#94a3b8;
         }
 
-        .table td {
-            vertical-align: middle;
-            padding: 14px 12px;
-            font-size: 14px;
+        .table-wrap{
+            overflow:auto;
         }
 
-        .product-img {
-            width: 78px;
-            height: 56px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            background: #fafafa;
+        .table-custom{
+            width:100%;
+            border-collapse:collapse;
+            min-width:1080px;
         }
 
-        .product-name {
-            font-weight: 700;
-            margin-bottom: 4px;
+        .table-custom thead th{
+            background:#243041;
+            color:#f8fafc;
+            font-weight:800;
+            font-size:.92rem;
+            padding:14px 12px;
+            border-bottom:1px solid #475569;
+            white-space:nowrap;
         }
 
-        .product-meta {
-            color: var(--text-muted);
-            font-size: 13px;
+        .table-custom tbody td{
+            padding:14px 12px;
+            border-bottom:1px solid #374151;
+            vertical-align:middle;
+            color:#e5e7eb;
         }
 
-        .price-text {
-            font-weight: 700;
-            color: var(--honda-red);
+        .table-custom tbody tr:hover{
+            background:rgba(255,255,255,.03);
         }
 
-        .badge-active {
-            background: #e8f8ee;
-            color: #179b4d;
-            padding: 7px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
+        .product-box{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            min-width:260px;
         }
 
-        .badge-hidden {
-            background: #f1f1f1;
-            color: #666;
-            padding: 7px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
+        .product-img{
+            width:88px;
+            height:62px;
+            object-fit:cover;
+            border-radius:12px;
+            border:1px solid #475569;
+            background:#0b1220;
+            flex-shrink:0;
         }
 
-        .action-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+        .product-name{
+            font-weight:800;
+            color:#fff;
+            margin-bottom:4px;
         }
 
-        .btn-action {
-            border: none;
-            border-radius: 10px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-            line-height: 1;
-            min-width: 82px;
+        .product-meta{
+            color:#cbd5e1;
+            font-size:.88rem;
         }
 
-        .btn-action:hover {
-            transform: translateY(-1px);
+        .badge-status{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:90px;
+            padding:7px 12px;
+            border-radius:999px;
+            font-size:.83rem;
+            font-weight:800;
         }
 
-        .btn-detail {
-            background: #eef5ff;
-            color: #0d6efd;
-            border: 1px solid #cfe2ff;
+        .status-active{
+            background:rgba(22,163,74,.16);
+            color:#86efac;
+            border:1px solid rgba(22,163,74,.3);
         }
 
-        .btn-detail:hover {
-            background: #dbeafe;
-            color: #0b5ed7;
+        .status-hidden{
+            background:rgba(217,119,6,.16);
+            color:#fdba74;
+            border:1px solid rgba(217,119,6,.3);
         }
 
-        .btn-edit {
-            background: #fff4db;
-            color: #b77900;
-            border: 1px solid #ffe08a;
+        .price{
+            font-weight:800;
+            color:#fff;
+            white-space:nowrap;
         }
 
-        .btn-edit:hover {
-            background: #ffecb5;
-            color: #946200;
+        .action-group{
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
         }
 
-        .btn-delete {
-            background: #ffe9e9;
-            color: #c40000;
-            border: 1px solid #ffc9c9;
+        .action-btn{
+            min-height:38px;
+            padding:8px 12px;
+            border-radius:10px;
+            font-size:.88rem;
+            font-weight:700;
+            border:1px solid #475569;
+            background:#1e293b;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            text-decoration:none;
         }
 
-        .btn-delete:hover {
-            background: #ffd6d6;
-            color: #a80000;
+        .action-btn:hover{
+            background:#334155;
+            color:#fff;
         }
 
-        .btn-create {
-            background: var(--honda-red);
-            color: #fff;
-            border: none;
-            font-weight: 700;
-            border-radius: 10px;
-            padding: 10px 18px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s ease;
+        .empty-state{
+            text-align:center;
+            padding:36px 20px;
+            color:#cbd5e1;
         }
 
-        .btn-create:hover {
-            background: var(--honda-red-dark);
-            color: #fff;
+        .error-box{
+            margin-top:12px;
+            color:#fecaca;
+            background:rgba(127,29,29,.35);
+            border:1px solid rgba(239,68,68,.35);
+            border-radius:12px;
+            padding:12px 14px;
+            display:none;
+            white-space:pre-wrap;
         }
 
-        .btn-reload {
-            border: 1px solid var(--honda-red);
-            color: var(--honda-red);
-            background: #fff;
-            font-weight: 700;
-            border-radius: 10px;
-            padding: 10px 16px;
-            transition: 0.2s ease;
-        }
-
-        .btn-reload:hover {
-            background: var(--honda-red);
-            color: #fff;
-        }
-
-        .btn-back {
-            border: 1px solid var(--honda-red);
-            color: var(--honda-red);
-            background: #fff;
-            font-weight: 700;
-            border-radius: 10px;
-            padding: 10px 16px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s ease;
-        }
-
-        .btn-back:hover {
-            background: var(--honda-red);
-            color: #fff;
-        }
-
-        .empty-note {
-            color: var(--text-muted);
-            padding: 22px 0;
-        }
-
-        @media (max-width: 992px) {
-            .layout {
-                flex-direction: column;
+        @media (max-width: 1100px){
+            .summary-grid{
+                grid-template-columns:repeat(2,1fr);
             }
+        }
 
-            .sidebar {
-                width: 100%;
+        @media (max-width: 768px){
+            .summary-grid{
+                grid-template-columns:1fr;
             }
         }
     </style>
 </head>
 <body>
-<div class="layout">
-    <aside class="sidebar">
-        <div class="sidebar-brand">Honda Admin</div>
-        <div class="sidebar-subtitle">Quản trị hệ thống bán xe máy</div>
-
-        <div class="sidebar-section-title">Điều hướng</div>
-        <ul class="sidebar-menu">
-            <li><a href="/admin/dashboard">Dashboard</a></li>
-            <li><a href="/admin/motorbike" class="active">Quản lý xe máy</a></li>
-            <li><a href="#">Quản lý đơn hàng</a></li>
-            <li><a href="#">Quản lý khách hàng</a></li>
-            <li><a href="#">Danh mục xe</a></li>
-            <li><a href="#">Khuyến mãi</a></li>
-            <li><a href="#">Tin tức</a></li>
-        </ul>
-
-        <div class="sidebar-section-title">Hệ thống</div>
-        <ul class="sidebar-menu">
-            <li><a href="#">Cài đặt</a></li>
-            <li><a href="#" onclick="logout()">Đăng xuất</a></li>
-        </ul>
-    </aside>
-
-    <main class="main-content">
-        <div class="topbar">
-            <div>
-                <span class="quick-badge">Quản lý sản phẩm</span>
-                <h2>Danh sách xe máy</h2>
-                <p>Quản lý toàn bộ xe đang hiển thị trong hệ thống showroom</p>
-            </div>
-            <div class="d-flex flex-wrap gap-2">
-                <button class="btn-reload" onclick="loadMotorbikes()">↻ Tải lại</button>
-                <a href="/admin/motorbike/create" class="btn-create">＋ Thêm xe mới</a>
+<div class="page">
+    <div class="topbar">
+        <div>
+            <h1 class="title">Quản lý xe</h1>
+            <div class="subtitle">
+                Danh sách sản phẩm trong hệ thống với tìm kiếm, lọc trạng thái và thao tác CRUD.
             </div>
         </div>
 
-        <div class="content-body">
-            <div class="section-title">Quản lý xe</div>
+        <div class="actions">
+            <a href="/admin/dashboard" class="btn-outline-light2">
+                <i class="bi bi-arrow-left"></i>
+                Dashboard
+            </a>
+            <a href="/admin/motorbike/create" class="btn-main">
+                <i class="bi bi-plus-circle"></i>
+                Thêm xe mới
+            </a>
+        </div>
+    </div>
 
-            <div class="card card-box">
-                <div class="card-body">
-                    <div class="toolbar">
-                        <div>
-                            <h5 class="toolbar-title">Danh sách sản phẩm</h5>
-                            <p class="toolbar-subtitle">Theo dõi thông tin xe, hãng, danh mục, giá bán và trạng thái hiển thị</p>
-                        </div>
-                        <div>
-                            <a href="/admin/dashboard" class="btn-back">← Về dashboard</a>
-                        </div>
-                    </div>
+    <section class="hero">
+        <h3>Danh sách sản phẩm</h3>
+        <p>Trang này sẽ tự thích nghi nếu API trả về mảng thường, content hoặc data.</p>
+    </section>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle table-hover">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Ảnh</th>
-                                <th>Tên xe</th>
-                                <th>Slug</th>
-                                <th>SKU</th>
-                                <th>Giá</th>
-                                <th>Hãng</th>
-                                <th>Danh mục</th>
-                                <th>Trạng thái</th>
-                                <th>CRUD</th>
-                            </tr>
-                            </thead>
-                            <tbody id="motorbikeTableBody">
-                            <tr>
-                                <td colspan="10" class="text-center empty-note">Đang tải dữ liệu...</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <section class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-label">Tổng sản phẩm</div>
+            <div class="summary-value" id="totalProducts">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Đang hiển thị</div>
+            <div class="summary-value" id="activeProducts">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Đang ẩn</div>
+            <div class="summary-value" id="hiddenProducts">0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Kết quả lọc</div>
+            <div class="summary-value" id="filteredProducts">0</div>
+        </div>
+    </section>
+
+    <section class="panel" style="margin-bottom:24px;">
+        <h2 class="panel-title">Bộ lọc dữ liệu</h2>
+
+        <div class="row g-3 align-items-end">
+            <div class="col-lg-6">
+                <label class="form-label">Tìm theo tên / SKU / slug / hãng / danh mục</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Ví dụ: wave, yamaha, HWA2027...">
+            </div>
+
+            <div class="col-lg-3">
+                <label class="form-label">Trạng thái</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="all">Tất cả</option>
+                    <option value="active">Hiển thị</option>
+                    <option value="hidden">Ẩn</option>
+                </select>
+            </div>
+
+            <div class="col-lg-3 d-flex gap-2 flex-wrap">
+                <button class="btn-main" onclick="applyFilter()">
+                    <i class="bi bi-funnel"></i>
+                    Lọc
+                </button>
+                <button class="btn-outline-light2" onclick="resetFilter()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Reset
+                </button>
             </div>
         </div>
-    </main>
+
+        <div id="errorBox" class="error-box"></div>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Danh sách xe</h2>
+
+        <div class="table-wrap">
+            <table class="table-custom">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Sản phẩm</th>
+                    <th>Hãng</th>
+                    <th>Danh mục</th>
+                    <th>SKU</th>
+                    <th>Giá</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="motorbikeTableBody">
+                <tr>
+                    <td colspan="8" class="empty-state">Đang tải dữ liệu...</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
 <script>
     const token = localStorage.getItem("accessToken");
+    if (!token) window.location.href = "/login";
 
-    if (!token) {
+    const FALLBACK_IMAGE = "https://via.placeholder.com/400x260?text=No+Image";
+    let motorbikes = [];
+    let filteredMotorbikes = [];
+
+    function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         window.location.href = "/login";
     }
 
-    async function loadMotorbikes() {
+    function showError(message) {
+        const box = document.getElementById("errorBox");
+        box.style.display = "block";
+        box.innerText = message;
+    }
+
+    function clearError() {
+        const box = document.getElementById("errorBox");
+        box.style.display = "none";
+        box.innerText = "";
+    }
+
+    function safeText(value, fallback = "--") {
+        return value === null || value === undefined || value === "" ? fallback : value;
+    }
+
+    function formatPrice(price) {
+        return Number(price || 0).toLocaleString("vi-VN") + " đ";
+    }
+
+    function normalizeListResponse(data) {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.content)) return data.content;
+        if (Array.isArray(data.data)) return data.data;
+        if (Array.isArray(data.items)) return data.items;
+        return [];
+    }
+
+    function renderSummary() {
+        document.getElementById("totalProducts").innerText = motorbikes.length;
+        document.getElementById("activeProducts").innerText = motorbikes.filter(x => x.isActive).length;
+        document.getElementById("hiddenProducts").innerText = motorbikes.filter(x => !x.isActive).length;
+        document.getElementById("filteredProducts").innerText = filteredMotorbikes.length;
+    }
+
+    function renderTable(list) {
         const tbody = document.getElementById("motorbikeTableBody");
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center empty-note">Đang tải dữ liệu...</td></tr>`;
+
+        if (!list.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-state">Không có sản phẩm phù hợp.</td>
+                </tr>
+            `;
+            renderSummary();
+            return;
+        }
+
+        tbody.innerHTML = list.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <div class="product-box">
+                        <img class="product-img"
+                             src="${item.primaryImageUrl || FALLBACK_IMAGE}"
+                             alt="${safeText(item.name, "")}"
+                             onerror="this.src='${FALLBACK_IMAGE}'">
+                        <div>
+                            <div class="product-name">${safeText(item.name, "Chưa có tên")}</div>
+                            <div class="product-meta">Slug: ${safeText(item.slug)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${safeText(item.brandName)}</td>
+                <td>${safeText(item.categoryName)}</td>
+                <td>${safeText(item.sku)}</td>
+                <td class="price">${formatPrice(item.price)}</td>
+                <td>
+                    <span class="badge-status ${item.isActive ? "status-active" : "status-hidden"}">
+                        ${item.isActive ? "Hiển thị" : "Ẩn"}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-group">
+                        <a class="action-btn" href="/admin/motorbike/detail/${item.id}">
+                            <i class="bi bi-eye"></i> Chi tiết
+                        </a>
+                        <a class="action-btn" href="/admin/motorbike/edit/${item.id}">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <button class="action-btn" onclick="deleteMotorbike(${item.id}, '${String(item.name || "").replace(/'/g, "\\'")}')">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+
+        renderSummary();
+    }
+
+    function applyFilter() {
+        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+        const status = document.getElementById("statusFilter").value;
+
+        filteredMotorbikes = motorbikes.filter(item => {
+            const matchesKeyword =
+                !keyword ||
+                String(item.name || "").toLowerCase().includes(keyword) ||
+                String(item.slug || "").toLowerCase().includes(keyword) ||
+                String(item.sku || "").toLowerCase().includes(keyword) ||
+                String(item.brandName || "").toLowerCase().includes(keyword) ||
+                String(item.categoryName || "").toLowerCase().includes(keyword);
+
+            const matchesStatus =
+                status === "all" ||
+                (status === "active" && item.isActive) ||
+                (status === "hidden" && !item.isActive);
+
+            return matchesKeyword && matchesStatus;
+        });
+
+        renderTable(filteredMotorbikes);
+    }
+
+    function resetFilter() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("statusFilter").value = "all";
+        filteredMotorbikes = [...motorbikes];
+        renderTable(filteredMotorbikes);
+    }
+
+    async function loadMotorbikes() {
+        clearError();
 
         try {
             const response = await fetch("/api/admin/motorbikes", {
-                method: "GET",
                 headers: {
                     "Authorization": "Bearer " + token
                 }
             });
 
             if (response.status === 401 || response.status === 403) {
-                clearTokenAndRedirect();
+                logout();
                 return;
             }
+
+            const rawText = await response.text();
 
             if (!response.ok) {
-                throw new Error("Không thể tải danh sách sản phẩm");
+                throw new Error(`HTTP ${response.status}\n${rawText}`);
             }
 
-            const data = await response.json();
-
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center empty-note">Chưa có sản phẩm nào</td></tr>`;
-                return;
+            let jsonData;
+            try {
+                jsonData = JSON.parse(rawText);
+            } catch (e) {
+                throw new Error("Response không phải JSON hợp lệ:\n" + rawText);
             }
 
-            tbody.innerHTML = data.map(item => `
-                <tr>
-                    <td>${item.id ?? ""}</td>
-                    <td>
-                        <img class="product-img"
-                             src="${item.primaryImageUrl || 'https://via.placeholder.com/78x56?text=No+Image'}"
-                             alt="${item.name || ''}">
-                    </td>
-                    <td>
-                        <div class="product-name">${item.name ?? ""}</div>
-                    </td>
-                    <td>${item.slug ?? ""}</td>
-                    <td>${item.sku ?? ""}</td>
-                    <td><span class="price-text">${Number(item.price ?? 0).toLocaleString("vi-VN")} đ</span></td>
-                    <td>${item.brandName ?? ""}</td>
-                    <td>${item.categoryName ?? ""}</td>
-                    <td>
-                        ${item.isActive
-                            ? '<span class="badge-active">Hiển thị</span>'
-                            : '<span class="badge-hidden">Ẩn</span>'}
-                    </td>
-                    <td>
-                        <div class="action-group">
-                            <a href="/admin/motorbike/detail/${item.id}" class="btn-action btn-detail">👁 Chi tiết</a>
-                            <a href="/admin/motorbike/edit/${item.id}" class="btn-action btn-edit">✎ Sửa</a>
-                            <button type="button" class="btn-action btn-delete"
-                                    onclick="deleteMotorbike(${item.id}, '${escapeJs(item.name ?? '')}')">🗑 Xóa</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join("");
+            motorbikes = normalizeListResponse(jsonData);
+            filteredMotorbikes = [...motorbikes];
+            renderTable(filteredMotorbikes);
+
+            if (!Array.isArray(motorbikes)) {
+                throw new Error("Dữ liệu trả về không phải danh sách.");
+            }
         } catch (error) {
-            console.error(error);
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Lỗi tải dữ liệu</td></tr>`;
+            console.error("loadMotorbikes error:", error);
+            showError("Không tải được dữ liệu sản phẩm.\n\n" + error.message);
+            document.getElementById("motorbikeTableBody").innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-state">Không tải được dữ liệu sản phẩm.</td>
+                </tr>
+            `;
         }
     }
 
     async function deleteMotorbike(id, name) {
-        const confirmed = confirm(`Bạn có chắc muốn xóa xe "${name}" không?`);
-        if (!confirmed) return;
+        const ok = confirm(`Bạn có chắc muốn xóa xe "${name}" không?`);
+        if (!ok) return;
 
         try {
             const response = await fetch(`/api/admin/motorbikes/${id}`, {
@@ -525,42 +638,33 @@
                 }
             });
 
+            const rawText = await response.text();
+
             if (response.status === 401 || response.status === 403) {
-                clearTokenAndRedirect();
+                logout();
                 return;
             }
 
             if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "Xóa sản phẩm thất bại");
+                throw new Error(rawText || "Xóa sản phẩm thất bại");
             }
 
-            alert("Xóa sản phẩm thành công");
-            loadMotorbikes();
+            motorbikes = motorbikes.filter(item => item.id !== id);
+            filteredMotorbikes = filteredMotorbikes.filter(item => item.id !== id);
+            renderTable(filteredMotorbikes);
+            alert("Xóa sản phẩm thành công.");
         } catch (error) {
             console.error(error);
-            alert(error.message || "Có lỗi khi xóa sản phẩm");
+            alert("Không thể xóa sản phẩm.\n" + error.message);
         }
     }
 
-    function escapeJs(str) {
-        return String(str)
-            .replace(/\\/g, "\\\\")
-            .replace(/'/g, "\\'")
-            .replace(/"/g, '&quot;')
-            .replace(/\n/g, ' ')
-            .replace(/\r/g, ' ');
-    }
-
-    function clearTokenAndRedirect() {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
-    }
-
-    function logout() {
-        clearTokenAndRedirect();
-    }
+    document.getElementById("searchInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            applyFilter();
+        }
+    });
 
     loadMotorbikes();
 </script>

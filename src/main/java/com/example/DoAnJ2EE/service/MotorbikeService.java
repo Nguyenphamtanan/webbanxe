@@ -10,6 +10,7 @@ public interface MotorbikeService {
     List<MotorbikeResponse> getAll();
     MotorbikeDetailResponse getById(Long id);
     MotorbikeDetailResponse getBySlug(String slug);
+    MotorbikeDetailResponse getDetailBySlug(String slug);
     MotorbikeResponse create(MotorbikeRequest request);
     MotorbikeResponse update(Long id, MotorbikeRequest request);
     void delete(Long id);

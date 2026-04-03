@@ -17,7 +17,12 @@ public class MotorbikeDetailResponse {
     private String engine;
     private BigDecimal weightKg;
     private String primaryImageUrl;
+
+    private Integer brandId;
     private String brandName;
+
+    private Integer categoryId;
     private String categoryName;
+
     private Boolean isActive;
 }
