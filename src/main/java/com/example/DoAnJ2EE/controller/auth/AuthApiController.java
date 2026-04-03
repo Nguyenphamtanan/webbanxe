@@ -1,9 +1,6 @@
 package com.example.DoAnJ2EE.controller.auth;
 
-import com.example.DoAnJ2EE.dto.auth.AuthResponse;
-import com.example.DoAnJ2EE.dto.auth.LoginRequest;
-import com.example.DoAnJ2EE.dto.auth.RefreshTokenRequest;
-import com.example.DoAnJ2EE.dto.auth.RegisterRequest;
+import com.example.DoAnJ2EE.dto.auth.*;
 import com.example.DoAnJ2EE.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,7 @@ public class AuthApiController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 

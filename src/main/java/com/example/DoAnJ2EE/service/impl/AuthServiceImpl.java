@@ -5,6 +5,7 @@ import com.example.DoAnJ2EE.dto.auth.AuthResponse;
 import com.example.DoAnJ2EE.dto.auth.LoginRequest;
 import com.example.DoAnJ2EE.dto.auth.RefreshTokenRequest;
 import com.example.DoAnJ2EE.dto.auth.RegisterRequest;
+import com.example.DoAnJ2EE.dto.auth.RegisterResponse;
 import com.example.DoAnJ2EE.entity.RefreshToken;
 import com.example.DoAnJ2EE.entity.User;
 import com.example.DoAnJ2EE.repository.UserRepository;
@@ -26,41 +27,38 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
 
     @Override
-    public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username đã tồn tại");
+    public RegisterResponse register(RegisterRequest request) {
+        String fullName = request.getFullName().trim();
+        String email = request.getEmail().trim().toLowerCase();
+        String phone = request.getPhone().trim();
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Mật khẩu xác nhận không khớp");
         }
 
-        if (request.getEmail() != null && !request.getEmail().isBlank()
-                && userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Email đã tồn tại");
         }
 
-        if (request.getPhone() != null && !request.getPhone().isBlank()
-                && userRepository.existsByPhone(request.getPhone())) {
+        if (userRepository.existsByPhone(phone)) {
             throw new RuntimeException("Số điện thoại đã tồn tại");
         }
 
         User user = User.builder()
-                .username(request.getUsername())
+                .username(email)
+                .fullName(fullName)
+                .email(email)
+                .phone(phone)
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
                 .role(UserRole.CUSTOMER)
                 .isActive(true)
                 .build();
 
-        user = userRepository.save(user);
+        userRepository.save(user);
 
-        String accessToken = jwtService.generateToken(user.getUsername());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken.getToken())
-                .username(user.getUsername())
-                .role(user.getRole().name())
+        return RegisterResponse.builder()
+                .message("Đăng ký thành công, vui lòng đăng nhập")
+                .email(user.getEmail())
                 .build();
     }
 
@@ -77,13 +75,13 @@ public class AuthServiceImpl implements AuthService {
             throw new BadCredentialsException("Sai tài khoản hoặc mật khẩu");
         }
 
-        String accessToken = jwtService.generateToken(user.getUsername());
+        String accessToken = jwtService.generateToken(user.getEmail());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken.getToken())
-                .username(user.getUsername())
+                .username(user.getFullName())
                 .role(user.getRole().name())
                 .build();
     }
@@ -98,12 +96,12 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = refreshToken.getUser();
-        String newAccessToken = jwtService.generateToken(user.getUsername());
+        String newAccessToken = jwtService.generateToken(user.getEmail());
 
         return AuthResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(refreshToken.getToken())
-                .username(user.getUsername())
+                .username(user.getFullName())
                 .role(user.getRole().name())
                 .build();
     }

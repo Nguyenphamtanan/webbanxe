@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập Google</title>
+</head>
+<body>
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    const accessToken = params.get("accessToken");
+    const refreshToken = params.get("refreshToken");
+    const role = params.get("role");
+    const username = params.get("username");
+
+    if (accessToken) localStorage.setItem("accessToken", accessToken);
+    if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+    if (role) localStorage.setItem("role", role);
+    if (username) localStorage.setItem("username", username);
+
+    if (role === "ADMIN") {
+        window.location.href = "/admin/dashboard";
+    } else {
+        window.location.href = "/customer/dashboard";
+    }
+</script>
+</body>
+</html>

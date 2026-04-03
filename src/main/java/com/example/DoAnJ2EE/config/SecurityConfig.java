@@ -2,6 +2,7 @@ package com.example.DoAnJ2EE.config;
 
 import com.example.DoAnJ2EE.security.AuthEntryPointJwt;
 import com.example.DoAnJ2EE.security.JwtAuthenticationFilter;
+import com.example.DoAnJ2EE.security.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthEntryPointJwt authEntryPointJwt;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,16 +32,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // OAuth2 cần session trong lúc xác thực
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+
                 .authorizeHttpRequests(auth -> auth
-                        // public pages
                         .requestMatchers(
                                 "/",
                                 "/home",
                                 "/login",
                                 "/register",
-                                "/admin/dashboard",
-                                "/customer/dashboard",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/oauth2-success",
                                 "/error",
                                 "/favicon.ico",
                                 "/css/**",
@@ -48,28 +53,27 @@ public class SecurityConfig {
                                 "/uploads/**"
                         ).permitAll()
 
-                        // auth api
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // protected dashboard apis
                         .requestMatchers("/api/dashboard/admin").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/dashboard/customer").authenticated()
 
-                        // protected admin apis
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "STAFF")
-
-                        // protected customer apis
                         .requestMatchers("/api/cart/**", "/api/orders/**", "/api/profile/**").authenticated()
 
                         .anyRequest().permitAll()
                 )
+
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
+
 }
