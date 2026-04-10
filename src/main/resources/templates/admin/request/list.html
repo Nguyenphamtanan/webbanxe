@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Quản lý yêu cầu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -18,203 +17,448 @@
 
         body {
             background: var(--bg);
-            color:#fff;
+            color: #fff;
             font-family: "SF Pro Display", Inter, sans-serif;
         }
 
         .wrap {
-            max-width:1300px;
-            margin:40px auto;
-            padding:0 16px;
+            max-width: 1380px;
+            margin: 40px auto;
+            padding: 0 16px;
         }
 
         .title {
-            font-size:2.2rem;
-            font-weight:900;
+            font-size: 2.2rem;
+            font-weight: 900;
         }
 
         .sub {
-            color:var(--muted);
-            margin-bottom:24px;
+            color: var(--muted);
+            margin-bottom: 24px;
         }
 
         .card-lux {
             background: var(--card);
-            border:1px solid var(--line);
-            border-radius:20px;
-            padding:20px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #cbd5e1;
+            border: none;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            font-weight: 700;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+            background: transparent;
         }
 
         table {
-            width:100%;
+            width: 100%;
         }
 
         th, td {
-            padding:14px;
-            border-bottom:1px solid var(--line);
+            padding: 14px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
         }
 
         .muted {
-            color:var(--muted);
-            font-size:.9rem;
+            color: var(--muted);
+            font-size: .9rem;
         }
 
         .bike-box {
-            display:flex;
-            gap:12px;
-            align-items:center;
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
         .bike-box img {
-            width:70px;
-            height:55px;
-            object-fit:cover;
-            border-radius:10px;
-            border:1px solid var(--line);
+            width: 72px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--line);
         }
 
         .badge-lux {
-            padding:6px 10px;
-            border-radius:999px;
-            font-weight:700;
-            font-size:.8rem;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .8rem;
+            display: inline-block;
         }
 
         .NEW { background:#1e40af; }
         .CONTACTED { background:#7c3aed; }
-        .QUOTED { background:#f59e0b; }
+        .QUOTED { background:#f59e0b; color:#111; }
         .APPROVED { background:#16a34a; }
         .REJECTED { background:#dc2626; }
 
+        .PENDING { background:#92400e; color:#fde68a; }
+        .CONFIRMED { background:#1d4ed8; color:#bfdbfe; }
+        .COMPLETED { background:#166534; color:#bbf7d0; }
+        .CANCELLED { background:#991b1b; color:#fecaca; }
+
         .btnx {
-            padding:6px 10px;
-            border-radius:10px;
-            border:1px solid var(--line);
-            background:transparent;
-            color:#fff;
-            font-size:.85rem;
+            padding: 7px 11px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: #fff;
+            font-size: .85rem;
         }
 
         .btnx:hover {
-            background:#1f2937;
+            background: #1f2937;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
     </style>
 </head>
 <body>
 
 <div class="wrap">
-    <h1 class="title">Quản lý yêu cầu</h1>
-    <p class="sub">Xử lý báo giá và chuyển đổi khách hàng</p>
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="title">Quản lý yêu cầu</h1>
+            <p class="sub">Tiếp nhận và xử lý yêu cầu báo giá, đặt lịch từ khách hàng</p>
+        </div>
+        <a href="/admin/dashboard" class="btn btn-outline-light">Dashboard</a>
+    </div>
 
     <div class="card-lux">
-        <table>
-            <thead>
-            <tr>
-                <th>Xe</th>
-                <th>Khách</th>
-                <th>Trạng thái</th>
-                <th>Giá báo</th>
-                <th>Cọc</th>
-                <th>Ngày</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-        </table>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link active" onclick="switchTab('quoteTab', this)">Yêu cầu báo giá</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" onclick="switchTab('appointmentTab', this)">Yêu cầu đặt lịch</button>
+            </li>
+        </ul>
+
+        <div id="quoteTab" class="tab-pane active">
+            <table>
+                <thead>
+                <tr>
+                    <th>Xe</th>
+                    <th>Khách</th>
+                    <th>Loại</th>
+                    <th>Trạng thái</th>
+                    <th>Giá báo</th>
+                    <th>Cọc</th>
+                    <th>Ngày</th>
+                    <th>Phản hồi KH</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="quoteTbody">
+                <tr><td colspan="9" class="empty-row">Đang tải dữ liệu...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="appointmentTab" class="tab-pane">
+            <table>
+                <thead>
+                <tr>
+                    <th>Mã lịch</th>
+                    <th>Khách hàng</th>
+                    <th>Xe</th>
+                    <th>Thời gian hẹn</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="appointmentTbody">
+                <tr><td colspan="7" class="empty-row">Đang tải dữ liệu...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
     const token = localStorage.getItem("accessToken");
-    const tbody = document.getElementById("tbody");
+    const quoteTbody = document.getElementById("quoteTbody");
+    const appointmentTbody = document.getElementById("appointmentTbody");
 
-    function formatCurrency(v){
-        if(!v) return "-";
-        return new Intl.NumberFormat("vi-VN").format(v) + " đ";
+    if (!token) {
+        window.location.href = "/login";
     }
 
-    function formatDate(v){
+    function switchTab(tabId, btn) {
+        document.querySelectorAll(".tab-pane").forEach(tab => tab.classList.remove("active"));
+        document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active");
+        btn.classList.add("active");
+    }
+
+    function formatCurrency(v) {
+        if (v == null || v === 0 || v === "") return "-";
+        return new Intl.NumberFormat("vi-VN").format(Number(v)) + " đ";
+    }
+
+    function formatDate(v) {
+        if (!v) return "-";
         return new Date(v).toLocaleString("vi-VN");
     }
 
-    async function load(){
-        const res = await fetch("/api/admin/requests", {
-            headers:{Authorization:"Bearer "+token}
-        });
+    function safeText(v, fallback = "-") {
+        return v === null || v === undefined || v === "" ? fallback : v;
+    }
 
-        const data = await res.json();
+    async function loadQuoteRequests() {
+        try {
+            const res = await fetch("/api/admin/requests", {
+                headers: { Authorization: "Bearer " + token }
+            });
 
-        tbody.innerHTML = data.map(r => `
-            <tr>
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/login";
+                return;
+            }
 
-                <!-- XE -->
-                <td>
-                    <div class="bike-box">
-                        <img src="${r.motorbikeImage || 'https://via.placeholder.com/120'}">
-                        <div>
-                            <div>${r.motorbikeName || '---'}</div>
-                            <div class="muted">${r.requestCode}</div>
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Không tải được danh sách báo giá");
+            }
+
+            const data = await res.json();
+
+            if (!data.length) {
+                quoteTbody.innerHTML = `<tr><td colspan="9" class="empty-row">Chưa có yêu cầu báo giá</td></tr>`;
+                return;
+            }
+
+            quoteTbody.innerHTML = data.map(r => `
+                <tr>
+                    <td>
+                        <div class="bike-box">
+                            <img src="${r.motorbikeImage || 'https://via.placeholder.com/120'}"
+                                 onerror="this.src='https://via.placeholder.com/120'">
+                            <div>
+                                <div>${safeText(r.motorbikeName, '---')}</div>
+                                <div class="muted">${safeText(r.requestCode)}</div>
+                            </div>
                         </div>
-                    </div>
-                </td>
+                    </td>
 
-                <!-- KHÁCH -->
-                <td>
-                    <div>${r.fullName}</div>
-                    <div class="muted">${r.phone}</div>
-                </td>
+                    <td>
+                        <div>${safeText(r.fullName)}</div>
+                        <div class="muted">${safeText(r.phone)}</div>
+                        <div class="muted">${safeText(r.email, '')}</div>
+                    </td>
 
-                <!-- STATUS -->
-                <td>
-                    <span class="badge-lux ${r.status}">
-                        ${r.status}
-                    </span>
-                </td>
+                    <td>${safeText(r.requestType)}</td>
 
-                <!-- PRICE -->
-                <td>${formatCurrency(r.quotedPrice)}</td>
-                <td>${formatCurrency(r.depositRequired)}</td>
+                    <td>
+                        <span class="badge-lux ${r.status}">
+                            ${safeText(r.status)}
+                        </span>
+                    </td>
 
-                <!-- DATE -->
-                <td class="muted">${formatDate(r.createdAt)}</td>
+                    <td>${formatCurrency(r.quotedPrice)}</td>
+                    <td>${formatCurrency(r.depositRequired)}</td>
+                    <td class="muted">${formatDate(r.createdAt)}</td>
 
-                <!-- ACTION -->
-                <td>
-                    <div style="display:flex; gap:6px; flex-wrap:wrap">
+                    <td>
+                        ${
+                            r.status === "APPROVED"
+                            ? `<span class="badge-lux APPROVED">Đồng ý</span>`
+                            : r.status === "REJECTED"
+                            ? `<span class="badge-lux REJECTED">Từ chối</span>`
+                            : r.status === "QUOTED"
+                            ? `<span class="muted">Chờ khách phản hồi</span>`
+                            : "-"
+                        }
+                    </td>
 
+                    <td>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap">
+                            <button class="btnx" onclick="viewQuoteDetail(${r.id})">Chi tiết</button>
 
-                        <button class="btnx" onclick="quote(${r.id})">
-                            Báo giá
-                        </button>
+                            ${r.status === "NEW"
+                                ? `<button class="btnx" onclick="updateQuoteStatus(${r.id}, 'CONTACTED')">Liên hệ</button>`
+                                : ""
+                            }
 
-                        <button class="btnx" onclick="status(${r.id},'CONTACTED')">
-                            Liên hệ
-                        </button>
-
-                    </div>
-                </td>
-
-            </tr>
-        `).join("");
+                            ${r.status === "APPROVED"
+                                ? `<button class="btnx" onclick="goDepositPage()">Sang trang đặt cọc</button>`
+                                : ""
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        } catch (error) {
+            console.error(error);
+            quoteTbody.innerHTML = `<tr><td colspan="9" class="empty-row">Không tải được dữ liệu báo giá</td></tr>`;
+        }
     }
 
-    async function status(id, s){
-        await fetch(`/api/admin/requests/${id}/status`,{
-            method:"PUT",
-            headers:{
-                "Content-Type":"application/json",
-                Authorization:"Bearer "+token
-            },
-            body:JSON.stringify({status:s})
-        });
-        load();
+    async function loadAppointments() {
+        try {
+            const res = await fetch("/api/admin/appointments", {
+                headers: { Authorization: "Bearer " + token }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/login";
+                return;
+            }
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Không tải được danh sách lịch hẹn");
+            }
+
+            const data = await res.json();
+
+            if (!data.length) {
+                appointmentTbody.innerHTML = `<tr><td colspan="7" class="empty-row">Chưa có yêu cầu đặt lịch</td></tr>`;
+                return;
+            }
+
+            appointmentTbody.innerHTML = data.map(a => `
+                <tr>
+                    <td>${safeText(a.appointmentCode)}</td>
+
+                    <td>
+                        <div>${safeText(a.customerName)}</div>
+                        <div class="muted">${safeText(a.phone)}</div>
+                    </td>
+
+                    <td>${safeText(a.motorbikeName)}</td>
+                    <td>${formatDate(a.appointmentTime)}</td>
+
+                    <td>
+                        <span class="badge-lux ${a.status}">
+                            ${safeText(a.status)}
+                        </span>
+                    </td>
+
+                    <td class="muted">${formatDate(a.createdAt)}</td>
+
+                    <td>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap">
+                            <button class="btnx" onclick="viewAppointmentDetail(${a.id})">Chi tiết</button>
+
+                            ${a.status === "PENDING"
+                                ? `<button class="btnx" onclick="updateAppointmentStatus(${a.id}, 'CONFIRMED')">Xác nhận</button>`
+                                : ""
+                            }
+
+                            ${a.status === "CONFIRMED"
+                                ? `<button class="btnx" onclick="updateAppointmentStatus(${a.id}, 'COMPLETED')">Hoàn tất</button>`
+                                : ""
+                            }
+
+                            ${(a.status === "PENDING" || a.status === "CONFIRMED")
+                                ? `<button class="btnx" onclick="updateAppointmentStatus(${a.id}, 'CANCELLED')">Hủy</button>`
+                                : ""
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        } catch (error) {
+            console.error(error);
+            appointmentTbody.innerHTML = `<tr><td colspan="7" class="empty-row">Không tải được dữ liệu lịch hẹn</td></tr>`;
+        }
     }
 
-    function quote(id){
+    async function updateQuoteStatus(id, status) {
+        try {
+            const res = await fetch(`/api/admin/requests/${id}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    status: status,
+                    salesNote: "Admin đã liên hệ khách hàng"
+                })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Cập nhật trạng thái thất bại");
+            }
+
+            loadQuoteRequests();
+        } catch (error) {
+            console.error(error);
+            alert(error.message || "Lỗi cập nhật");
+        }
+    }
+
+    async function updateAppointmentStatus(id, status) {
+        try {
+            const res = await fetch(`/api/admin/appointments/${id}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ status })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Cập nhật trạng thái lịch hẹn thất bại");
+            }
+
+            loadAppointments();
+        } catch (error) {
+            console.error(error);
+            alert(error.message || "Lỗi cập nhật");
+        }
+    }
+
+    function viewQuoteDetail(id) {
         window.location.href = "/admin/requests/" + id;
     }
 
-    load();
+    function viewAppointmentDetail(id) {
+        window.location.href = "/admin/appointments/" + id;
+    }
+
+    function goDepositPage() {
+        window.location.href = "/admin/deposits";
+    }
+
+    loadQuoteRequests();
+    loadAppointments();
 </script>
 
 </body>

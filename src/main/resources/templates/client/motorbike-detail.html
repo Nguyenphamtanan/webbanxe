@@ -595,6 +595,13 @@
                         <div class="action-grid">
                             <button class="btn-lux btn-lux-primary"
                                     type="button"
+                                    onclick="createDeposit(bikeId)">
+                                <i class="bi bi-cash-coin"></i>
+                                Đặt cọc ngay
+                            </button>
+
+                            <button class="btn-lux btn-lux-primary"
+                                    type="button"
                                     th:attr="onclick='requestQuote(' + ${bike.id} + ')'">
                                 <i class="bi bi-chat-dots"></i>
                                 Yêu cầu báo giá
@@ -697,7 +704,7 @@
 </div>
 
 <script th:inline="javascript">
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
     const errorBox = document.getElementById("errorBox");
     const successBox = document.getElementById("successBox");
     const bikeId = [[${bike.id}]];
@@ -727,6 +734,55 @@
         window.location.href = "/login";
     }
 
+    async function createDeposit(motorbikeId) {
+    clearAlert();
+
+    if (!token) {
+        redirectToLogin();
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/deposits", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                motorbikeId: Number(motorbikeId),
+                note: "Đặt cọc từ trang chi tiết xe"
+            })
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            redirectToLogin();
+            return;
+        }
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || "Không thể tạo đặt cọc");
+        }
+
+        const data = await response.json();
+
+        showSuccess("Tạo đặt cọc thành công, đang chuyển sang thanh toán...");
+
+        // 👉 chuyển sang trang chi tiết deposit (QR + PayOS)
+        setTimeout(() => {
+            window.location.href = "/customer/deposits/" + data.id;
+        }, 800);
+
+    } catch (err) {
+        console.error(err);
+        showError(err.message || "Có lỗi xảy ra khi tạo đặt cọc");
+    }
+}
+
+
     async function addToCart(motorbikeId) {
         clearAlert();
 
@@ -751,6 +807,7 @@
             if (response.status === 401 || response.status === 403) {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
+                localStorage.removeItem("token");
                 redirectToLogin();
                 return;
             }
@@ -779,16 +836,16 @@
         window.location.href = "/customer/requests/quote?motorbikeId=" + motorbikeId;
     }
 
-    function scheduleViewing(motorbikeId) {
-        clearAlert();
+  function scheduleViewing(motorbikeId) {
+    clearAlert();
 
-        if (!token) {
-            redirectToLogin();
-            return;
-        }
-
-        showSuccess("Chức năng đặt lịch xem xe sẽ làm ở bước tiếp theo.");
+    if (!token) {
+        redirectToLogin();
+        return;
     }
+
+    window.location.href = "/customer/appointments/create?motorbikeId=" + motorbikeId;
+}
 
     function getCompareList() {
         return JSON.parse(localStorage.getItem("compareMotorbikes") || "[]");

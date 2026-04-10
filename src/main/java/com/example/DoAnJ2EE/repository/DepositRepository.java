@@ -12,4 +12,5 @@ public interface DepositRepository extends JpaRepository<Deposit, Long> {
     List<Deposit> findByUserOrderByCreatedAtDesc(User user);
     Optional<Deposit> findByPurchaseRequest(PurchaseRequest purchaseRequest);
     List<Deposit> findAllByOrderByCreatedAtDesc();
+    Optional<Deposit> findByPayosOrderCode(Long payosOrderCode);
 }

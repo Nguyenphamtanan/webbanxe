@@ -2,6 +2,7 @@ package com.example.DoAnJ2EE.security;
 
 import com.example.DoAnJ2EE.entity.User;
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,7 +31,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public Collection<? extends SimpleGrantedAuthority> getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 

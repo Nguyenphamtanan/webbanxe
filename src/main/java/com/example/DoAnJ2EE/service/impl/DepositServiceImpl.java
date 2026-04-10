@@ -3,20 +3,20 @@ package com.example.DoAnJ2EE.service.impl;
 import com.example.DoAnJ2EE.common.constant.DepositStatus;
 import com.example.DoAnJ2EE.common.constant.PaymentMethod;
 import com.example.DoAnJ2EE.common.constant.PaymentStatus;
-import com.example.DoAnJ2EE.common.constant.PurchaseRequestStatus;
 import com.example.DoAnJ2EE.dto.request.CreateDepositRequest;
 import com.example.DoAnJ2EE.dto.response.DepositResponse;
 import com.example.DoAnJ2EE.entity.Deposit;
-import com.example.DoAnJ2EE.entity.PurchaseRequest;
-import com.example.DoAnJ2EE.entity.PurchaseRequestItem;
+import com.example.DoAnJ2EE.entity.Motorbike;
 import com.example.DoAnJ2EE.entity.User;
 import com.example.DoAnJ2EE.repository.DepositRepository;
-import com.example.DoAnJ2EE.repository.PurchaseRequestItemRepository;
-import com.example.DoAnJ2EE.repository.PurchaseRequestRepository;
+import com.example.DoAnJ2EE.repository.MotorbikeRepository;
 import com.example.DoAnJ2EE.service.DepositService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.DoAnJ2EE.service.PayOSService;
+import com.example.DoAnJ2EE.dto.response.PayOSCreateResponse;
+import com.example.DoAnJ2EE.service.MailService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,67 +27,54 @@ import java.util.List;
 public class DepositServiceImpl implements DepositService {
 
     private final DepositRepository depositRepository;
-    private final PurchaseRequestRepository purchaseRequestRepository;
-    private final PurchaseRequestItemRepository purchaseRequestItemRepository;
+    private final MotorbikeRepository motorbikeRepository;
+    private final PayOSService payOSService;
+    private final MailService mailService;
 
     @Override
     @Transactional
     public DepositResponse create(User user, CreateDepositRequest request) {
-        if (request.getRequestId() == null) {
-            throw new RuntimeException("Thiếu requestId");
+        if (request.getMotorbikeId() == null) {
+            throw new RuntimeException("Thiếu motorbikeId");
         }
 
-        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(request.getRequestId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy yêu cầu"));
+        Motorbike motorbike = motorbikeRepository.findById(request.getMotorbikeId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy xe"));
 
-        if (purchaseRequest.getUser() == null || !purchaseRequest.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Bạn không có quyền tạo đặt cọc cho yêu cầu này");
+        if (!Boolean.TRUE.equals(motorbike.getIsActive())) {
+            throw new RuntimeException("Xe hiện không khả dụng");
         }
 
-        if (purchaseRequest.getStatus() != PurchaseRequestStatus.APPROVED) {
-            throw new RuntimeException("Chỉ được đặt cọc khi yêu cầu đã được đồng ý");
+        BigDecimal price = motorbike.getPrice();
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Giá xe không hợp lệ");
         }
 
-        depositRepository.findByPurchaseRequest(purchaseRequest).ifPresent(d -> {
-            throw new RuntimeException("Yêu cầu này đã có đặt cọc");
-        });
-
-        PurchaseRequestItem item = purchaseRequestItemRepository.findByPurchaseRequest(purchaseRequest)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy xe trong yêu cầu"));
-
-        BigDecimal quotedPrice = purchaseRequest.getQuotedPrice();
-        if (quotedPrice == null || quotedPrice.compareTo(BigDecimal.ZERO) <= 0) {
-            quotedPrice = item.getUnitPrice();
-        }
-
-        BigDecimal depositAmount = purchaseRequest.getDepositRequired();
-        if (depositAmount == null || depositAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            depositAmount = quotedPrice.multiply(new BigDecimal("0.05"));
-        }
-
-        PaymentMethod paymentMethod;
-        try {
-            paymentMethod = PaymentMethod.valueOf(request.getPaymentMethod().toUpperCase());
-        } catch (Exception e) {
-            throw new RuntimeException("Phương thức thanh toán không hợp lệ");
-        }
+        BigDecimal depositAmount = price.multiply(new BigDecimal("0.05"));
 
         Deposit deposit = Deposit.builder()
-                .depositCode(generateDepositCode())
-                .purchaseRequest(purchaseRequest)
+                .depositCode("DEP" + System.currentTimeMillis())
                 .user(user)
-                .motorbike(item.getMotorbike())
-                .quotedPrice(quotedPrice)
+                .motorbike(motorbike)
+                .quotedPrice(price)
                 .depositAmount(depositAmount)
-                .paymentMethod(paymentMethod)
+                .paymentMethod(PaymentMethod.PAYOS)
                 .paymentStatus(PaymentStatus.UNPAID)
                 .status(DepositStatus.PENDING)
                 .note(request.getNote())
                 .build();
 
         deposit = depositRepository.save(deposit);
+
+        // 🔥 GỌI PAYOS
+        PayOSCreateResponse payos = payOSService.createDepositPayment(deposit);
+
+        deposit.setPayosOrderCode(payos.getOrderCode());
+        deposit.setCheckoutUrl(payos.getCheckoutUrl());
+        deposit.setQrCode(payos.getQrCode());
+
+        deposit = depositRepository.save(deposit);
+
         return mapToResponse(deposit);
     }
 
@@ -106,10 +93,10 @@ public class DepositServiceImpl implements DepositService {
         }
 
         deposit.setStatus(DepositStatus.PAID);
-        deposit.setPaymentStatus(PaymentStatus.DEPOSIT_PAID);
+        deposit.setPaymentStatus(PaymentStatus.PAID);
         deposit.setPaidAt(LocalDateTime.now());
 
-        depositRepository.save(deposit);
+        deposit = depositRepository.save(deposit);
         return mapToResponse(deposit);
     }
 
@@ -154,43 +141,143 @@ public class DepositServiceImpl implements DepositService {
         deposit.setStatus(DepositStatus.CONFIRMED);
         deposit.setConfirmedAt(LocalDateTime.now());
 
-        PurchaseRequest purchaseRequest = deposit.getPurchaseRequest();
-        purchaseRequest.setStatus(PurchaseRequestStatus.CONVERTED);
+        deposit = depositRepository.save(deposit);
+        return mapToResponse(deposit);
+    }
 
-        depositRepository.save(deposit);
-        purchaseRequestRepository.save(purchaseRequest);
+    @Override
+    public DepositResponse getAdminById(Long id) {
+        Deposit deposit = depositRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đặt cọc"));
 
         return mapToResponse(deposit);
     }
 
-    private String generateDepositCode() {
-        return "DEP" + System.currentTimeMillis();
+
+    @Override
+    @Transactional
+    public DepositResponse updateStatusByAdmin(Long id, String status, String note) {
+        Deposit deposit = depositRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đặt cọc"));
+
+        DepositStatus newStatus;
+        try {
+            newStatus = DepositStatus.valueOf(status.toUpperCase());
+        } catch (Exception e) {
+            throw new RuntimeException("Trạng thái đặt cọc không hợp lệ");
+        }
+
+        deposit.setStatus(newStatus);
+
+        if (note != null && !note.isBlank()) {
+            deposit.setNote(note);
+        }
+
+        if (newStatus == DepositStatus.PAID) {
+            deposit.setPaymentStatus(PaymentStatus.DEPOSIT_PAID);
+            if (deposit.getPaidAt() == null) {
+                deposit.setPaidAt(LocalDateTime.now());
+            }
+        }
+
+        if (newStatus == DepositStatus.CONFIRMED) {
+            deposit.setPaymentStatus(PaymentStatus.DEPOSIT_PAID);
+            if (deposit.getConfirmedAt() == null) {
+                deposit.setConfirmedAt(LocalDateTime.now());
+            }
+        }
+
+        if (newStatus == DepositStatus.CANCELLED) {
+            deposit.setPaymentStatus(PaymentStatus.UNPAID);
+        }
+
+        deposit = depositRepository.save(deposit);
+
+        if (deposit.getUser() != null
+                && deposit.getUser().getEmail() != null
+                && !deposit.getUser().getEmail().isBlank()) {
+
+            String html = """
+                <h3>Đơn đặt cọc của bạn đã được cập nhật</h3>
+                <p><b>Mã đặt cọc:</b> %s</p>
+                <p><b>Xe:</b> %s</p>
+                <p><b>Trạng thái mới:</b> %s</p>
+                <p><b>Ghi chú:</b> %s</p>
+                """
+                    .formatted(
+                            deposit.getDepositCode(),
+                            deposit.getMotorbike().getName(),
+                            deposit.getStatus().name(),
+                            deposit.getNote() != null ? deposit.getNote() : "Không có"
+                    );
+
+            try {
+                mailService.sendMail(
+                        deposit.getUser().getEmail(),
+                        "Cập nhật đơn đặt cọc",
+                        html
+                );
+            } catch (Exception e) {
+                System.out.println("Gửi mail deposit lỗi: " + e.getMessage());
+            }
+        }
+
+        return mapToResponse(deposit);
     }
 
     private DepositResponse mapToResponse(Deposit deposit) {
+        Long purchaseRequestId = null;
+        String requestCode = null;
+
+        if (deposit.getPurchaseRequest() != null) {
+            purchaseRequestId = deposit.getPurchaseRequest().getId();
+            requestCode = deposit.getPurchaseRequest().getRequestCode();
+        }
+
+        Long motorbikeId = null;
+        String motorbikeName = null;
+        String motorbikeSlug = null;
+        String motorbikeImage = null;
+
+        if (deposit.getMotorbike() != null) {
+            motorbikeId = deposit.getMotorbike().getId();
+            motorbikeName = deposit.getMotorbike().getName();
+            motorbikeSlug = deposit.getMotorbike().getSlug();
+            motorbikeImage = deposit.getMotorbike().getPrimaryImageUrl();
+        }
+
+        String paymentMethod = deposit.getPaymentMethod() != null ? deposit.getPaymentMethod().name() : null;
+        String paymentStatus = deposit.getPaymentStatus() != null ? deposit.getPaymentStatus().name() : null;
+        String status = deposit.getStatus() != null ? deposit.getStatus().name() : null;
+
         return new DepositResponse(
                 deposit.getId(),
                 deposit.getDepositCode(),
-                deposit.getPurchaseRequest().getId(),
-                deposit.getPurchaseRequest().getRequestCode(),
-                deposit.getMotorbike().getId(),
-                deposit.getMotorbike().getName(),
-                deposit.getMotorbike().getSlug(),
-                deposit.getMotorbike().getPrimaryImageUrl(),
+                purchaseRequestId,
+                requestCode,
+                motorbikeId,
+                motorbikeName,
+                motorbikeSlug,
+                motorbikeImage,
                 deposit.getQuotedPrice(),
                 deposit.getDepositAmount(),
-                deposit.getPaymentMethod().name(),
-                deposit.getPaymentStatus().name(),
-                deposit.getStatus().name(),
+                paymentMethod,
+                paymentStatus,
+                status,
                 deposit.getNote(),
                 deposit.getPaidAt(),
                 deposit.getConfirmedAt(),
                 deposit.getCreatedAt(),
 
-                "MB",                    // bankCode
-                "1234567899",            // bankAccount
-                "MB BANK",               // bankName
-                "NGUYEN PHAM TAN AN"     // accountName
+                "MB",
+                "1234567899",
+                "MB BANK",
+                "NGUYEN PHAM TAN AN",
+                deposit.getPayosOrderCode(),
+                deposit.getCheckoutUrl(),
+                deposit.getQrCode(),
+                deposit.getTransactionCode()
         );
+
     }
 }

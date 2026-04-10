@@ -39,6 +39,8 @@ public class DashboardApiController {
             email = authentication.getName();
         }
 
+        System.out.println("=== DEBUG DASHBOARD EMAIL: " + email);
+
         return dashboardService.getCustomerDashboard(email);
     }
 }

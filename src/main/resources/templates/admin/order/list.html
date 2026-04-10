@@ -5,104 +5,215 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý đơn hàng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
-    body {
-        background: #0b0b0b;
-        color: #fff;
-        font-family: Arial, sans-serif;
+    :root{
+      --bg:#0a0f14;
+      --card:#131a22;
+      --line:rgba(255,255,255,.08);
+      --muted:#9ca3af;
+      --text:#ffffff;
+      --accent:#2563eb;
     }
 
-    .wrapper {
-        max-width: 1300px;
-        margin: 40px auto;
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"SF Pro Display", Inter, Arial, sans-serif;
     }
 
-    .card-box {
-        background: #151515;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 20px;
-        padding: 24px;
+    .wrap{
+      max-width:1360px;
+      margin:40px auto;
+      padding:0 16px;
     }
 
-    .table {
-        color: #fff;
+    .title{
+      font-size:2.2rem;
+      font-weight:900;
+      margin-bottom:6px;
     }
 
-    .table thead th {
-        color: #ddd;
-        border-bottom-color: rgba(255,255,255,0.1);
-        white-space: nowrap;
+    .sub{
+      color:var(--muted);
+      margin-bottom:24px;
     }
 
-    .table td {
-        border-bottom-color: rgba(255,255,255,0.06);
-        vertical-align: middle;
+    .card-lux{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:20px;
     }
 
-    .status-badge {
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
-        display: inline-block;
+    .toolbar{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
     }
 
-    .pending { background: #3d320a; color: #ffd95e; }
-    .confirmed { background: #102e4a; color: #78c6ff; }
-    .shipping { background: #2f2147; color: #d6a6ff; }
-    .completed { background: #163d24; color: #7CFC98; }
-    .cancelled { background: #3b1818; color: #ff8a8a; }
-
-    .btn-custom {
-        border-radius: 10px;
+    .form-select{
+      max-width:260px;
+      background:#0d1319;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.1);
     }
 
-    .modal-content {
-        background: #151515;
-        color: #fff;
-        border: 1px solid rgba(255,255,255,0.08);
+    .form-select:focus{
+      background:#0d1319;
+      color:#fff;
+      border-color:#3b82f6;
+      box-shadow:none;
+    }
+
+    table{
+      width:100%;
+    }
+
+    th, td{
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+
+    th{
+      color:#d1d5db;
+      white-space:nowrap;
+      font-weight:700;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .order-code{
+      font-weight:800;
+    }
+
+    .status-badge{
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      display:inline-block;
+      white-space:nowrap;
+    }
+
+    .WAITING_CONFIRMATION{ background:#3d320a; color:#ffd95e; }
+    .WAITING_DEPOSIT{ background:#102e4a; color:#78c6ff; }
+    .DEPOSIT_PAID{ background:#1d4ed8; color:#bfdbfe; }
+    .WAITING_FINAL_PAYMENT{ background:#4b2e14; color:#fdba74; }
+    .PAID{ background:#163d24; color:#7CFC98; }
+    .PREPARING_DELIVERY{ background:#2f2147; color:#d6a6ff; }
+    .DELIVERED{ background:#166534; color:#bbf7d0; }
+    .CANCELLED{ background:#3b1818; color:#ff8a8a; }
+
+    .btnx{
+      padding:8px 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:transparent;
+      color:#fff;
+      font-size:.85rem;
+      transition:.2s ease;
+    }
+
+    .btnx:hover{
+      background:#1f2937;
+    }
+
+    .action-wrap{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .empty-row{
+      text-align:center;
+      color:var(--muted);
+      padding:24px;
+    }
+
+    .modal-content{
+      background:#151515;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
     }
 
     .modal-header,
-    .modal-footer {
-        border-color: rgba(255,255,255,0.08);
+    .modal-footer{
+      border-color:rgba(255,255,255,.08);
     }
 
-    .text-muted-custom {
-        color: #a8a8a8;
+    .detail-grid p{
+      margin-bottom:10px;
+    }
+
+    .detail-grid strong{
+      color:#fff;
+    }
+
+    .table-dark{
+      --bs-table-bg:#111827;
+      --bs-table-border-color:rgba(255,255,255,.08);
+      --bs-table-color:#fff;
     }
   </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="wrap">
+  <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-      <h2>Quản lý đơn hàng</h2>
-      <p class="text-muted-custom mb-0">Danh sách đơn hàng trong hệ thống</p>
+      <h1 class="title">Quản lý đơn hàng</h1>
+      <p class="sub">Theo dõi tiến trình đơn mua xe từ xác nhận đến bàn giao hoàn tất.</p>
     </div>
-    <a href="/admin/dashboard" class="btn btn-outline-light btn-custom">Về dashboard</a>
+    <a href="/admin/dashboard" class="btn btn-outline-light">Dashboard</a>
   </div>
 
-  <div class="card-box">
+  <div class="card-lux">
+    <div class="toolbar">
+      <select id="statusFilter" class="form-select" onchange="renderOrders()">
+        <option value="ALL">Tất cả trạng thái</option>
+        <option value="WAITING_CONFIRMATION">Chờ xác nhận</option>
+        <option value="WAITING_DEPOSIT">Chờ đặt cọc</option>
+        <option value="DEPOSIT_PAID">Đã đặt cọc</option>
+        <option value="WAITING_FINAL_PAYMENT">Chờ thanh toán đủ</option>
+        <option value="PAID">Đã thanh toán đủ</option>
+        <option value="PREPARING_DELIVERY">Chuẩn bị giao xe</option>
+        <option value="DELIVERED">Đã bàn giao</option>
+        <option value="CANCELLED">Đã hủy</option>
+      </select>
+
+      <select id="paymentStatusFilter" class="form-select" onchange="renderOrders()">
+        <option value="ALL">Tất cả thanh toán</option>
+        <option value="UNPAID">Chưa thanh toán</option>
+        <option value="DEPOSIT_PAID">Đã thanh toán cọc</option>
+        <option value="PARTIALLY_PAID">Đã thanh toán một phần</option>
+        <option value="PAID">Đã thanh toán đủ</option>
+        <option value="REFUNDED">Đã hoàn tiền</option>
+      </select>
+    </div>
+
     <div class="table-responsive">
-      <table class="table align-middle">
+      <table>
         <thead>
         <tr>
-          <th>ID</th>
           <th>Mã đơn</th>
           <th>Khách hàng</th>
           <th>Người nhận</th>
-          <th>SĐT</th>
           <th>Tổng tiền</th>
           <th>Thanh toán</th>
           <th>Trạng thái</th>
           <th>Ngày tạo</th>
-          <th width="240">CRUD</th>
+          <th>Thao tác</th>
         </tr>
         </thead>
         <tbody id="orderTableBody">
         <tr>
-          <td colspan="10" class="text-center text-muted-custom">Đang tải dữ liệu...</td>
+          <td colspan="8" class="empty-row">Đang tải dữ liệu...</td>
         </tr>
         </tbody>
       </table>
@@ -121,7 +232,7 @@
         Đang tải...
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-light btn-custom" data-bs-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -129,25 +240,57 @@
 
 <script>
   const token = localStorage.getItem("accessToken");
+  const tbody = document.getElementById("orderTableBody");
+  let allOrders = [];
 
   if (!token) {
       window.location.href = "/login";
   }
 
-  function getStatusClass(status) {
-      switch (status) {
-          case "PENDING": return "pending";
-          case "CONFIRMED": return "confirmed";
-          case "SHIPPING": return "shipping";
-          case "COMPLETED": return "completed";
-          case "CANCELLED": return "cancelled";
-          default: return "";
-      }
+  function formatCurrency(value) {
+      return new Intl.NumberFormat("vi-VN").format(Number(value || 0)) + " đ";
+  }
+
+  function formatDate(value) {
+      if (!value) return "-";
+      return new Date(value).toLocaleString("vi-VN");
+  }
+
+  function paymentMethodLabel(method) {
+      const map = {
+          COD: "Tiền mặt",
+          PAYOS: "PayOS",
+          BANK_TRANSFER: "Chuyển khoản"
+      };
+      return map[method] || method || "-";
+  }
+
+  function paymentStatusLabel(status) {
+      const map = {
+          UNPAID: "Chưa thanh toán",
+          DEPOSIT_PAID: "Đã thanh toán cọc",
+          PARTIALLY_PAID: "Đã thanh toán một phần",
+          PAID: "Đã thanh toán đủ",
+          REFUNDED: "Đã hoàn tiền"
+      };
+      return map[status] || status || "-";
+  }
+
+  function orderStatusLabel(status) {
+      const map = {
+          WAITING_CONFIRMATION: "Chờ xác nhận",
+          WAITING_DEPOSIT: "Chờ đặt cọc",
+          DEPOSIT_PAID: "Đã đặt cọc",
+          WAITING_FINAL_PAYMENT: "Chờ thanh toán đủ",
+          PAID: "Đã thanh toán đủ",
+          PREPARING_DELIVERY: "Chuẩn bị giao xe",
+          DELIVERED: "Đã bàn giao",
+          CANCELLED: "Đã hủy"
+      };
+      return map[status] || status || "-";
   }
 
   async function loadOrders() {
-      const tbody = document.getElementById("orderTableBody");
-
       try {
           const response = await fetch("/api/admin/orders", {
               headers: { "Authorization": "Bearer " + token }
@@ -162,36 +305,115 @@
 
           if (!response.ok) throw new Error("Không tải được danh sách đơn hàng");
 
-          const data = await response.json();
-
-          if (!data.length) {
-              tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted-custom">Chưa có đơn hàng</td></tr>`;
-              return;
-          }
-
-          tbody.innerHTML = data.map(order => `
-              <tr>
-                  <td>${order.id}</td>
-                  <td>${order.orderCode ?? ""}</td>
-                  <td>${order.customerName ?? ""}</td>
-                  <td>${order.receiverName ?? ""}</td>
-                  <td>${order.receiverPhone ?? ""}</td>
-                  <td>${Number(order.totalAmount ?? 0).toLocaleString("vi-VN")} đ</td>
-                  <td>${order.paymentMethod ?? ""} / ${order.paymentStatus ?? ""}</td>
-                  <td><span class="status-badge ${getStatusClass(order.status)}">${order.status}</span></td>
-                  <td>${order.createdAt ? new Date(order.createdAt).toLocaleString("vi-VN") : ""}</td>
-                  <td>
-                      <button class="btn btn-sm btn-outline-info btn-custom me-2"
-                              onclick="viewOrderDetail(${order.id})">Chi tiết</button>
-                      <button class="btn btn-sm btn-outline-warning btn-custom"
-                              onclick="changeOrderStatus(${order.id}, '${order.status}')">Đổi trạng thái</button>
-                  </td>
-              </tr>
-          `).join("");
+          allOrders = await response.json();
+          renderOrders();
       } catch (error) {
           console.error(error);
-          tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Lỗi tải dữ liệu</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" class="empty-row">Lỗi tải dữ liệu</td></tr>`;
       }
+  }
+
+  function renderOrders() {
+      const statusFilter = document.getElementById("statusFilter").value;
+      const paymentStatusFilter = document.getElementById("paymentStatusFilter").value;
+
+      let list = [...allOrders];
+
+      if (statusFilter !== "ALL") {
+          list = list.filter(order => order.status === statusFilter);
+      }
+
+      if (paymentStatusFilter !== "ALL") {
+          list = list.filter(order => order.paymentStatus === paymentStatusFilter);
+      }
+
+      if (!list.length) {
+          tbody.innerHTML = `<tr><td colspan="8" class="empty-row">Chưa có đơn hàng phù hợp</td></tr>`;
+          return;
+      }
+
+      tbody.innerHTML = list.map(order => `
+          <tr>
+              <td>
+                  <div class="order-code">${order.orderCode ?? ""}</div>
+                  <div class="muted">#${order.id ?? ""}</div>
+              </td>
+              <td>
+                  <div>${order.customerName ?? "-"}</div>
+              </td>
+              <td>
+                  <div>${order.receiverName ?? "-"}</div>
+                  <div class="muted">${order.receiverPhone ?? "-"}</div>
+              </td>
+              <td>${formatCurrency(order.totalAmount)}</td>
+              <td>
+                  <div>${paymentMethodLabel(order.paymentMethod)}</div>
+                  <div class="muted">${paymentStatusLabel(order.paymentStatus)}</div>
+              </td>
+              <td>
+                  <span class="status-badge ${order.status || ""}">
+                    ${orderStatusLabel(order.status)}
+                  </span>
+              </td>
+              <td>${formatDate(order.createdAt)}</td>
+              <td>
+                  <div class="action-wrap">
+                      <button class="btnx" onclick="viewOrderDetail(${order.id})">Chi tiết</button>
+                      ${renderActionButtons(order)}
+                  </div>
+              </td>
+          </tr>
+      `).join("");
+  }
+
+  function renderActionButtons(order) {
+      const id = order.id;
+      const status = order.status;
+
+      if (status === "WAITING_CONFIRMATION") {
+          return `
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'WAITING_DEPOSIT')">Xác nhận đơn</button>
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'CANCELLED')">Hủy</button>
+          `;
+      }
+
+      if (status === "WAITING_DEPOSIT") {
+          return `<span class="muted">Chờ khách đặt cọc</span>`;
+      }
+
+      if (status === "DEPOSIT_PAID") {
+          return `
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'WAITING_FINAL_PAYMENT')">Chờ thanh toán đủ</button>
+          `;
+      }
+
+      if (status === "WAITING_FINAL_PAYMENT") {
+          return `
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'PAID')">Xác nhận thanh toán đủ</button>
+          `;
+      }
+
+      if (status === "PAID") {
+          return `
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'PREPARING_DELIVERY')">Chuẩn bị giao xe</button>
+          `;
+      }
+
+      if (status === "PREPARING_DELIVERY") {
+          return `
+              <button class="btnx" onclick="changeOrderStatus(${id}, 'DELIVERED')">Đã bàn giao</button>
+          `;
+      }
+
+      if (status === "DELIVERED") {
+          return `<span class="muted">Đơn đã hoàn tất</span>`;
+      }
+
+      if (status === "CANCELLED") {
+          return `<span class="muted">Đơn đã hủy</span>`;
+      }
+
+      return ``;
   }
 
   async function viewOrderDetail(id) {
@@ -207,22 +429,24 @@
           const itemsHtml = (data.items || []).map(item => `
               <tr>
                   <td>${item.motorbikeName ?? ""}</td>
-                  <td>${Number(item.unitPrice ?? 0).toLocaleString("vi-VN")} đ</td>
+                  <td>${formatCurrency(item.unitPrice)}</td>
                   <td>${item.quantity ?? 0}</td>
-                  <td>${Number(item.lineTotal ?? 0).toLocaleString("vi-VN")} đ</td>
+                  <td>${formatCurrency(item.lineTotal)}</td>
               </tr>
           `).join("");
 
           document.getElementById("orderDetailBody").innerHTML = `
-              <p><strong>Mã đơn:</strong> ${data.orderCode ?? ""}</p>
-              <p><strong>Khách hàng:</strong> ${data.customerName ?? ""}</p>
-              <p><strong>Người nhận:</strong> ${data.receiverName ?? ""}</p>
-              <p><strong>Số điện thoại:</strong> ${data.receiverPhone ?? ""}</p>
-              <p><strong>Địa chỉ:</strong> ${data.shippingAddress ?? ""}</p>
-              <p><strong>Ghi chú:</strong> ${data.note ?? ""}</p>
-              <p><strong>Trạng thái:</strong> ${data.status ?? ""}</p>
-              <p><strong>Thanh toán:</strong> ${data.paymentMethod ?? ""} / ${data.paymentStatus ?? ""}</p>
-              <p><strong>Tổng tiền:</strong> ${Number(data.totalAmount ?? 0).toLocaleString("vi-VN")} đ</p>
+              <div class="detail-grid">
+                <p><strong>Mã đơn:</strong> ${data.orderCode ?? ""}</p>
+                <p><strong>Khách hàng:</strong> ${data.customerName ?? ""}</p>
+                <p><strong>Người nhận:</strong> ${data.receiverName ?? ""}</p>
+                <p><strong>Số điện thoại:</strong> ${data.receiverPhone ?? ""}</p>
+                <p><strong>Địa chỉ:</strong> ${data.shippingAddress ?? ""}</p>
+                <p><strong>Ghi chú:</strong> ${data.note ?? ""}</p>
+                <p><strong>Trạng thái:</strong> ${orderStatusLabel(data.status)}</p>
+                <p><strong>Thanh toán:</strong> ${paymentMethodLabel(data.paymentMethod)} / ${paymentStatusLabel(data.paymentStatus)}</p>
+                <p><strong>Tổng tiền:</strong> ${formatCurrency(data.totalAmount)}</p>
+              </div>
 
               <hr>
               <h6>Sản phẩm trong đơn</h6>
@@ -250,10 +474,7 @@
       }
   }
 
-  async function changeOrderStatus(id, oldStatus) {
-      const status = prompt("Nhập trạng thái mới (PENDING, CONFIRMED, SHIPPING, COMPLETED, CANCELLED):", oldStatus);
-      if (!status) return;
-
+  async function changeOrderStatus(id, newStatus) {
       try {
           const response = await fetch(`/api/admin/orders/${id}/status`, {
               method: "PUT",
@@ -261,10 +482,13 @@
                   "Content-Type": "application/json",
                   "Authorization": "Bearer " + token
               },
-              body: JSON.stringify({ status })
+              body: JSON.stringify({ status: newStatus })
           });
 
-          const data = await response.json();
+          let data = {};
+          try {
+              data = await response.json();
+          } catch (_) {}
 
           if (!response.ok) throw new Error(data.message || "Cập nhật trạng thái thất bại");
 

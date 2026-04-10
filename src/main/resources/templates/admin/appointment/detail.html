@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết lịch hẹn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background:#0b0f14;
+            color:#fff;
+            font-family:"SF Pro Display", Inter, sans-serif;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:40px auto;
+        }
+
+        .card-lux{
+            background:#121821;
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:18px;
+            padding:20px;
+            margin-bottom:20px;
+        }
+
+        .title{
+            font-size:1.8rem;
+            font-weight:900;
+            margin-bottom:10px;
+        }
+
+        .label{
+            color:#9ca3af;
+            font-size:.9rem;
+            min-width:160px;
+            display:inline-block;
+        }
+
+        .value{
+            font-weight:700;
+        }
+
+        .badge-lux{
+            padding:6px 10px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:.8rem;
+            display:inline-block;
+        }
+
+        .PENDING{ background:#92400e; color:#fde68a; }
+        .CONFIRMED{ background:#1d4ed8; color:#bfdbfe; }
+        .COMPLETED{ background:#166534; color:#bbf7d0; }
+        .CANCELLED{ background:#991b1b; color:#fecaca; }
+
+        .btnx{
+            padding:10px 14px;
+            border-radius:10px;
+            border:1px solid rgba(255,255,255,.1);
+            background:transparent;
+            color:#fff;
+        }
+
+        .form-control{
+            background:#0d1319;
+            color:#fff;
+            border:1px solid rgba(255,255,255,.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="title mb-1">Chi tiết lịch hẹn</h1>
+            <div class="text-secondary">Xem thông tin khách hàng và xử lý trạng thái lịch hẹn</div>
+        </div>
+        <a href="/admin/requests" class="btn btn-outline-light">Quay lại</a>
+    </div>
+
+    <div class="card-lux">
+        <div class="title">Thông tin lịch hẹn</div>
+        <div id="detailBox">Đang tải...</div>
+    </div>
+
+    <div class="card-lux">
+        <div class="title">Phản hồi lịch hẹn</div>
+
+        <div class="mb-3">
+            <label class="label">Trạng thái</label>
+            <select id="status" class="form-control">
+                <option value="PENDING">PENDING</option>
+                <option value="CONFIRMED">CONFIRMED</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="CANCELLED">CANCELLED</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="label">Nội dung phản hồi</label>
+            <textarea id="responseNote" class="form-control" rows="4"
+                      placeholder="Muốn gửi nội dung này qua mail cho user thì backend phải bổ sung field responseNote"></textarea>
+        </div>
+
+        <button class="btnx" onclick="submitStatus()">Gửi phản hồi</button>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem("accessToken");
+    const id = window.location.pathname.split("/").pop();
+
+    if(!token) window.location.href = "/login";
+
+    function formatDate(v){
+        if(!v) return "-";
+        return new Date(v).toLocaleString("vi-VN");
+    }
+
+    async function loadDetail(){
+        try{
+            const res = await fetch(`/api/admin/appointments/${id}`, {
+                headers: { Authorization: "Bearer " + token }
+            });
+
+            if(!res.ok) throw new Error("Không tải được chi tiết lịch hẹn");
+
+            const a = await res.json();
+
+            document.getElementById("status").value = a.status || "PENDING";
+
+            document.getElementById("detailBox").innerHTML = `
+                <div class="mb-2"><span class="label">Mã lịch hẹn:</span> <span class="value">${a.appointmentCode || "-"}</span></div>
+                <div class="mb-2"><span class="label">Khách hàng:</span> <span class="value">${a.customerName || "-"}</span></div>
+                <div class="mb-2"><span class="label">Số điện thoại:</span> <span class="value">${a.phone || "-"}</span></div>
+                <div class="mb-2"><span class="label">Xe:</span> <span class="value">${a.motorbikeName || "-"}</span></div>
+                <div class="mb-2"><span class="label">Thời gian hẹn:</span> <span class="value">${formatDate(a.appointmentTime)}</span></div>
+                <div class="mb-2"><span class="label">Ghi chú khách:</span> <span class="value">${a.note || "-"}</span></div>
+                <div class="mb-2"><span class="label">Trạng thái:</span> <span class="badge-lux ${a.status}">${a.status}</span></div>
+                <div><span class="label">Ngày tạo:</span> <span class="value">${formatDate(a.createdAt)}</span></div>
+            `;
+        }catch(error){
+            console.error(error);
+            alert(error.message || "Lỗi tải chi tiết");
+        }
+    }
+
+    async function submitStatus(){
+        try{
+            const res = await fetch(`/api/admin/appointments/${id}/status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    status: document.getElementById("status").value
+                })
+            });
+
+            if(!res.ok){
+                const text = await res.text();
+                throw new Error(text || "Cập nhật thất bại");
+            }
+
+            alert("Cập nhật trạng thái thành công");
+            loadDetail();
+        }catch(error){
+            console.error(error);
+            alert(error.message || "Lỗi cập nhật");
+        }
+    }
+
+    loadDetail();
+</script>
+</body>
+</html>

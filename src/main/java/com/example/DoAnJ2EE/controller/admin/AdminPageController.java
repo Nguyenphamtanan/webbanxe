@@ -36,6 +36,7 @@ public class AdminPageController {
     public String adminCategoryPage() {
         return "admin/category/list";
     }
+
     @GetMapping("/admin/categories/create")
     public String adminCategoryCreatePage() {
         return "admin/category/create";
@@ -56,6 +57,11 @@ public class AdminPageController {
         return "admin/order/list";
     }
 
+    @GetMapping("/admin/orders/{id}")
+    public String adminOrderDetailPage(@PathVariable Long id) {
+        return "admin/order/detail";
+    }
+
     @GetMapping("/admin/brands")
     public String adminBrandPage() {
         return "admin/brand/list";
@@ -70,12 +76,29 @@ public class AdminPageController {
     public String adminRequests() {
         return "admin/request/list";
     }
+
     @GetMapping("/admin/requests/{id}")
     public String adminRequestDetailPage(@PathVariable Long id) {
         return "admin/request/detail";
     }
+
     @GetMapping("/admin/deposits")
     public String adminDepositPage() {
         return "admin/deposit/list";
+    }
+
+    @GetMapping("/admin/deposits/{id}")
+    public String adminDepositDetailPage(@PathVariable Long id) {
+        return "admin/deposit/detail";
+    }
+
+    @GetMapping("/admin/appointments")
+    public String adminAppointmentPage() {
+        return "admin/appointment/list";
+    }
+
+    @GetMapping("/admin/appointments/{id}")
+    public String adminAppointmentDetailPage(@PathVariable Long id) {
+        return "admin/appointment/detail";
     }
 }

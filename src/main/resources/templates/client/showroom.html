@@ -588,7 +588,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Kho</label>
+                <label for="warehouseId" class="form-label">Kho</label>
                 <select id="warehouseId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả kho</option>
                     <option th:each="w : ${warehouses}" th:value="${w.id}" th:text="${w.name}"></option>
@@ -596,7 +596,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Danh mục</label>
+                <label for="categoryId" class="form-label">Danh mục</label>
                 <select id="categoryId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả danh mục</option>
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
@@ -604,7 +604,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Hãng xe</label>
+                <label for="brandId" class="form-label">Hãng xe</label>
                 <select id="brandId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả hãng</option>
                     <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}"></option>

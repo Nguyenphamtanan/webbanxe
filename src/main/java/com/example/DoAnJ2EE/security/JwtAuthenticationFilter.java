@@ -27,23 +27,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("REQUEST URI = " + request.getRequestURI());
+        System.out.println("AUTH HEADER = " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("NO TOKEN");
             filterChain.doFilter(request, response);
             return;
         }
 
         String jwt = authHeader.substring(7);
+        boolean valid = jwtService.isTokenValid(jwt);
+        System.out.println("JWT VALID = " + valid);
 
-        if (!jwtService.isTokenValid(jwt)) {
+        if (!valid) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String email = jwtService.extractEmail(jwt);
+        String subject = jwtService.extractSubject(jwt);
+        System.out.println("JWT SUBJECT = " + subject);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(subject);
+            System.out.println("USER LOADED = " + userDetails.getUsername());
+            System.out.println("AUTHORITIES = " + userDetails.getAuthorities());
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
@@ -57,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            System.out.println("AUTH SET OK");
         }
 
         filterChain.doFilter(request, response);

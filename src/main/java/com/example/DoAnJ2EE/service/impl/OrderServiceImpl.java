@@ -131,12 +131,66 @@ public class OrderServiceImpl implements OrderService {
     public Order updateStatus(Long id, String status) {
         Order order = findById(id);
 
+        OrderStatus currentStatus = order.getStatus();
+        OrderStatus newStatus;
+
         try {
-            order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+            newStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (Exception e) {
             throw new RuntimeException("Trạng thái không hợp lệ");
         }
 
+        // ===== RULE NGHIỆP VỤ =====
+        switch (currentStatus) {
+
+            case WAITING_CONFIRMATION -> {
+                if (newStatus != OrderStatus.WAITING_DEPOSIT &&
+                        newStatus != OrderStatus.CANCELLED) {
+                    throw new RuntimeException("Chỉ được chuyển sang WAITING_DEPOSIT hoặc CANCELLED");
+                }
+            }
+
+            case WAITING_DEPOSIT -> {
+                throw new RuntimeException("Đang chờ khách đặt cọc, không thể cập nhật");
+            }
+
+            case DEPOSIT_PAID -> {
+                if (newStatus != OrderStatus.WAITING_FINAL_PAYMENT) {
+                    throw new RuntimeException("Chỉ được chuyển sang WAITING_FINAL_PAYMENT");
+                }
+            }
+
+            case WAITING_FINAL_PAYMENT -> {
+                if (newStatus != OrderStatus.PAID) {
+                    throw new RuntimeException("Chỉ được chuyển sang PAID");
+                }
+            }
+
+            case PAID -> {
+                if (newStatus != OrderStatus.PREPARING_DELIVERY) {
+                    throw new RuntimeException("Chỉ được chuyển sang PREPARING_DELIVERY");
+                }
+
+                // update paymentStatus khi thanh toán đủ
+                order.setPaymentStatus(PaymentStatus.PAID);
+            }
+
+            case PREPARING_DELIVERY -> {
+                if (newStatus != OrderStatus.DELIVERED) {
+                    throw new RuntimeException("Chỉ được chuyển sang DELIVERED");
+                }
+            }
+
+            case DELIVERED -> {
+                throw new RuntimeException("Đơn đã hoàn tất");
+            }
+
+            case CANCELLED -> {
+                throw new RuntimeException("Đơn đã bị hủy");
+            }
+        }
+
+        order.setStatus(newStatus);
         return orderRepository.save(order);
     }
 
