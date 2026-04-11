@@ -1,0 +1,339 @@
+<div id="ai-chat-widget" class="ai-chat-widget">
+    <button id="ai-chat-fab" class="ai-chat-fab" type="button" aria-label="Mở chat">
+        <span>✦</span>
+    </button>
+
+    <div id="ai-chatbox" class="ai-chatbox hidden">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title-wrap">
+                <div class="ai-chat-dot"></div>
+                <div>
+                    <div class="ai-chat-title">AI tư vấn xe</div>
+                    <div class="ai-chat-subtitle">Hỗ trợ nhanh cho bạn</div>
+                </div>
+            </div>
+            <button type="button" id="ai-chat-close" class="ai-chat-close">×</button>
+        </div>
+
+        <div id="ai-chat-messages" class="ai-chat-messages">
+            <div class="ai-msg ai-bot">
+                Xin chào, mình có thể hỗ trợ tư vấn xe cho bạn.
+            </div>
+        </div>
+
+        <div class="ai-chat-input-wrap">
+            <input id="ai-chat-input" type="text" placeholder="Nhập câu hỏi..." />
+            <button id="ai-chat-send" type="button">Gửi</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ai-chat-widget{
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 9999;
+        font-family: inherit;
+    }
+
+    .ai-chat-fab{
+        width: 58px;
+        height: 58px;
+        border: 1px solid rgba(120, 170, 255, 0.18);
+        border-radius: 50%;
+        cursor: pointer;
+        color: #eaf2ff;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+            radial-gradient(circle at 30% 30%, rgba(72, 124, 255, 0.42), rgba(28, 64, 140, 0.26) 45%, rgba(8, 17, 38, 0.96) 100%);
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, 0.45),
+            0 0 30px rgba(45, 102, 255, 0.18),
+            inset 0 1px 0 rgba(255,255,255,0.06);
+        backdrop-filter: blur(10px);
+        transition: all .2s ease;
+    }
+
+    .ai-chat-fab:hover{
+        transform: translateY(-2px);
+        box-shadow:
+            0 16px 36px rgba(0, 0, 0, 0.5),
+            0 0 34px rgba(45, 102, 255, 0.24),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .ai-chatbox{
+        position: absolute;
+        right: 0;
+        bottom: 72px;
+        width: 360px;
+        height: 500px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border-radius: 24px;
+        border: 1px solid rgba(120, 170, 255, 0.10);
+        background:
+            linear-gradient(180deg, rgba(11, 23, 52, 0.98) 0%, rgba(6, 14, 34, 0.98) 100%);
+        box-shadow:
+            0 24px 60px rgba(0,0,0,0.48),
+            0 0 40px rgba(30, 90, 255, 0.10),
+            inset 0 1px 0 rgba(255,255,255,0.04);
+        backdrop-filter: blur(16px);
+        animation: aiShow .2s ease;
+    }
+
+    @keyframes aiShow{
+        from{
+            opacity: 0;
+            transform: translateY(8px) scale(.98);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .ai-chatbox.hidden{
+        display: none;
+    }
+
+    .ai-chat-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        background:
+            linear-gradient(90deg, rgba(20, 39, 86, 0.95) 0%, rgba(18, 34, 74, 0.88) 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .ai-chat-title-wrap{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ai-chat-dot{
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #4d7cff;
+        box-shadow: 0 0 12px rgba(77,124,255,0.7);
+        flex-shrink: 0;
+    }
+
+    .ai-chat-title{
+        color: #f3f7ff;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .ai-chat-subtitle{
+        color: rgba(219, 231, 255, 0.58);
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .ai-chat-close{
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.04);
+        color: #dce7ff;
+        cursor: pointer;
+        font-size: 18px;
+        transition: .2s ease;
+    }
+
+    .ai-chat-close:hover{
+        background: rgba(255,255,255,0.08);
+    }
+
+    .ai-chat-messages{
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background:
+            radial-gradient(circle at top right, rgba(57, 104, 255, 0.08), transparent 30%);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(137,163,217,0.28) transparent;
+    }
+
+    .ai-msg{
+        max-width: 84%;
+        padding: 12px 14px;
+        border-radius: 18px;
+        line-height: 1.55;
+        font-size: 14px;
+        word-break: break-word;
+        white-space: pre-wrap;
+    }
+
+    .ai-bot{
+        align-self: flex-start;
+        color: #e9f1ff;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+        border: 1px solid rgba(255,255,255,0.05);
+        border-top-left-radius: 8px;
+    }
+
+    .ai-user{
+        align-self: flex-end;
+        color: #ffffff;
+        background:
+            linear-gradient(135deg, #315ff4 0%, #4578ff 100%);
+        box-shadow: 0 8px 22px rgba(49,95,244,0.22);
+        border-top-right-radius: 8px;
+    }
+
+    .ai-chat-input-wrap{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 14px;
+        background:
+            linear-gradient(180deg, rgba(8, 16, 34, 0.95), rgba(7, 14, 28, 0.98));
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .ai-chat-input-wrap input{
+        flex: 1;
+        height: 44px;
+        border-radius: 14px;
+        border: 1px solid rgba(124, 154, 221, 0.12);
+        outline: none;
+        padding: 0 14px;
+        background: rgba(255,255,255,0.06);
+        color: #edf4ff;
+        font-size: 14px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .ai-chat-input-wrap input::placeholder{
+        color: rgba(208, 222, 255, 0.38);
+    }
+
+    .ai-chat-input-wrap input:focus{
+        border-color: rgba(83, 126, 255, 0.34);
+        box-shadow: 0 0 0 3px rgba(61, 110, 255, 0.10);
+    }
+
+    .ai-chat-input-wrap button{
+        height: 44px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        color: #fff;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2f5cf0 0%, #4677ff 100%);
+        box-shadow: 0 8px 20px rgba(47, 92, 240, 0.24);
+        transition: .2s ease;
+    }
+
+    .ai-chat-input-wrap button:hover{
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 576px){
+        .ai-chat-widget{
+            right: 14px;
+            bottom: 14px;
+        }
+
+        .ai-chatbox{
+            width: min(92vw, 360px);
+            height: 68vh;
+        }
+
+        .ai-chat-fab{
+            width: 54px;
+            height: 54px;
+        }
+    }
+</style>
+
+<script th:inline="javascript">
+    window.AI_CHAT_MOTORBIKE_ID = window.AI_CHAT_MOTORBIKE_ID || null;
+    window.AI_CHAT_PAGE_CONTEXT = window.AI_CHAT_PAGE_CONTEXT || "general";
+
+    const aiChatFab = document.getElementById("ai-chat-fab");
+    const aiChatbox = document.getElementById("ai-chatbox");
+    const aiChatMessages = document.getElementById("ai-chat-messages");
+    const aiChatInput = document.getElementById("ai-chat-input");
+    const aiChatSend = document.getElementById("ai-chat-send");
+    const aiChatClose = document.getElementById("ai-chat-close");
+
+    function openAiChat() {
+        aiChatbox.classList.remove("hidden");
+        aiChatFab.style.display = "none";
+        setTimeout(() => aiChatInput.focus(), 120);
+    }
+
+    function closeAiChat() {
+        aiChatbox.classList.add("hidden");
+        aiChatFab.style.display = "flex";
+    }
+
+    function appendAiMessage(text, type) {
+        const div = document.createElement("div");
+        div.className = "ai-msg " + (type === "user" ? "ai-user" : "ai-bot");
+        div.textContent = text;
+        aiChatMessages.appendChild(div);
+        aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+    }
+
+    async function sendAiMessage() {
+        const message = aiChatInput.value.trim();
+        if (!message) return;
+
+        appendAiMessage(message, "user");
+        aiChatInput.value = "";
+
+        try {
+            const response = await fetch("/api/ai/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: message,
+                    motorbikeId: window.AI_CHAT_MOTORBIKE_ID,
+                    pageContext: window.AI_CHAT_PAGE_CONTEXT
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Lỗi chatbot");
+            }
+
+            appendAiMessage(data.answer || "Xin lỗi, hiện chưa có câu trả lời.", "bot");
+        } catch (error) {
+            appendAiMessage("Xin lỗi, chatbot đang tạm thời gặp lỗi.", "bot");
+        }
+    }
+
+    aiChatFab.addEventListener("click", openAiChat);
+    aiChatClose.addEventListener("click", closeAiChat);
+    aiChatSend.addEventListener("click", sendAiMessage);
+
+    aiChatInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            sendAiMessage();
+        }
+    });
+</script>

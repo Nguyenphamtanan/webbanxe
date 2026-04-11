@@ -1,62 +1,39 @@
-spring:
-  config:
-    import: optional:application-secret.yml
+datasource:
+  url: jdbc:sqlserver://localhost:1433;databaseName=QLVehicles;encrypt=true;trustServerCertificate=true
+  username: thu
+  username: sa
+  password: 123456
+  driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-  datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=QLVehicles;encrypt=true;trustServerCertificate=true
-    username: sa
-    password: 123456
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  @@ -33,10 +33,30 @@ spring:
+       - email
+       redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
-        format_sql: true
+       mail:
+         host: smtp.gmail.com
+         port: 587
+         username: nguyenphamtanan1502@gmail.com
+         password: oynaeapadwixuwnn
+         properties:
+           mail:
+             smtp:
+               auth: true
+               starttls:
+                 enable: true
 
-  thymeleaf:
-    cache: false
+     server:
+       port: 8080
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID:}
-            client-secret: ${GOOGLE_CLIENT_SECRET:}
-            scope:
-              - openid
-              - profile
-              - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+     jwt:
+       secret: yourSecretKeyYourSecretKeyYourSecretKey123456
+       expiration: 86400000
+       refresh-expiration: 604800000
+       refresh-expiration: 604800000
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: nguyenphamtanan1502@gmail.com
-    password: oynaeapadwixuwnn
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-server:
-  port: 8080
-
-jwt:
-  secret: yourSecretKeyYourSecretKeyYourSecretKey123456
-  expiration: 86400000
-  refresh-expiration: 604800000
-
-payos:
-  client-id: 8a7b1a96-015f-44a9-982b-cc0540a4bbff
-  api-key: 17c3420b-9065-4e9b-b621-bd50375468a3
-  checksum-key: d7d1975dc5da0d6e4c269528d8585855c16b4fef9c9d01f3f149827e85f48d1b
-  return-url: http://localhost:8080/customer/deposits/return?status=success
-  cancel-url: http://localhost:8080/customer/deposits/cancel?status=cancel
-  webhook-url: https://your-domain.com/api/payos/webhook
+     payos:
+       client-id: 8a7b1a96-015f-44a9-982b-cc0540a4bbff
+       api-key: 17c3420b-9065-4e9b-b621-bd50375468a3
+       checksum-key: d7d1975dc5da0d6e4c269528d8585855c16b4fef9c9d01f3f149827e85f48d1b
+       return-url: http://localhost:8080/customer/deposits/return?status=success
+       cancel-url: http://localhost:8080/customer/deposits/cancel?status=cancel
+       webhook-url: https://your-domain.com/api/payos/webhook
