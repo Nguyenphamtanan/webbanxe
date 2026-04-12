@@ -60,6 +60,8 @@ public class DashboardServiceImpl implements DashboardService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
 
+        long totalOrders = orderRepository.countByUser(user);
+
         long pendingOrders =
                 orderRepository.countByUserAndStatus(user, OrderStatus.WAITING_CONFIRMATION)
                         + orderRepository.countByUserAndStatus(user, OrderStatus.WAITING_DEPOSIT)
@@ -78,7 +80,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .totalOrders(orderRepository.countByUser(user))
+                .totalOrders(totalOrders)
                 .pendingOrders(pendingOrders)
                 .completedOrders(completedOrders)
                 .cancelledOrders(cancelledOrders)

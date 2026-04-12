@@ -36,4 +36,11 @@ public class DepositResponse {
     private String bankAccount;
     private String bankName;
     private String accountName;
+
+    private Long payosOrderCode;
+    private String checkoutUrl;
+    private String qrCode;
+    private String transactionCode;
+
+
 }

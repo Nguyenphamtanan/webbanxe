@@ -27,8 +27,8 @@ public class Deposit {
     @Column(name = "deposit_code", nullable = false, unique = true, length = 30)
     private String depositCode;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "purchase_request_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_request_id")
     private PurchaseRequest purchaseRequest;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -73,4 +73,16 @@ public class Deposit {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "payos_order_code", unique = true)
+    private Long payosOrderCode;
+
+    @Column(name = "checkout_url", length = 1000)
+    private String checkoutUrl;
+
+    @Column(name = "qr_code", length = 2000)
+    private String qrCode;
+
+    @Column(name = "transaction_code", length = 100)
+    private String transactionCode;
 }

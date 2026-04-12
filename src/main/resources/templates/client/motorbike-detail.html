@@ -59,36 +59,11 @@
             padding: 28px 16px 60px;
         }
 
-        .topbar {
+        .page-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 22px;
-            flex-wrap: wrap;
-        }
-
-        .brand-mark {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.95rem;
-        }
-
-        .brand-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            background: var(--accent);
-            box-shadow: 0 0 16px rgba(37,99,235,0.8);
-        }
-
-        .top-actions {
-            display: flex;
+            justify-content: flex-end;
             gap: 12px;
+            margin-bottom: 22px;
             flex-wrap: wrap;
         }
 
@@ -485,32 +460,27 @@
             .btn-lux {
                 width: 100%;
             }
+
+            .page-actions {
+                justify-content: stretch;
+            }
         }
     </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('showroom')"></div>
+
 <div class="detail-shell">
-
-    <div class="topbar">
-        <div class="brand-mark">
-            <span class="brand-dot"></span>
-            <span>Auto Space Detail</span>
-        </div>
-
-        <div class="top-actions">
-            <a href="/showroom" class="btn-lux">
-                <i class="bi bi-arrow-left"></i>
-                Quay lại showroom
-            </a>
-            <a href="/" class="btn-lux">
-                <i class="bi bi-house-door"></i>
-                Trang chủ
-            </a>
-            <a href="/customer/dashboard" class="btn-lux">
-                <i class="bi bi-grid-1x2"></i>
-                Dashboard
-            </a>
-        </div>
+    <div class="page-actions">
+        <a href="/showroom" class="btn-lux">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại showroom
+        </a>
+        <a href="/" class="btn-lux">
+            <i class="bi bi-house-door"></i>
+            Trang chủ
+        </a>
     </div>
 
     <div id="errorBox" class="alert-box alert-error"></div>
@@ -593,6 +563,13 @@
                         </div>
 
                         <div class="action-grid">
+                            <button class="btn-lux btn-lux-primary"
+                                    type="button"
+                                    onclick="createDeposit(bikeId)">
+                                <i class="bi bi-cash-coin"></i>
+                                Đặt cọc ngay
+                            </button>
+
                             <button class="btn-lux btn-lux-primary"
                                     type="button"
                                     th:attr="onclick='requestQuote(' + ${bike.id} + ')'">
@@ -697,7 +674,7 @@
 </div>
 
 <script th:inline="javascript">
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
     const errorBox = document.getElementById("errorBox");
     const successBox = document.getElementById("successBox");
     const bikeId = [[${bike.id}]];
@@ -727,6 +704,53 @@
         window.location.href = "/login";
     }
 
+    async function createDeposit(motorbikeId) {
+        clearAlert();
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/deposits", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    motorbikeId: Number(motorbikeId),
+                    note: "Đặt cọc từ trang chi tiết xe"
+                })
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                redirectToLogin();
+                return;
+            }
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Không thể tạo đặt cọc");
+            }
+
+            const data = await response.json();
+
+            showSuccess("Tạo đặt cọc thành công, đang chuyển sang thanh toán...");
+
+            setTimeout(() => {
+                window.location.href = "/customer/deposits/" + data.id;
+            }, 800);
+
+        } catch (err) {
+            console.error(err);
+            showError(err.message || "Có lỗi xảy ra khi tạo đặt cọc");
+        }
+    }
+
     async function addToCart(motorbikeId) {
         clearAlert();
 
@@ -751,6 +775,7 @@
             if (response.status === 401 || response.status === 403) {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
+                localStorage.removeItem("token");
                 redirectToLogin();
                 return;
             }
@@ -787,7 +812,7 @@
             return;
         }
 
-        showSuccess("Chức năng đặt lịch xem xe sẽ làm ở bước tiếp theo.");
+        window.location.href = "/customer/appointments/create?motorbikeId=" + motorbikeId;
     }
 
     function getCompareList() {

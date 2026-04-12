@@ -20,8 +20,8 @@
             --line-strong: rgba(255,255,255,0.16);
             --text: #f8fafc;
             --muted: #9ca3af;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
+            --accent: #2f6bff;
+            --accent-hover: #6fa2ff;
             --danger: #dc3545;
             --success: #16a34a;
             --shadow: 0 22px 50px rgba(0,0,0,0.30);
@@ -31,13 +31,9 @@
             --radius-sm: 14px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             margin: 0;
@@ -58,41 +54,8 @@
 
         .showroom-shell {
             max-width: 1380px;
-            margin: 0 auto;
-            padding: 30px 16px 56px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .brand-mark {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.95rem;
-        }
-
-        .brand-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            background: var(--accent);
-            box-shadow: 0 0 16px rgba(37,99,235,0.8);
-        }
-
-        .topbar-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            margin: 28px auto 0;
+            padding: 0 16px 56px;
         }
 
         .btn-lux {
@@ -471,16 +434,13 @@
             .hero-inner {
                 grid-template-columns: 1fr;
             }
-
-            .topbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
         }
 
         @media (max-width: 575.98px) {
             .showroom-shell {
-                padding-top: 22px;
+                margin-top: 18px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
 
             .hero,
@@ -496,26 +456,10 @@
     </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('showroom')"></div>
+
 <div class="showroom-shell">
-
-    <div class="topbar">
-        <div class="brand-mark">
-            <span class="brand-dot"></span>
-            <span>Auto Space Showroom</span>
-        </div>
-
-        <div class="topbar-actions">
-            <a href="/" class="btn-lux">
-                <i class="bi bi-house-door"></i>
-                Về trang chủ
-            </a>
-            <a href="/customer/dashboard" class="btn-lux">
-                <i class="bi bi-grid-1x2"></i>
-                Dashboard
-            </a>
-        </div>
-    </div>
-
     <section class="glass-box hero">
         <div class="hero-inner">
             <div>
@@ -588,7 +532,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Kho</label>
+                <label for="warehouseId" class="form-label">Kho</label>
                 <select id="warehouseId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả kho</option>
                     <option th:each="w : ${warehouses}" th:value="${w.id}" th:text="${w.name}"></option>
@@ -596,7 +540,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Danh mục</label>
+                <label for="categoryId" class="form-label">Danh mục</label>
                 <select id="categoryId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả danh mục</option>
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
@@ -604,7 +548,7 @@
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <label class="form-label">Hãng xe</label>
+                <label for="brandId" class="form-label">Hãng xe</label>
                 <select id="brandId" class="form-select" onchange="loadProducts()">
                     <option value="">Tất cả hãng</option>
                     <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}"></option>
@@ -717,11 +661,12 @@
         }, 300);
     }
 
-        function getDetailUrl(item) {
-            if (item.slug) return `/san-pham/${item.slug}`;
-            if (item.id) return `/showroom/${item.id}`;
-            return "/showroom";
-        }
+    function getDetailUrl(item) {
+        if (item.slug) return `/san-pham/${item.slug}`;
+        if (item.id) return `/showroom/${item.id}`;
+        return "/showroom";
+    }
+
     async function loadProducts() {
         const warehouseId = document.getElementById("warehouseId").value;
         const categoryId = document.getElementById("categoryId").value;

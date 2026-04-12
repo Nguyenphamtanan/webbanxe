@@ -2,48 +2,144 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Gửi yêu cầu báo giá</title>
+    <title>Gửi yêu cầu từ giỏ hàng</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         :root {
-            --bg:#0b0b0b;
-            --card:#171717;
+            --bg:#070a10;
+            --card:rgba(17, 24, 39, 0.82);
+            --card-2:rgba(13, 18, 30, 0.92);
             --line:rgba(255,255,255,0.08);
-            --muted:#a8a8a8;
+            --muted:#a7b0bf;
+            --text:#f8fafc;
+            --accent:#2f6bff;
+            --accent-hover:#6fa2ff;
+            --success:#22c55e;
+            --danger:#ef4444;
+            --shadow:0 24px 60px rgba(0,0,0,0.35);
         }
-        body{background:var(--bg);color:#fff;font-family:Arial,sans-serif}
-        .wrap{max-width:1000px;margin:36px auto;padding:0 16px}
-        .box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px}
-        .title{font-size:2rem;font-weight:800;margin-bottom:6px}
-        .sub{color:var(--muted);margin-bottom:24px}
-        .form-control,.form-select,textarea{
-            background:#101010!important;
-            color:#fff!important;
-            border:1px solid var(--line)!important;
-            border-radius:14px!important;
-            padding:12px 14px!important;
-            box-shadow:none!important;
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(47,107,255,0.16), transparent 24%),
+                radial-gradient(circle at top right, rgba(47,107,255,0.08), transparent 22%),
+                linear-gradient(180deg, #070a10 0%, #0a0f18 40%, #070a10 100%);
         }
-        .form-label{font-weight:700;margin-bottom:8px}
-        .summary{
-            background:#101010;border:1px solid var(--line);
-            border-radius:16px;padding:18px;margin-top:24px
+
+        a { text-decoration: none; color: inherit; }
+
+        .wrap { width: min(1200px, calc(100% - 40px)); margin: 28px auto 0; padding-bottom: 40px; }
+
+        .box {
+            background: linear-gradient(180deg, rgba(18,24,34,0.98), rgba(12,17,24,0.98));
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: var(--shadow);
         }
-        .row-line{display:flex;justify-content:space-between;margin-bottom:12px;color:var(--muted)}
-        .row-line.total{color:#fff;font-weight:800;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
-        .btn-main,.btn-second{
-            border-radius:14px;padding:12px 16px;font-weight:700;text-decoration:none;
-            display:inline-block;text-align:center
+
+        .title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 6px; letter-spacing: -1px; }
+        .sub { color: var(--muted); margin-bottom: 24px; line-height: 1.8; }
+
+        .form-control,.form-select,textarea {
+            background:#101722 !important;
+            color:#fff !important;
+            border:1px solid var(--line) !important;
+            border-radius:14px !important;
+            padding:12px 14px !important;
+            box-shadow:none !important;
+            min-height:50px;
         }
-        .btn-main{background:#fff;color:#000;border:none;width:100%}
-        .btn-second{background:transparent;color:#fff;border:1px solid var(--line);width:100%}
-        .alert-box{display:none;border-radius:14px;padding:12px 14px;margin-bottom:16px}
-        .alert-error{background:rgba(255,77,79,.12);color:#ffb3b5;border:1px solid rgba(255,77,79,.3)}
-        .alert-success{background:rgba(29,185,84,.12);color:#9ef0b9;border:1px solid rgba(29,185,84,.3)}
+
+        .form-label { font-weight:700; margin-bottom:8px; color:#e8eef8; }
+
+        .summary {
+            background: rgba(255,255,255,0.03);
+            border:1px solid var(--line);
+            border-radius:16px;
+            padding:18px;
+            margin-top:24px;
+        }
+
+        .row-line {
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:12px;
+            color:var(--muted);
+            gap: 16px;
+        }
+
+        .row-line.total {
+            color:#fff;
+            font-weight:800;
+            border-top:1px solid var(--line);
+            padding-top:12px;
+            margin-top:12px;
+        }
+
+        .btn-main,.btn-second {
+            border-radius:14px;
+            padding:12px 16px;
+            font-weight:700;
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap: 8px;
+            width:100%;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, var(--accent), #5e8fff);
+            color:#fff;
+            border:none;
+            box-shadow: 0 12px 28px rgba(47,107,255,0.28);
+        }
+
+        .btn-second {
+            background:rgba(255,255,255,0.04);
+            color:#fff;
+            border:1px solid var(--line);
+        }
+
+        .alert-box {
+            display:none;
+            border-radius:14px;
+            padding:12px 14px;
+            margin-bottom:16px;
+        }
+
+        .alert-error {
+            background:rgba(239,68,68,.12);
+            color:#ffb3b5;
+            border:1px solid rgba(239,68,68,.3);
+        }
+
+        .alert-success {
+            background:rgba(34,197,94,.12);
+            color:#9ef0b9;
+            border:1px solid rgba(34,197,94,.3);
+        }
+
+        @media (max-width: 575.98px) {
+            .wrap { width: min(100% - 24px, 100%); }
+        }
     </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('cart')"></div>
+
 <div class="wrap">
     <div class="box">
         <h1 class="title">Thông tin nhận báo giá / đặt cọc</h1>
@@ -103,10 +199,16 @@
 
             <div class="row g-3 mt-2">
                 <div class="col-md-6">
-                    <a href="/customer/cart" class="btn-second">Trở lại giỏ hàng</a>
+                    <a href="/customer/cart" class="btn-second">
+                        <i class="bi bi-arrow-left"></i>
+                        Trở lại giỏ hàng
+                    </a>
                 </div>
                 <div class="col-md-6">
-                    <button type="submit" id="submitBtn" class="btn-main">Gửi yêu cầu</button>
+                    <button type="submit" id="submitBtn" class="btn-main">
+                        <i class="bi bi-send"></i>
+                        Gửi yêu cầu
+                    </button>
                 </div>
             </div>
         </form>

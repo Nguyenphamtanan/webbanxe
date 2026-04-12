@@ -10,44 +10,39 @@
 
   <style>
     :root {
-        --bg: #0a0f14;
-        --panel: #131a22;
-        --panel-2: #18212c;
+        --bg: #070a10;
+        --panel: rgba(17, 24, 39, 0.82);
+        --panel-2: rgba(13, 18, 30, 0.92);
         --card: #111821;
         --line: rgba(255,255,255,0.08);
         --line-strong: rgba(255,255,255,0.14);
         --text: #f8fafc;
-        --muted: #9ca3af;
-        --accent: #2563eb;
-        --accent-hover: #1d4ed8;
-        --danger: #dc3545;
-        --success: #16a34a;
+        --muted: #a7b0bf;
+        --accent: #2f6bff;
+        --accent-hover: #6fa2ff;
+        --danger: #ef4444;
+        --success: #22c55e;
     }
 
-    * {
-        box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
         margin: 0;
         background:
-            radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 25%),
-            radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 22%),
-            linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+            radial-gradient(circle at top left, rgba(47,107,255,0.10), transparent 25%),
+            radial-gradient(circle at top right, rgba(47,107,255,0.06), transparent 22%),
+            linear-gradient(180deg, #070a10 0%, #0a0f18 45%, #070a10 100%);
         color: var(--text);
         font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
         min-height: 100vh;
     }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
+    a { text-decoration: none; color: inherit; }
 
     .compare-shell {
         max-width: 1440px;
-        margin: 0 auto;
-        padding: 36px 16px 56px;
+        margin: 28px auto 0;
+        padding: 0 16px 56px;
     }
 
     .topbar {
@@ -72,11 +67,7 @@
         line-height: 1.8;
     }
 
-    .topbar-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
+    .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .btn-lux {
         min-height: 46px;
@@ -100,25 +91,18 @@
         transform: translateY(-1px);
     }
 
-    .btn-lux-primary {
-        background: var(--accent);
-        border-color: var(--accent);
-    }
-
-    .btn-lux-primary:hover {
-        background: var(--accent-hover);
-        border-color: var(--accent-hover);
-    }
+    .btn-lux-primary { background: var(--accent); border-color: var(--accent); }
+    .btn-lux-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
     .btn-lux-danger {
-        background: rgba(220,53,69,0.12);
-        border-color: rgba(220,53,69,0.32);
+        background: rgba(239,68,68,0.12);
+        border-color: rgba(239,68,68,0.32);
         color: #fff;
     }
 
     .btn-lux-danger:hover {
-        background: rgba(220,53,69,0.20);
-        border-color: rgba(220,53,69,0.45);
+        background: rgba(239,68,68,0.20);
+        border-color: rgba(239,68,68,0.45);
     }
 
     .glass-box {
@@ -139,25 +123,11 @@
         flex-wrap: wrap;
     }
 
-    .summary-text {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
+    .summary-text { display: flex; flex-direction: column; gap: 4px; }
+    .summary-label { color: var(--muted); font-size: 0.92rem; }
+    .summary-value { font-size: 1.1rem; font-weight: 800; }
 
-    .summary-label {
-        color: var(--muted);
-        font-size: 0.92rem;
-    }
-
-    .summary-value {
-        font-size: 1.1rem;
-        font-weight: 800;
-    }
-
-    .compare-wrapper {
-        overflow-x: auto;
-    }
+    .compare-wrapper { overflow-x: auto; }
 
     .compare-table {
         min-width: 1100px;
@@ -189,11 +159,7 @@
         background: rgba(255,255,255,0.01);
     }
 
-    .vehicle-top {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
+    .vehicle-top { display: flex; flex-direction: column; gap: 14px; }
 
     .vehicle-image {
         width: 100%;
@@ -204,45 +170,14 @@
         background: #0b1016;
     }
 
-    .vehicle-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    .vehicle-image img { width: 100%; height: 100%; object-fit: cover; }
+    .vehicle-name { font-size: 1.1rem; font-weight: 900; line-height: 1.45; margin: 0; }
+    .vehicle-sub { color: var(--muted); font-size: 0.92rem; }
+    .vehicle-actions { display: grid; gap: 10px; }
 
-    .vehicle-name {
-        font-size: 1.1rem;
-        font-weight: 900;
-        line-height: 1.45;
-        margin: 0;
-    }
-
-    .vehicle-sub {
-        color: var(--muted);
-        font-size: 0.92rem;
-    }
-
-    .vehicle-actions {
-        display: grid;
-        gap: 10px;
-    }
-
-    .value-main {
-        font-size: 1rem;
-        font-weight: 700;
-        line-height: 1.7;
-    }
-
-    .value-muted {
-        color: var(--muted);
-        line-height: 1.75;
-    }
-
-    .price-value {
-        font-size: 1.18rem;
-        font-weight: 900;
-        color: #fff;
-    }
+    .value-main { font-size: 1rem; font-weight: 700; line-height: 1.7; }
+    .value-muted { color: var(--muted); line-height: 1.75; }
+    .price-value { font-size: 1.18rem; font-weight: 900; color: #fff; }
 
     .highlight-best {
         display: inline-flex;
@@ -250,8 +185,8 @@
         gap: 8px;
         padding: 8px 12px;
         border-radius: 999px;
-        background: rgba(22,163,74,0.14);
-        border: 1px solid rgba(22,163,74,0.30);
+        background: rgba(34,197,94,0.14);
+        border: 1px solid rgba(34,197,94,0.30);
         color: #dcfce7;
         font-size: 0.82rem;
         font-weight: 700;
@@ -270,7 +205,7 @@
 
     .error-box {
         color: #ffb4b4;
-        border-color: rgba(220,53,69,0.30);
+        border-color: rgba(239,68,68,0.30);
     }
 
     .note-box {
@@ -284,19 +219,16 @@
     }
 
     @media (max-width: 768px) {
-        .compare-shell {
-            padding-top: 24px;
-        }
-
-        .summary-bar {
-            padding: 18px;
-        }
+        .compare-shell { padding-left: 12px; padding-right: 12px; }
+        .summary-bar { padding: 18px; }
     }
   </style>
 </head>
 <body>
-<div class="compare-shell">
 
+<div th:replace="fragments/navbar :: navbar('showroom')"></div>
+
+<div class="compare-shell">
   <div class="topbar">
     <div class="topbar-left">
       <h1>So sánh xe</h1>
@@ -475,7 +407,7 @@
                               </div>
 
                               <div class="vehicle-actions">
-                                  <a class="btn-lux btn-lux-primary" href="/showroom/${escapeHtml(item.slug || '')}">
+                                  <a class="btn-lux btn-lux-primary" href="/san-pham/${escapeHtml(item.slug || '')}">
                                       <i class="bi bi-arrow-right-circle"></i>
                                       Xem chi tiết
                                   </a>
@@ -516,9 +448,7 @@
 
                       ${buildRow("Trọng lượng", items, item => `
                           <div class="value-main">
-                              ${item.weightKg !== null && item.weightKg !== undefined
-                                  ? `${item.weightKg} kg`
-                                  : "Chưa cập nhật"}
+                              ${item.weightKg !== null && item.weightKg !== undefined ? `${item.weightKg} kg` : "Chưa cập nhật"}
                           </div>
                           ${lightestId === item.id ? `
                               <div class="highlight-best">

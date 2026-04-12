@@ -10,43 +10,39 @@
 
   <style>
     :root {
-        --bg: #0a0f14;
-        --panel: #131a22;
-        --panel-2: #18212c;
+        --bg: #070a10;
+        --panel: rgba(17, 24, 39, 0.82);
+        --panel-2: rgba(13, 18, 30, 0.92);
         --card: #111821;
         --line: rgba(255,255,255,0.08);
         --line-strong: rgba(255,255,255,0.14);
         --text: #f8fafc;
-        --muted: #9ca3af;
-        --accent: #2563eb;
-        --accent-hover: #1d4ed8;
-        --danger: #dc3545;
-        --success: #16a34a;
+        --muted: #a7b0bf;
+        --accent: #2f6bff;
+        --accent-hover: #6fa2ff;
+        --danger: #ef4444;
+        --success: #22c55e;
+        --shadow: 0 24px 60px rgba(0,0,0,0.35);
     }
 
-    * {
-        box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
         margin: 0;
         background:
-            radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 24%),
-            linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+            radial-gradient(circle at top left, rgba(47,107,255,0.10), transparent 24%),
+            linear-gradient(180deg, #070a10 0%, #0a0f18 45%, #070a10 100%);
         color: var(--text);
         font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
         min-height: 100vh;
     }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
+    a { text-decoration: none; color: inherit; }
 
     .page-shell {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 32px 16px 56px;
+        width: min(1400px, calc(100% - 40px));
+        margin: 28px auto 0;
+        padding-bottom: 40px;
     }
 
     .top-actions {
@@ -79,13 +75,14 @@
     }
 
     .btn-lux-primary {
-        background: var(--accent);
-        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--accent), #5e8fff);
+        border-color: transparent;
+        box-shadow: 0 12px 28px rgba(47,107,255,0.28);
     }
 
     .btn-lux-primary:hover {
-        background: var(--accent-hover);
-        border-color: var(--accent-hover);
+        background: linear-gradient(135deg, var(--accent-hover), #82adff);
+        border-color: transparent;
     }
 
     .glass-box {
@@ -93,12 +90,10 @@
         border: 1px solid var(--line);
         border-radius: 24px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+        box-shadow: var(--shadow);
     }
 
-    .content-box {
-        padding: 24px;
-    }
+    .content-box { padding: 24px; }
 
     .bike-box {
         height: 100%;
@@ -116,27 +111,10 @@
         background: #0b1016;
     }
 
-    .bike-body {
-        padding: 18px;
-    }
-
-    .bike-name {
-        font-size: 1.2rem;
-        font-weight: 900;
-        line-height: 1.5;
-        margin-bottom: 8px;
-    }
-
-    .bike-meta {
-        color: var(--muted);
-        margin-bottom: 12px;
-        line-height: 1.7;
-    }
-
-    .bike-price {
-        font-size: 1.45rem;
-        font-weight: 900;
-    }
+    .bike-body { padding: 18px; }
+    .bike-name { font-size: 1.2rem; font-weight: 900; line-height: 1.5; margin-bottom: 8px; }
+    .bike-meta { color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+    .bike-price { font-size: 1.45rem; font-weight: 900; }
 
     .box-title {
         margin: 0 0 10px;
@@ -166,16 +144,14 @@
         border: 1px solid rgba(255,255,255,0.10);
     }
 
-    .form-control::placeholder {
-        color: #7f8a98;
-    }
+    .form-control::placeholder { color: #7f8a98; }
 
     .form-control:focus,
     .form-select:focus {
         background: #0d1319;
         color: #fff;
         border-color: var(--accent);
-        box-shadow: 0 0 0 0.18rem rgba(37,99,235,0.18);
+        box-shadow: 0 0 0 0.18rem rgba(47,107,255,0.18);
     }
 
     textarea.form-control {
@@ -193,15 +169,15 @@
     }
 
     .alert-error {
-        background: rgba(220,53,69,0.12);
+        background: rgba(239,68,68,0.12);
         color: #ffb4b4;
-        border-color: rgba(220,53,69,0.28);
+        border-color: rgba(239,68,68,0.28);
     }
 
     .alert-success {
-        background: rgba(22,163,74,0.12);
+        background: rgba(34,197,94,0.12);
         color: #b7f7c7;
-        border-color: rgba(22,163,74,0.28);
+        border-color: rgba(34,197,94,0.28);
     }
 
     .info-note {
@@ -215,28 +191,20 @@
     }
 
     @media (max-width: 991.98px) {
-        .bike-box img {
-            height: 240px;
-        }
+        .bike-box img { height: 240px; }
     }
 
     @media (max-width: 575.98px) {
-        .page-shell {
-            padding-top: 24px;
-        }
-
-        .content-box {
-            padding: 18px;
-        }
-
-        .btn-lux {
-            width: 100%;
-            justify-content: center;
-        }
+        .page-shell { width: min(100% - 24px, 100%); }
+        .content-box { padding: 18px; }
+        .btn-lux { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('requests')"></div>
+
 <div class="page-shell">
   <div class="top-actions">
     <a th:href="@{'/showroom/' + ${bike.slug}}" class="btn-lux">

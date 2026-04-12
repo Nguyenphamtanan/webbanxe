@@ -26,14 +26,6 @@ public class DepositApiController {
         return ResponseEntity.ok(depositService.create(userDetails.getUser(), request));
     }
 
-    @PutMapping("/{id}/mark-paid")
-    public ResponseEntity<DepositResponse> markPaid(
-            @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        return ResponseEntity.ok(depositService.markPaid(id, userDetails.getUser()));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<DepositResponse> getById(
             @PathVariable Long id,

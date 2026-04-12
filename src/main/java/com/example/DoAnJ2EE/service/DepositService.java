@@ -14,4 +14,6 @@ public interface DepositService {
 
     List<DepositResponse> getAllForAdmin();
     DepositResponse adminConfirm(Long id);
+    DepositResponse getAdminById(Long id);
+    DepositResponse updateStatusByAdmin(Long id, String status, String note);
 }

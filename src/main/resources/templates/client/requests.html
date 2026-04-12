@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Yêu cầu của tôi</title>
@@ -10,20 +12,24 @@
 
     <style>
         :root {
-            --bg: #0a0f14;
-            --panel: #131a22;
-            --panel-2: #18212c;
-            --card: #111821;
+            --bg: #070a10;
+            --bg-soft: #0b1018;
+            --card: rgba(17, 24, 39, 0.82);
+            --card-2: rgba(13, 18, 30, 0.92);
             --line: rgba(255,255,255,0.08);
             --line-strong: rgba(255,255,255,0.14);
             --text: #f8fafc;
-            --muted: #9ca3af;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
-            --danger: #dc3545;
-            --success: #16a34a;
+            --muted: #a7b0bf;
+            --accent: #2f6bff;
+            --accent-hover: #6fa2ff;
+            --success: #22c55e;
             --warning: #f59e0b;
+            --danger: #ef4444;
             --purple: #7c3aed;
+            --shadow: 0 24px 60px rgba(0,0,0,0.35);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
         }
 
         * {
@@ -32,13 +38,13 @@
 
         body {
             margin: 0;
-            background:
-                radial-gradient(circle at top left, rgba(37,99,235,0.10), transparent 24%),
-                radial-gradient(circle at top right, rgba(37,99,235,0.06), transparent 18%),
-                linear-gradient(180deg, #0a0f14 0%, #0d131a 45%, #0a0f14 100%);
+            min-height: 100vh;
             color: var(--text);
             font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
-            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(47,107,255,0.16), transparent 24%),
+                radial-gradient(circle at top right, rgba(47,107,255,0.08), transparent 22%),
+                linear-gradient(180deg, #070a10 0%, #0a0f18 40%, #070a10 100%);
         }
 
         a {
@@ -47,9 +53,9 @@
         }
 
         .page-shell {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 34px 16px 56px;
+            width: min(1400px, calc(100% - 40px));
+            margin: 28px auto 0;
+            padding-bottom: 40px;
         }
 
         .page-head {
@@ -63,7 +69,7 @@
 
         .page-title {
             margin: 0 0 8px;
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(2.4rem, 5vw, 4rem);
             font-weight: 900;
             letter-spacing: -1px;
         }
@@ -73,79 +79,82 @@
             color: var(--muted);
             line-height: 1.8;
             max-width: 760px;
+            font-size: 1.03rem;
         }
 
         .toolbar {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
-            margin-top: 18px;
+            margin-top: 22px;
         }
 
         .btn-lux {
-            min-height: 48px;
-            padding: 11px 18px;
-            border-radius: 14px;
-            border: 1px solid var(--line);
-            background: rgba(255,255,255,0.03);
+            min-height: 50px;
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
             color: #fff;
-            font-weight: 700;
+            font-weight: 800;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: 0.25s ease;
+            backdrop-filter: blur(10px);
         }
 
         .btn-lux:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: var(--line-strong);
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(255,255,255,0.16);
             color: #fff;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         .btn-lux-primary {
-            background: var(--accent);
-            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), #5e8fff);
+            border-color: transparent;
+            box-shadow: 0 12px 28px rgba(47,107,255,0.28);
         }
 
         .btn-lux-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
+            background: linear-gradient(135deg, var(--accent-hover), #82adff);
+            border-color: transparent;
         }
 
         .glass-box {
-            background: rgba(19,26,34,0.88);
+            background: linear-gradient(180deg, rgba(15,22,34,0.96), rgba(10,15,24,0.96));
             border: 1px solid var(--line);
-            border-radius: 24px;
+            border-radius: var(--radius-lg);
             backdrop-filter: blur(10px);
-            box-shadow: 0 18px 42px rgba(0,0,0,0.24);
+            box-shadow: var(--shadow);
         }
 
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            gap: 18px;
             margin-bottom: 24px;
         }
 
         .summary-card {
-            padding: 20px;
+            padding: 22px;
         }
 
         .summary-label {
             color: var(--muted);
             font-size: 0.92rem;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .summary-value {
-            font-size: 1.6rem;
+            font-size: 1.9rem;
             font-weight: 900;
             line-height: 1.1;
         }
 
         .summary-note {
-            margin-top: 8px;
+            margin-top: 10px;
             color: #cbd5e1;
             font-size: 0.92rem;
         }
@@ -156,7 +165,7 @@
             align-items: center;
             gap: 14px;
             flex-wrap: wrap;
-            margin-bottom: 18px;
+            margin-bottom: 22px;
             padding: 18px 20px;
         }
 
@@ -173,18 +182,23 @@
 
         .form-select {
             min-width: 190px;
-            min-height: 46px;
+            min-height: 48px;
             border-radius: 14px;
-            background: #0d1319;
+            background: rgba(255,255,255,0.04);
             color: #fff;
             border: 1px solid rgba(255,255,255,0.10);
         }
 
         .form-select:focus {
-            background: #0d1319;
+            background: rgba(255,255,255,0.05);
             color: #fff;
             border-color: var(--accent);
-            box-shadow: 0 0 0 0.18rem rgba(37,99,235,0.18);
+            box-shadow: 0 0 0 0.18rem rgba(47,107,255,0.18);
+        }
+
+        .form-select option {
+            background: #101722;
+            color: #fff;
         }
 
         .request-list {
@@ -193,16 +207,17 @@
         }
 
         .request-card {
-            padding: 22px;
-            border-radius: 24px;
-            background: linear-gradient(180deg, rgba(18,24,34,0.96), rgba(13,18,26,0.96));
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(18,24,34,0.98), rgba(12,17,24,0.98));
             border: 1px solid var(--line);
+            box-shadow: var(--shadow);
             transition: 0.25s ease;
         }
 
         .request-card:hover {
-            border-color: rgba(37,99,235,0.26);
-            transform: translateY(-2px);
+            border-color: rgba(47,107,255,0.28);
+            transform: translateY(-3px);
         }
 
         .request-top {
@@ -211,11 +226,11 @@
             align-items: flex-start;
             gap: 18px;
             flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .request-code {
-            font-size: 1.12rem;
+            font-size: 1.18rem;
             font-weight: 900;
             margin-bottom: 6px;
         }
@@ -259,15 +274,15 @@
 
         .status-approved,
         .status-converted {
-            background: rgba(22,163,74,0.14);
+            background: rgba(34,197,94,0.14);
             color: #bbf7d0;
-            border-color: rgba(22,163,74,0.28);
+            border-color: rgba(34,197,94,0.28);
         }
 
         .status-rejected {
-            background: rgba(220,53,69,0.14);
+            background: rgba(239,68,68,0.14);
             color: #fecaca;
-            border-color: rgba(220,53,69,0.28);
+            border-color: rgba(239,68,68,0.28);
         }
 
         .detail-grid {
@@ -334,10 +349,11 @@
         .loading-box {
             padding: 56px 20px;
             text-align: center;
-            border-radius: 24px;
+            border-radius: var(--radius-lg);
             border: 1px dashed rgba(255,255,255,0.10);
             background: rgba(19,26,34,0.72);
             color: var(--muted);
+            box-shadow: var(--shadow);
         }
 
         .empty-box h3,
@@ -359,6 +375,12 @@
             }
         }
 
+        @media (max-width: 991.98px) {
+            .page-shell {
+                width: min(100% - 24px, 100%);
+            }
+        }
+
         @media (max-width: 768px) {
             .summary-grid,
             .detail-grid {
@@ -368,10 +390,17 @@
             .request-card {
                 padding: 18px;
             }
+
+            .page-title {
+                font-size: 2.2rem;
+            }
         }
     </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('requests')"></div>
+
 <div class="page-shell">
     <div class="page-head">
         <div>
@@ -381,10 +410,7 @@
             </p>
 
             <div class="toolbar">
-                <a href="/customer/dashboard" class="btn-lux">
-                    <i class="bi bi-grid-1x2"></i>
-                    Về dashboard
-                </a>
+
                 <a href="/showroom" class="btn-lux btn-lux-primary">
                     <i class="bi bi-bag"></i>
                     Tiếp tục xem xe
@@ -513,117 +539,116 @@
         summaryGrid.style.display = total ? "grid" : "none";
     }
 
-  function renderRequests(data) {
-    if (!data.length) {
-        requestsContainer.innerHTML = `
-            <div class="empty-box">
-                <h3>Không có yêu cầu phù hợp</h3>
-                <p>Thử đổi bộ lọc hoặc quay lại showroom để gửi yêu cầu mới.</p>
-                <div class="mt-3">
-                    <a href="/showroom" class="btn-lux btn-lux-primary">
-                        <i class="bi bi-arrow-right"></i>
-                        Đi tới showroom
-                    </a>
+    function renderRequests(data) {
+        if (!data.length) {
+            requestsContainer.innerHTML = `
+                <div class="empty-box">
+                    <h3>Không có yêu cầu phù hợp</h3>
+                    <p>Thử đổi bộ lọc hoặc quay lại showroom để gửi yêu cầu mới.</p>
+                    <div class="mt-3">
+                        <a href="/showroom" class="btn-lux btn-lux-primary">
+                            <i class="bi bi-arrow-right"></i>
+                            Đi tới showroom
+                        </a>
+                    </div>
                 </div>
-            </div>
-        `;
-        return;
-    }
+            `;
+            return;
+        }
 
-    requestsContainer.innerHTML = `
-        <div class="request-list">
-            ${data.map(r => `
-                <div class="request-card">
-                    <div class="request-top">
-                        <div style="display:flex; gap:14px; align-items:center;">
-                            <img src="${r.motorbikeImage || 'https://via.placeholder.com/120'}"
-                                 style="width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+        requestsContainer.innerHTML = `
+            <div class="request-list">
+                ${data.map(r => `
+                    <div class="request-card">
+                        <div class="request-top">
+                            <div style="display:flex; gap:14px; align-items:center;">
+                                <img src="${r.motorbikeImage || 'https://via.placeholder.com/120'}"
+                                     style="width:90px;height:70px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+
+                                <div>
+                                    <div class="request-code">
+                                        ${r.motorbikeName || 'Xe không xác định'}
+                                    </div>
+
+                                    <div class="request-meta">
+                                        Mã: ${r.requestCode || '-'} <br>
+                                        Ngày gửi: ${formatDate(r.createdAt)}
+                                    </div>
+                                </div>
+                            </div>
 
                             <div>
-                                <div class="request-code">
-                                    ${r.motorbikeName || 'Xe không xác định'}
-                                </div>
-
-                                <div class="request-meta">
-                                    Mã: ${r.requestCode} <br>
-                                    Ngày gửi: ${formatDate(r.createdAt)}
-                                </div>
+                                <span class="badge-lux ${statusClass(r.status)}">
+                                    ${statusLabel(r.status)}
+                                </span>
                             </div>
                         </div>
 
-                        <div>
-                            <span class="badge-lux ${statusClass(r.status)}">
-                                ${statusLabel(r.status)}
-                            </span>
+                        <div class="detail-grid">
+                            <div class="detail-box">
+                                <div class="detail-label">Nhu cầu</div>
+                                <div class="detail-value">${requestTypeLabel(r.requestType)}</div>
+                            </div>
+
+                            <div class="detail-box">
+                                <div class="detail-label">Giá báo từ showroom</div>
+                                <div class="detail-value money-highlight">${formatCurrency(r.quotedPrice)}</div>
+                            </div>
+
+                            <div class="detail-box">
+                                <div class="detail-label">Tiền cọc yêu cầu</div>
+                                <div class="detail-value money-highlight">${formatCurrency(r.depositRequired)}</div>
+                            </div>
+
+                            <div class="detail-box">
+                                <div class="detail-label">Trạng thái xử lý</div>
+                                <div class="detail-value">${statusLabel(r.status)}</div>
+                            </div>
+                        </div>
+
+                        <div class="note-box">
+                            <div class="note-title">Ghi chú từ showroom</div>
+                            <div class="note-text">${r.salesNote || "Chưa có ghi chú từ showroom."}</div>
+                        </div>
+
+                        <div class="request-actions">
+                            <a href="/customer/requests" class="btn-lux">
+                                <i class="bi bi-arrow-clockwise"></i>
+                                Làm mới
+                            </a>
+
+                            <a href="/showroom/${r.motorbikeSlug || ''}" class="btn-lux">
+                                <i class="bi bi-eye"></i>
+                                Xem xe
+                            </a>
+
+                            ${r.status === "QUOTED" ? `
+                                <button class="btn-lux btn-lux-primary" type="button"
+                                        onclick="customerDecision(${r.id}, 'APPROVED')">
+                                    <i class="bi bi-check-circle"></i>
+                                    Đồng ý báo giá
+                                </button>
+
+                                <button class="btn-lux" type="button"
+                                        onclick="customerDecision(${r.id}, 'REJECTED')">
+                                    <i class="bi bi-x-circle"></i>
+                                    Từ chối
+                                </button>
+                            ` : ``}
+
+                       ${(r.status === "APPROVED" || r.status === "CONVERTED") ? `
+                        <button class="btn-lux btn-lux-primary" type="button"
+                                onclick="goToDepositFlow(${r.id})">
+                            <i class="bi bi-cash-coin"></i>
+                            Tiếp tục đặt cọc
+                        </button>
+                    ` : ``}
                         </div>
                     </div>
-
-                    <div class="detail-grid">
-                        <div class="detail-box">
-                            <div class="detail-label">Nhu cầu</div>
-                            <div class="detail-value">${requestTypeLabel(r.requestType)}</div>
-                        </div>
-
-                        <div class="detail-box">
-                            <div class="detail-label">Giá báo từ showroom</div>
-                            <div class="detail-value money-highlight">${formatCurrency(r.quotedPrice)}</div>
-                        </div>
-
-                        <div class="detail-box">
-                            <div class="detail-label">Tiền cọc yêu cầu</div>
-                            <div class="detail-value money-highlight">${formatCurrency(r.depositRequired)}</div>
-                        </div>
-
-                        <div class="detail-box">
-                            <div class="detail-label">Trạng thái xử lý</div>
-                            <div class="detail-value">${statusLabel(r.status)}</div>
-                        </div>
-                    </div>
-
-                    <div class="note-box">
-                        <div class="note-title">Ghi chú từ showroom</div>
-                        <div class="note-text">${r.salesNote || "Chưa có ghi chú từ showroom."}</div>
-                    </div>
-
-                    <div class="request-actions">
-                        <a href="/customer/requests" class="btn-lux">
-                            <i class="bi bi-arrow-clockwise"></i>
-                            Làm mới
-                        </a>
-
-                        <a href="/showroom/${r.motorbikeSlug}" class="btn-lux">
-                            <i class="bi bi-eye"></i>
-                            Xem xe
-                        </a>
-
-                        ${r.status === "QUOTED" ? `
-                            <button class="btn-lux btn-lux-primary" type="button"
-                                    onclick="customerDecision(${r.id}, 'APPROVED')">
-                                <i class="bi bi-check-circle"></i>
-                                Đồng ý báo giá
-                            </button>
-
-                            <button class="btn-lux" type="button"
-                                    onclick="customerDecision(${r.id}, 'REJECTED')">
-                                <i class="bi bi-x-circle"></i>
-                                Từ chối
-                            </button>
-                        ` : ``}
-
-                        ${r.status === "APPROVED" || r.status === "CONVERTED"
-                            ? `<button class="btn-lux btn-lux-primary" type="button"
-                                       onclick="goToDepositFlow(${r.id})">
-                                   <i class="bi bi-cash-coin"></i>
-                                   Tiếp tục đặt cọc
-                               </button>`
-                            : ``
-                        }
-                    </div>
-                </div>
-            `).join("")}
-        </div>
-    `;
-}
+                `).join("")}
+            </div>
+        `;
+    }
 
     function applyFilters() {
         const status = statusFilter.value;
@@ -639,9 +664,10 @@
         renderRequests(filtered);
     }
 
-    function goToDepositFlow(requestId) {
-        window.location.href = "/customer/deposits/create?requestId=" + requestId;
-    }
+            function goToDepositFlow(requestId) {
+                window.location.href = "/customer/deposits/create?requestId=" + requestId;
+            }
+
     async function loadMyRequests() {
         try {
             const res = await fetch("/api/requests/my-requests", {
@@ -684,41 +710,40 @@
         }
     }
 
-    loadMyRequests();
     async function customerDecision(id, status) {
-    try {
-        const res = await fetch(`/api/requests/${id}/decision`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify({
-                status: status,
-                salesNote: ""
-            })
-        });
+        try {
+            const res = await fetch(`/api/requests/${id}/decision`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    status: status,
+                    salesNote: ""
+                })
+            });
 
-        if (res.status === 401 || res.status === 403) {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            window.location.href = "/login";
-            return;
+            if (res.status === 401 || res.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.location.href = "/login";
+                return;
+            }
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || "Không thể cập nhật");
+            }
+
+            loadMyRequests();
+        } catch (error) {
+            console.error(error);
+            alert(error.message || "Có lỗi xảy ra");
         }
-
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(text || "Không thể cập nhật");
-        }
-
-        // reload lại UI
-        loadMyRequests();
-
-    } catch (error) {
-        console.error(error);
-        alert(error.message || "Có lỗi xảy ra");
     }
-}
+
+    loadMyRequests();
 </script>
 </body>
 </html>

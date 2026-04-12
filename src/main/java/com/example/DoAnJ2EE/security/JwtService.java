@@ -35,10 +35,9 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractEmail(String token) {
+    public String extractSubject(String token) {
         return extractAllClaims(token).getSubject();
     }
-
     public boolean isTokenValid(String token) {
         try {
             Jwts.parser()

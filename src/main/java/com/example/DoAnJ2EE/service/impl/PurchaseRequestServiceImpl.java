@@ -26,6 +26,7 @@ import com.example.DoAnJ2EE.service.PurchaseRequestService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.DoAnJ2EE.service.MailService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,6 +41,7 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
     private final PurchaseRequestItemRepository purchaseRequestItemRepository;
     private final RegionRepository regionRepository;
     private final MotorbikeRepository motorbikeRepository;
+    private final MailService mailService;
 
     @Override
     @Transactional
@@ -164,7 +166,7 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
                     String image = null;
                     String slug = null;
 
-                    if (item != null) {
+                    if (item.getMotorbike() != null) {
                         name = item.getMotorbikeName();
                         image = item.getMotorbike().getPrimaryImageUrl();
                         slug = item.getMotorbike().getSlug();
@@ -207,8 +209,11 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
 
                     if (item != null) {
                         name = item.getMotorbikeName();
-                        image = item.getMotorbike().getPrimaryImageUrl();
-                        slug = item.getMotorbike().getSlug();
+
+                        if (item.getMotorbike() != null) {
+                            image = item.getMotorbike().getPrimaryImageUrl();
+                            slug = item.getMotorbike().getSlug();
+                        }
                     }
 
                     return new AdminPurchaseRequestResponse(
@@ -217,14 +222,12 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
                             pr.getFullName(),
                             pr.getPhone(),
                             pr.getEmail(),
-                            pr.getRequestType().name(),
-                            pr.getStatus().name(),
+                            pr.getRequestType() != null ? pr.getRequestType().name() : null,
+                            pr.getStatus() != null ? pr.getStatus().name() : null,
                             pr.getQuotedPrice(),
                             pr.getDepositRequired(),
                             pr.getSalesNote(),
                             pr.getCreatedAt(),
-
-                            // 🔥 NEW
                             name,
                             image,
                             slug
@@ -255,6 +258,28 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
         purchaseRequest.setSalesNote(request.getSalesNote());
 
         purchaseRequestRepository.save(purchaseRequest);
+
+        // Gửi mail phản hồi cho khách
+        if (purchaseRequest.getEmail() != null && !purchaseRequest.getEmail().isBlank()) {
+            String html = """
+                <h3>Yêu cầu của bạn đã được showroom cập nhật</h3>
+                <p><b>Mã yêu cầu:</b> %s</p>
+                <p><b>Trạng thái mới:</b> %s</p>
+                <p><b>Ghi chú phản hồi:</b> %s</p>
+                """
+                    .formatted(
+                            purchaseRequest.getRequestCode(),
+                            purchaseRequest.getStatus().name(),
+                            purchaseRequest.getSalesNote() != null ? purchaseRequest.getSalesNote() : "Không có"
+                    );
+
+            mailService.sendMail(
+                    purchaseRequest.getEmail(),
+                    "Cập nhật yêu cầu từ showroom",
+                    html
+            );
+        }
+
         return mapToDetailResponse(purchaseRequest);
     }
 
@@ -264,12 +289,40 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
         PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy yêu cầu"));
 
+        if (purchaseRequest.getRequestType() != RequestType.QUOTE) {
+            throw new RuntimeException("Chỉ áp dụng báo giá cho yêu cầu QUOTE");
+        }
+
+
         purchaseRequest.setQuotedPrice(request.getQuotedPrice());
         purchaseRequest.setDepositRequired(request.getDepositRequired());
         purchaseRequest.setSalesNote(request.getSalesNote());
         purchaseRequest.setStatus(PurchaseRequestStatus.QUOTED);
 
         purchaseRequestRepository.save(purchaseRequest);
+
+        if (purchaseRequest.getEmail() != null && !purchaseRequest.getEmail().isBlank()) {
+            String html = """
+                <h3>Showroom đã phản hồi yêu cầu báo giá của bạn</h3>
+                <p>Mã yêu cầu: %s</p>
+                <p>Giá báo: %s</p>
+                <p>Tiền cọc: %s</p>
+                <p>Ghi chú: %s</p>
+                """
+                    .formatted(
+                            purchaseRequest.getRequestCode(),
+                            purchaseRequest.getQuotedPrice(),
+                            purchaseRequest.getDepositRequired(),
+                            purchaseRequest.getSalesNote() != null ? purchaseRequest.getSalesNote() : ""
+                    );
+
+            mailService.sendMail(
+                    purchaseRequest.getEmail(),
+                    "Phản hồi báo giá từ showroom",
+                    html
+            );
+        }
+
         return mapToDetailResponse(purchaseRequest);
     }
 
@@ -302,18 +355,33 @@ public class PurchaseRequestServiceImpl implements PurchaseRequestService {
     }
 
     private PurchaseRequestResponse mapToDetailResponse(PurchaseRequest purchaseRequest) {
-        List<PurchaseRequestItemResponse> items = purchaseRequestItemRepository.findByPurchaseRequest(purchaseRequest)
+
+        List<PurchaseRequestItemResponse> items = purchaseRequestItemRepository
+                .findByPurchaseRequest(purchaseRequest)
                 .stream()
-                .map(item -> new PurchaseRequestItemResponse(
-                        item.getId(),
-                        item.getMotorbike().getId(),
-                        item.getMotorbikeName(),
-                        item.getMotorbike().getSlug(),                 // ✅ slug
-                        item.getMotorbike().getPrimaryImageUrl(),      // ✅ image
-                        item.getUnitPrice(),
-                        item.getQuantity(),
-                        item.getLineTotal()
-                ))
+                .map(item -> {
+
+                    Long motorbikeId = null;
+                    String slug = null;
+                    String image = null;
+
+                    if (item.getMotorbike() != null) {
+                        motorbikeId = item.getMotorbike().getId();
+                        slug = item.getMotorbike().getSlug();
+                        image = item.getMotorbike().getPrimaryImageUrl();
+                    }
+
+                    return new PurchaseRequestItemResponse(
+                            item.getId(),
+                            motorbikeId,
+                            item.getMotorbikeName(),
+                            slug,
+                            image,
+                            item.getUnitPrice(),
+                            item.getQuantity(),
+                            item.getLineTotal()
+                    );
+                })
                 .toList();
 
         return new PurchaseRequestResponse(

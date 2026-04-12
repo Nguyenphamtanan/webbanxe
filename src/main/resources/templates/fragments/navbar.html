@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navbar(activePage)">
+    <style>
+        :root {
+            --accent: #2f6bff;
+            --accent-2: #6fa2ff;
+        }
+
+        a,
+        a:hover,
+        a:focus,
+        a:active,
+        a:visited {
+            text-decoration: none !important;
+        }
+
+        .brand-mark,
+        .nav-text-link,
+        .nav-center-logo,
+        .nav-icon-btn,
+        .nav-pill-btn {
+            text-decoration: none !important;
+        }
+
+        .navbar-lux {
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+            background: rgba(10,13,18,0.66);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .nav-shell {
+            min-height: 86px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .nav-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand-mark {
+            font-size: 1.18rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: #fff !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 18px rgba(47,107,255,0.8);
+        }
+
+        .nav-text-link {
+            color: #e5e7eb !important;
+            font-weight: 600;
+            transition: 0.25s;
+            white-space: nowrap;
+        }
+
+        .nav-text-link:hover {
+            color: #fff !important;
+        }
+
+        .nav-text-link.active {
+            color: var(--accent-2) !important;
+        }
+
+        .nav-center-logo {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white !important;
+            transition: 0.25s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-center-logo:hover {
+            transform: translateY(-2px);
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff !important;
+            box-shadow: 0 12px 24px rgba(47,107,255,0.24);
+        }
+
+        .nav-icon-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.03);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white !important;
+            transition: 0.25s;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-icon-btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff !important;
+            box-shadow: 0 12px 24px rgba(47,107,255,0.24);
+        }
+
+        .nav-icon-btn.active {
+            background: rgba(47,107,255,0.18);
+            border-color: rgba(47,107,255,0.38);
+            color: #fff !important;
+            box-shadow: 0 10px 22px rgba(47,107,255,0.16);
+        }
+
+        .nav-pill-btn {
+            padding: 10px 16px;
+            min-height: 46px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.03);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white !important;
+            font-weight: 600;
+            transition: 0.25s;
+            white-space: nowrap;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-pill-btn:hover {
+            transform: translateY(-2px);
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff !important;
+            box-shadow: 0 12px 24px rgba(47,107,255,0.24);
+        }
+
+        .nav-pill-btn.active {
+            background: rgba(47,107,255,0.18);
+            border-color: rgba(47,107,255,0.38);
+            color: #fff !important;
+            box-shadow: 0 10px 22px rgba(47,107,255,0.16);
+        }
+
+        .nav-logout-btn {
+            border: 1px solid rgba(239,68,68,0.22);
+            background: rgba(239,68,68,0.10);
+            cursor: pointer;
+        }
+
+        .nav-logout-btn:hover {
+            background: rgba(239,68,68,0.18);
+            border-color: rgba(239,68,68,0.36);
+            color: #fff !important;
+            box-shadow: 0 12px 24px rgba(239,68,68,0.18);
+        }
+
+        @media (max-width: 991.98px) {
+            .nav-shell {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .nav-left,
+            .nav-center,
+            .nav-right {
+                justify-content: center;
+            }
+
+            .nav-left {
+                gap: 18px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .brand-mark {
+                font-size: 0.98rem;
+                letter-spacing: 3px;
+            }
+        }
+    </style>
+
+    <nav class="navbar navbar-dark navbar-lux">
+        <div class="container nav-shell">
+            <div class="nav-left">
+                <a class="brand-mark" href="/">
+                    <span class="brand-dot"></span>
+                    AUTO SPACE
+                </a>
+
+                <a href="/showroom"
+                   class="nav-text-link"
+                   th:classappend="${activePage == 'showroom'} ? ' active' : ''">
+                    Showroom
+                </a>
+
+                <a href="/customer/orders"
+                   class="nav-text-link"
+                   th:classappend="${activePage == 'orders'} ? ' active' : ''">
+                    Đơn hàng
+                </a>
+
+                <a href="/customer/requests"
+                   class="nav-text-link"
+                   th:classappend="${activePage == 'requests'} ? ' active' : ''">
+                    Yêu cầu
+                </a>
+            </div>
+
+            <div class="nav-center">
+                <a href="/" class="nav-center-logo" title="Trang chủ">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </a>
+            </div>
+
+            <div class="nav-right" id="navActions"></div>
+        </div>
+    </nav>
+
+    <script>
+        async function syncUserName() {
+            const token = localStorage.getItem("accessToken");
+            if (!token) return;
+
+            try {
+                const res = await fetch("/api/dashboard/customer", {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+                if (data.fullName) {
+                    localStorage.setItem("fullName", data.fullName);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function logoutNavbar() {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("token");
+            localStorage.removeItem("fullName");
+            localStorage.removeItem("username");
+            localStorage.removeItem("name");
+            window.location.href = "/login";
+        }
+
+        function updateNavbarActions() {
+            const token = localStorage.getItem("accessToken");
+            const navActions = document.getElementById("navActions");
+            if (!navActions) return;
+
+            const path = window.location.pathname;
+
+            const cartActive = path.startsWith("/customer/cart") || path.startsWith("/customer/checkout");
+            const appointmentActive = path.startsWith("/customer/appointments");
+            const compareActive = path.startsWith("/showroom/compare");
+            const profileActive = path.startsWith("/customer/profile");
+
+            if (!token) {
+                navActions.innerHTML = `
+                    <a href="/customer/cart" class="nav-icon-btn ${cartActive ? 'active' : ''}" title="Giỏ hàng">
+                        <i class="bi bi-cart3"></i>
+                    </a>
+                    <a href="/customer/appointments" class="nav-icon-btn ${appointmentActive ? 'active' : ''}" title="Lịch hẹn">
+                        <i class="bi bi-calendar-event"></i>
+                    </a>
+                    <a href="/showroom/compare" class="nav-icon-btn ${compareActive ? 'active' : ''}" title="So sánh xe">
+                        <i class="bi bi-columns-gap"></i>
+                    </a>
+                    <a href="/login" class="nav-pill-btn" title="Đăng nhập">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Đăng nhập</span>
+                    </a>
+                `;
+                return;
+            }
+
+            const name = localStorage.getItem("fullName") || "Tài khoản";
+
+            navActions.innerHTML = `
+                <a href="/customer/cart" class="nav-icon-btn ${cartActive ? 'active' : ''}" title="Giỏ hàng">
+                    <i class="bi bi-cart3"></i>
+                </a>
+                <a href="/customer/appointments" class="nav-icon-btn ${appointmentActive ? 'active' : ''}" title="Lịch hẹn">
+                    <i class="bi bi-calendar-event"></i>
+                </a>
+                <a href="/showroom/compare" class="nav-icon-btn ${compareActive ? 'active' : ''}" title="So sánh xe">
+                    <i class="bi bi-columns-gap"></i>
+                </a>
+                <a href="/customer/profile" class="nav-pill-btn ${profileActive ? 'active' : ''}" title="Tài khoản">
+                    <i class="bi bi-person-circle"></i>
+                    <span>${name}</span>
+                </a>
+                <button type="button" class="nav-pill-btn nav-logout-btn" title="Đăng xuất" onclick="logoutNavbar()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </button>
+            `;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            syncUserName().finally(() => {
+                updateNavbarActions();
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>

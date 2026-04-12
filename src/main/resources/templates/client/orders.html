@@ -6,30 +6,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     :root {
-        --bg: #0b0b0b;
-        --card: #171717;
+        --bg: #070a10;
+        --card: rgba(17, 24, 39, 0.82);
+        --card-2: rgba(13, 18, 30, 0.92);
         --line: rgba(255,255,255,0.08);
-        --text: #ffffff;
-        --muted: #a8a8a8;
-        --success: #1db954;
-        --warning: #f5b301;
-        --danger: #ff4d4f;
+        --line-strong: rgba(255,255,255,0.14);
+        --text: #f8fafc;
+        --muted: #a7b0bf;
+        --accent: #2f6bff;
+        --accent-hover: #6fa2ff;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --shadow: 0 24px 60px rgba(0,0,0,0.35);
+        --radius-lg: 22px;
+        --radius-md: 18px;
     }
 
     * { box-sizing: border-box; }
 
     body {
         margin: 0;
-        background: var(--bg);
+        min-height: 100vh;
         color: var(--text);
-        font-family: Arial, sans-serif;
+        font-family: "SF Pro Display", Inter, "Segoe UI", Arial, sans-serif;
+        background:
+            radial-gradient(circle at top left, rgba(47,107,255,0.16), transparent 24%),
+            radial-gradient(circle at top right, rgba(47,107,255,0.08), transparent 22%),
+            linear-gradient(180deg, #070a10 0%, #0a0f18 40%, #070a10 100%);
     }
 
     .page-wrap {
         min-height: 100vh;
-        padding: 32px 16px;
+        width: min(1400px, calc(100% - 40px));
+        margin: 28px auto 0;
+        padding-bottom: 40px;
     }
 
     .orders-box {
@@ -38,14 +53,17 @@
     }
 
     .page-title {
-        font-size: 2rem;
-        font-weight: 800;
-        margin-bottom: 6px;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        font-weight: 900;
+        margin-bottom: 8px;
+        letter-spacing: -1px;
     }
 
     .page-subtitle {
         color: var(--muted);
         margin-bottom: 28px;
+        font-size: 1rem;
+        line-height: 1.8;
     }
 
     .toolbar {
@@ -56,20 +74,25 @@
     }
 
     .btn-second {
-        border: 1px solid var(--line);
-        background: transparent;
+        min-height: 48px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
         color: #fff;
         border-radius: 14px;
-        padding: 12px 16px;
+        padding: 12px 18px;
         text-decoration: none;
-        display: inline-block;
-        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
         transition: 0.2s ease;
+        backdrop-filter: blur(8px);
     }
 
     .btn-second:hover {
-        background: #fff;
-        color: #000;
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        transform: translateY(-1px);
     }
 
     .alert-box {
@@ -84,11 +107,18 @@
     }
 
     .order-card {
-        background: var(--card);
+        background: linear-gradient(180deg, rgba(18,24,34,0.98), rgba(12,17,24,0.98));
         border: 1px solid var(--line);
-        border-radius: 22px;
+        border-radius: var(--radius-lg);
         padding: 22px;
         margin-bottom: 18px;
+        box-shadow: var(--shadow);
+        transition: 0.25s ease;
+    }
+
+    .order-card:hover {
+        border-color: rgba(47,107,255,0.28);
+        transform: translateY(-2px);
     }
 
     .order-top {
@@ -123,7 +153,7 @@
     }
 
     .meta-item {
-        background: #101010;
+        background: rgba(255,255,255,0.03);
         border: 1px solid var(--line);
         border-radius: 16px;
         padding: 14px 16px;
@@ -153,27 +183,28 @@
 
     .status-completed,
     .status-paid {
-        background: rgba(29, 185, 84, 0.12);
+        background: rgba(34, 197, 94, 0.12);
         color: #9ef0b9;
-        border: 1px solid rgba(29, 185, 84, 0.25);
+        border: 1px solid rgba(34, 197, 94, 0.25);
     }
 
     .status-cancelled,
     .status-failed,
     .status-refunded,
     .status-unpaid {
-        background: rgba(255, 77, 79, 0.12);
+        background: rgba(239, 68, 68, 0.12);
         color: #ffb3b5;
-        border: 1px solid rgba(255, 77, 79, 0.25);
+        border: 1px solid rgba(239, 68, 68, 0.25);
     }
 
     .empty-box {
         text-align: center;
         padding: 60px 20px;
-        background: var(--card);
+        background: linear-gradient(180deg, rgba(18,24,34,0.98), rgba(12,17,24,0.98));
         border: 1px solid var(--line);
-        border-radius: 22px;
+        border-radius: var(--radius-lg);
         color: var(--muted);
+        box-shadow: var(--shadow);
     }
 
     .empty-box h3 {
@@ -190,17 +221,60 @@
             text-align: left;
         }
     }
+
+    @media (max-width: 575.98px) {
+        .page-wrap {
+            width: min(100% - 24px, 100%);
+        }
+    }
+    a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand-mark,
+.nav-text-link,
+.nav-center-logo,
+.nav-icon-btn,
+.nav-pill-btn {
+    text-decoration: none !important;
+}
+
+.brand-mark:hover,
+.nav-text-link:hover,
+.nav-center-logo:hover,
+.nav-icon-btn:hover,
+.nav-pill-btn:hover,
+.brand-mark:focus,
+.nav-text-link:focus,
+.nav-center-logo:focus,
+.nav-icon-btn:focus,
+.nav-pill-btn:focus,
+.brand-mark:visited,
+.nav-text-link:visited,
+.nav-center-logo:visited,
+.nav-icon-btn:visited,
+.nav-pill-btn:visited {
+    text-decoration: none !important;
+    color: inherit;
+}
   </style>
 </head>
 <body>
+
+<div th:replace="fragments/navbar :: navbar('orders')"></div>
+
 <div class="page-wrap">
   <div class="orders-box">
     <h1 class="page-title">Đơn hàng của tôi</h1>
     <p class="page-subtitle">Theo dõi lịch sử đặt hàng và trạng thái thanh toán của bạn.</p>
 
     <div class="toolbar">
-      <a href="/customer/dashboard" class="btn-second">Về dashboard</a>
-      <a href="/showroom" class="btn-second">Tiếp tục mua sắm</a>
+
+      <a href="/showroom" class="btn-second">
+        <i class="bi bi-bag"></i>
+        Tiếp tục mua sắm
+      </a>
     </div>
 
     <div id="errorBox" class="alert-box"></div>
@@ -286,7 +360,10 @@
                   <h3>Bạn chưa có đơn hàng nào</h3>
                   <p>Hãy khám phá showroom và đặt chiếc xe bạn yêu thích.</p>
                   <div class="mt-4">
-                      <a href="/showroom" class="btn-second">Đến showroom</a>
+                      <a href="/showroom" class="btn-second">
+                          <i class="bi bi-arrow-right"></i>
+                          Đến showroom
+                      </a>
                   </div>
               </div>
           `;

@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateDepositRequest {
-    private Long requestId;
-    private String paymentMethod;
+    private Long motorbikeId;
     private String note;
 }

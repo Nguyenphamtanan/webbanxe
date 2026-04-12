@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết đặt cọc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body{
+        background:#0b0f14;
+        color:#fff;
+        font-family:"SF Pro Display", Inter, sans-serif;
+    }
+
+    .container{
+        max-width:1000px;
+        margin:40px auto;
+    }
+
+    .card-lux{
+        background:#121821;
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:18px;
+        padding:20px;
+        margin-bottom:20px;
+    }
+
+    .title{
+        font-size:1.8rem;
+        font-weight:900;
+        margin-bottom:10px;
+    }
+
+    .label{
+        color:#9ca3af;
+        font-size:.9rem;
+        min-width:170px;
+        display:inline-block;
+    }
+
+    .value{
+        font-weight:700;
+    }
+
+    .badge-lux{
+        padding:6px 10px;
+        border-radius:999px;
+        font-weight:700;
+        font-size:.8rem;
+        display:inline-block;
+    }
+
+    .PENDING{ background:#92400e; color:#fde68a; }
+    .PAID{ background:#1d4ed8; color:#bfdbfe; }
+    .CONFIRMED{ background:#166534; color:#bbf7d0; }
+    .CANCELLED{ background:#991b1b; color:#fecaca; }
+
+    .btnx{
+        padding:10px 14px;
+        border-radius:10px;
+        border:1px solid rgba(255,255,255,.1);
+        background:transparent;
+        color:#fff;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="title mb-1">Chi tiết đặt cọc</h1>
+      <div class="text-secondary">Theo dõi trạng thái cọc và thanh toán</div>
+    </div>
+    <a href="/admin/deposits" class="btn btn-outline-light">Quay lại</a>
+  </div>
+
+  <div class="card-lux">
+    <div class="title">Thông tin đặt cọc</div>
+    <div id="detailBox">Đang tải...</div>
+  </div>
+
+  <div class="card-lux">
+    <div class="title">Thao tác</div>
+    <div id="actionBox"></div>
+  </div>
+</div>
+
+<script>
+  const token = localStorage.getItem("accessToken");
+  const id = window.location.pathname.split("/").pop();
+
+  if(!token) window.location.href = "/login";
+
+  function formatCurrency(v){
+      if(v == null) return "-";
+      return new Intl.NumberFormat("vi-VN").format(Number(v)) + " đ";
+  }
+
+  function formatDate(v){
+      if(!v) return "-";
+      return new Date(v).toLocaleString("vi-VN");
+  }
+
+  async function loadDetail(){
+      try{
+          const res = await fetch(`/api/admin/deposits/${id}`, {
+              headers: { Authorization: "Bearer " + token }
+          });
+
+          if(!res.ok) throw new Error("Không tải được chi tiết đặt cọc");
+
+          const d = await res.json();
+
+          document.getElementById("detailBox").innerHTML = `
+              <div class="mb-2"><span class="label">Mã cọc:</span> <span class="value">${d.depositCode || "-"}</span></div>
+              <div class="mb-2"><span class="label">Mã request:</span> <span class="value">${d.requestCode || "-"}</span></div>
+              <div class="mb-2"><span class="label">Xe:</span> <span class="value">${d.motorbikeName || "-"}</span></div>
+              <div class="mb-2"><span class="label">Giá báo:</span> <span class="value">${formatCurrency(d.quotedPrice)}</span></div>
+              <div class="mb-2"><span class="label">Tiền cọc:</span> <span class="value">${formatCurrency(d.depositAmount)}</span></div>
+              <div class="mb-2"><span class="label">Phương thức:</span> <span class="value">${d.paymentMethod || "-"}</span></div>
+              <div class="mb-2"><span class="label">Thanh toán:</span> <span class="value">${d.paymentStatus || "-"}</span></div>
+              <div class="mb-2"><span class="label">Trạng thái:</span> <span class="badge-lux ${d.status}">${d.status}</span></div>
+              <div class="mb-2"><span class="label">Ghi chú:</span> <span class="value">${d.note || "-"}</span></div>
+              <div class="mb-2"><span class="label">Ngày tạo:</span> <span class="value">${formatDate(d.createdAt)}</span></div>
+              <div class="mb-2"><span class="label">Ngày thanh toán:</span> <span class="value">${formatDate(d.paidAt)}</span></div>
+              <div><span class="label">Ngày xác nhận:</span> <span class="value">${formatDate(d.confirmedAt)}</span></div>
+          `;
+
+          let actions = ``;
+
+          if (d.status === "PAID") {
+              actions += `<button class="btnx me-2" onclick="updateStatus('CONFIRMED')">Xác nhận cọc</button>`;
+          }
+
+          if (d.status === "PENDING") {
+              actions += `<button class="btnx me-2" onclick="updateStatus('CANCELLED')">Hủy cọc</button>`;
+          }
+
+          if (d.status === "CONFIRMED") {
+              actions += `<button class="btnx" onclick="createOrder()">Tạo đơn hàng</button>`;
+          }
+
+          document.getElementById("actionBox").innerHTML = actions || `<span class="text-secondary">Không có thao tác khả dụng.</span>`;
+      }catch(error){
+          console.error(error);
+          alert(error.message || "Lỗi tải chi tiết");
+      }
+  }
+
+  async function updateStatus(status){
+      const note = prompt("Nhập ghi chú:", "") || "";
+
+      try{
+          const res = await fetch(`/api/admin/deposits/${id}/status`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token
+              },
+              body: JSON.stringify({ status, note })
+          });
+
+          if(!res.ok){
+              const text = await res.text();
+              throw new Error(text || "Cập nhật thất bại");
+          }
+
+          alert("Cập nhật trạng thái thành công");
+          loadDetail();
+      }catch(error){
+          console.error(error);
+          alert(error.message || "Lỗi cập nhật");
+      }
+  }
+
+  function createOrder(){
+      alert("Bước tiếp theo: nối API tạo order từ deposit này");
+  }
+
+  loadDetail();
+</script>
+</body>
+</html>
