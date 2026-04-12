@@ -14,4 +14,9 @@ public class PayOSProperties {
     private String returnUrl;
     private String cancelUrl;
     private String webhookUrl;
+
+    private String payoutClientId;
+    private String payoutApiKey;
+    private String payoutChecksumKey;
+    private String payoutUrl;
 }

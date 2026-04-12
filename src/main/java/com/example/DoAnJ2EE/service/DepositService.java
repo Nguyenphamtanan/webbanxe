@@ -1,6 +1,7 @@
 package com.example.DoAnJ2EE.service;
 
 import com.example.DoAnJ2EE.dto.request.CreateDepositRequest;
+import com.example.DoAnJ2EE.dto.request.RefundDepositRequest;
 import com.example.DoAnJ2EE.dto.response.DepositResponse;
 import com.example.DoAnJ2EE.entity.User;
 
@@ -16,4 +17,6 @@ public interface DepositService {
     DepositResponse adminConfirm(Long id);
     DepositResponse getAdminById(Long id);
     DepositResponse updateStatusByAdmin(Long id, String status, String note);
+    void refundPaidDeposit(Long depositId, RefundDepositRequest request, User user);
+
 }

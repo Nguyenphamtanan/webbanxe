@@ -5,4 +5,10 @@ import com.example.DoAnJ2EE.entity.Deposit;
 
 public interface PayOSService {
     PayOSCreateResponse createDepositPayment(Deposit deposit);
+
+    void createRefundPayout(String referenceId,
+                            Long amount,
+                            String description,
+                            String toBin,
+                            String toAccountNumber);
 }

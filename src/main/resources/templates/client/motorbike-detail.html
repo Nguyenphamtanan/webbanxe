@@ -7,6 +7,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
     <style>
         :root {
@@ -98,11 +99,6 @@
         .btn-lux-primary:hover {
             background: var(--accent-hover);
             border-color: var(--accent-hover);
-        }
-
-        .btn-lux-danger {
-            background: rgba(220,53,69,0.12);
-            border-color: rgba(220,53,69,0.28);
         }
 
         .btn-lux-warning {
@@ -424,6 +420,124 @@
             top: 20px;
         }
 
+        .review-summary-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 18px;
+        }
+
+        .review-summary-card,
+        .review-form-card,
+        .review-item {
+            padding: 22px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line);
+        }
+
+        .review-score-big {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 10px 0 8px;
+        }
+
+        .star-line {
+            color: #fbbf24;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .review-muted {
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.8;
+        }
+
+        .review-form-card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .review-form-card label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #e5edf7;
+        }
+
+        .review-form-card select,
+        .review-form-card textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            padding: 12px 14px;
+            outline: none;
+        }
+
+        .review-form-card option {
+            color: #111;
+        }
+
+        .review-form-card select {
+            min-height: 48px;
+        }
+
+        .review-form-card textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .review-form-card select:focus,
+        .review-form-card textarea:focus {
+            border-color: rgba(37,99,235,0.55);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .review-user {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        .review-date {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .review-comment {
+            color: #d8e0ea;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .review-empty {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--line);
+            color: var(--muted);
+        }
+
         @media (max-width: 991.98px) {
             .main-img,
             .main-img-box {
@@ -435,8 +549,9 @@
             }
 
             .workflow-steps,
-            .highlight-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .highlight-grid,
+            .review-summary-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -612,6 +727,25 @@
         </div>
 
         <div class="glass-box section">
+            <h2 class="section-title">Mô hình 3D sản phẩm</h2>
+
+            <div id="modelContainer" style="height:500px;">
+                <model-viewer id="bikeModelViewer"
+                              style="width:100%;height:100%;"
+                              camera-controls
+                              auto-rotate
+                              shadow-intensity="1"
+                              exposure="1"
+                              environment-image="neutral">
+                </model-viewer>
+            </div>
+
+            <div id="modelEmpty" style="display:none;color:#aaa;margin-top:10px;">
+                Xe này chưa có mô hình 3D
+            </div>
+        </div>
+
+        <div class="glass-box section">
             <h2 class="section-title">Điểm nhấn của mẫu xe này</h2>
 
             <div class="highlight-grid">
@@ -639,6 +773,91 @@
             <h2 class="section-title">Mô tả sản phẩm</h2>
             <div class="desc-box" th:text="${bike.description != null ? bike.description : 'Chưa có mô tả cho sản phẩm này.'}">
                 Mô tả
+            </div>
+        </div>
+
+        <div class="glass-box section">
+            <h2 class="section-title">Đánh giá khách hàng</h2>
+
+            <div class="review-summary-grid">
+                <div class="review-summary-card">
+                    <div class="review-muted">Điểm trung bình</div>
+                    <div class="review-score-big"
+                         th:text="${#numbers.formatDecimal(averageRating != null ? averageRating : 0, 1, 1)}">0.0</div>
+
+                    <div class="star-line"
+                         th:text="${averageRating >= 4.5 ? '★★★★★' :
+                                  averageRating >= 3.5 ? '★★★★☆' :
+                                  averageRating >= 2.5 ? '★★★☆☆' :
+                                  averageRating >= 1.5 ? '★★☆☆☆' :
+                                  averageRating >= 0.5 ? '★☆☆☆☆' : '☆☆☆☆☆'}">
+                        ☆☆☆☆☆
+                    </div>
+
+                    <div class="review-muted">
+                        <span th:text="${reviewCount != null ? reviewCount : 0}">0</span> lượt đánh giá
+                    </div>
+                </div>
+
+                <div class="review-form-card">
+                    <div class="mb-2">
+                        <label for="rating">Số sao</label>
+                        <select id="rating">
+                            <option value="5">5 sao - Rất tốt</option>
+                            <option value="4">4 sao - Tốt</option>
+                            <option value="3">3 sao - Ổn</option>
+                            <option value="2">2 sao - Chưa tốt</option>
+                            <option value="1">1 sao - Không hài lòng</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="comment">Bình luận</label>
+                        <textarea id="comment" placeholder="Chia sẻ cảm nhận của bạn sau khi mua xe"></textarea>
+                    </div>
+
+                    <button type="button" class="btn-lux btn-lux-primary" onclick="submitReview()">
+                        <i class="bi bi-send"></i>
+                        Gửi đánh giá
+                    </button>
+
+                    <div class="review-muted">
+                        Hệ thống sẽ kiểm tra điều kiện mua hàng ở phía máy chủ trước khi lưu đánh giá.
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-list" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+                <div class="review-item" th:each="review : ${reviews}">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-user"
+                                 th:text="${review.user != null && review.user.fullName != null ? review.user.fullName : 'Khách hàng'}">
+                                Nguyễn Văn A
+                            </div>
+                            <div class="star-line"
+                                 th:text="${review.rating == 5 ? '★★★★★' :
+                                          review.rating == 4 ? '★★★★☆' :
+                                          review.rating == 3 ? '★★★☆☆' :
+                                          review.rating == 2 ? '★★☆☆☆' : '★☆☆☆☆'}">
+                                ★★★★★
+                            </div>
+                        </div>
+
+                        <div class="review-date"
+                             th:text="${review.createdAt != null ? #temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm') : ''}">
+                            13/04/2026 10:30
+                        </div>
+                    </div>
+
+                    <div class="review-comment" th:text="${review.comment}">
+                        Nội dung đánh giá
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-empty" th:if="${reviews == null or #lists.isEmpty(reviews)}">
+                Chưa có đánh giá nào cho mẫu xe này.
             </div>
         </div>
 
@@ -678,6 +897,33 @@
     const errorBox = document.getElementById("errorBox");
     const successBox = document.getElementById("successBox");
     const bikeId = [[${bike.id}]];
+    const bikeSlug = /*[[${bike.slug}]]*/ "";
+
+function init3DModel() {
+    const viewer = document.getElementById("bikeModelViewer");
+    const modelEmpty = document.getElementById("modelEmpty");
+
+    if (!bikeSlug || !viewer) {
+        modelEmpty.style.display = "block";
+        return;
+    }
+
+    const modelUrl = "/models/" + bikeSlug + ".glb";
+
+    fetch(modelUrl, { method: "HEAD" })
+        .then(res => {
+            if (res.ok) {
+                viewer.setAttribute("src", modelUrl);
+            } else {
+                modelEmpty.style.display = "block";
+                viewer.style.display = "none";
+            }
+        })
+        .catch(() => {
+            modelEmpty.style.display = "block";
+            viewer.style.display = "none";
+        });
+}
 
     function showError(message) {
         errorBox.style.display = "block";
@@ -842,6 +1088,68 @@
         setCompareList(compareList);
         showSuccess("Đã thêm xe vào danh sách so sánh");
     }
+
+    async function submitReview() {
+        clearAlert();
+
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        const rating = document.getElementById("rating")?.value;
+        const comment = document.getElementById("comment")?.value?.trim();
+
+        if (!rating) {
+            showError("Vui lòng chọn số sao");
+            return;
+        }
+
+        if (!comment) {
+            showError("Vui lòng nhập bình luận");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/reviews/motorbike/" + bikeId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    rating: Number(rating),
+                    comment: comment
+                })
+            });
+
+            const text = await response.text();
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("token");
+                redirectToLogin();
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(text || "Không thể gửi đánh giá");
+            }
+
+            showSuccess(text || "Đánh giá thành công");
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+
+        } catch (err) {
+            console.error(err);
+            showError(err.message || "Có lỗi xảy ra khi gửi đánh giá");
+        }
+    }
+    init3DModel();
 </script>
+<div th:replace="fragments/ai-chatbox :: aiChatbox"></div>
 </body>
 </html>

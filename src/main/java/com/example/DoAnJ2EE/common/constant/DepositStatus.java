@@ -5,5 +5,6 @@ public enum DepositStatus {
     PAID,
     CONFIRMED,
     CANCELLED,
+    REFUND_PENDING,
     REFUNDED
 }

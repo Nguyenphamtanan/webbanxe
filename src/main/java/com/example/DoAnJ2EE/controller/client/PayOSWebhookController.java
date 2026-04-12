@@ -15,8 +15,12 @@ public class PayOSWebhookController {
     private final DepositWebhookService depositWebhookService;
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> webhook(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> webhook(@RequestBody Map<String, Object> payload) {
+        System.out.println("=== WEBHOOK HIT ===");
+        System.out.println("payload = " + payload);
+
         depositWebhookService.handleWebhook(payload);
-        return ResponseEntity.ok("OK");
+
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(
         name = "reviews",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UQ_reviews_user_motorbike", columnNames = {"user_id", "motorbike_id"})
+                @UniqueConstraint(columnNames = {"user_id", "motorbike_id"})
         }
 )
 @Getter
@@ -33,17 +33,17 @@ public class Review {
     @JoinColumn(name = "motorbike_id", nullable = false)
     private Motorbike motorbike;
 
-    @Column(name = "rating", nullable = false)
+    @Column(nullable = false)
     private Integer rating;
 
-    @Column(name = "comment", length = 1000)
+    @Column(name = "comment", columnDefinition = "NVARCHAR(1000)")
     private String comment;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

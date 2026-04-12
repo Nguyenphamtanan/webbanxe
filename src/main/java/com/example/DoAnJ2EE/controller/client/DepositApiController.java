@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.example.DoAnJ2EE.dto.request.RefundDepositRequest;
 
 import java.util.List;
 
@@ -39,5 +40,17 @@ public class DepositApiController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ResponseEntity.ok(depositService.getMyDeposits(userDetails.getUser()));
+    }
+
+    @PutMapping("/{id}/refund-paid")
+    public ResponseEntity<?> refundPaidDeposit(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody RefundDepositRequest request
+    ) {
+        depositService.refundPaidDeposit(id, request, userDetails.getUser());
+        return ResponseEntity.ok().body(java.util.Map.of(
+                "message", "Đã gửi yêu cầu hoàn tiền"
+        ));
     }
 }

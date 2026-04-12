@@ -4,19 +4,20 @@ import com.example.DoAnJ2EE.common.constant.DepositStatus;
 import com.example.DoAnJ2EE.common.constant.PaymentMethod;
 import com.example.DoAnJ2EE.common.constant.PaymentStatus;
 import com.example.DoAnJ2EE.dto.request.CreateDepositRequest;
+import com.example.DoAnJ2EE.dto.request.RefundDepositRequest;
 import com.example.DoAnJ2EE.dto.response.DepositResponse;
+import com.example.DoAnJ2EE.dto.response.PayOSCreateResponse;
 import com.example.DoAnJ2EE.entity.Deposit;
 import com.example.DoAnJ2EE.entity.Motorbike;
 import com.example.DoAnJ2EE.entity.User;
 import com.example.DoAnJ2EE.repository.DepositRepository;
 import com.example.DoAnJ2EE.repository.MotorbikeRepository;
 import com.example.DoAnJ2EE.service.DepositService;
+import com.example.DoAnJ2EE.service.MailService;
+import com.example.DoAnJ2EE.service.PayOSService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.example.DoAnJ2EE.service.PayOSService;
-import com.example.DoAnJ2EE.dto.response.PayOSCreateResponse;
-import com.example.DoAnJ2EE.service.MailService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -66,7 +67,6 @@ public class DepositServiceImpl implements DepositService {
 
         deposit = depositRepository.save(deposit);
 
-        // 🔥 GỌI PAYOS
         PayOSCreateResponse payos = payOSService.createDepositPayment(deposit);
 
         deposit.setPayosOrderCode(payos.getOrderCode());
@@ -153,7 +153,6 @@ public class DepositServiceImpl implements DepositService {
         return mapToResponse(deposit);
     }
 
-
     @Override
     @Transactional
     public DepositResponse updateStatusByAdmin(Long id, String status, String note) {
@@ -191,6 +190,10 @@ public class DepositServiceImpl implements DepositService {
             deposit.setPaymentStatus(PaymentStatus.UNPAID);
         }
 
+        if (newStatus == DepositStatus.REFUNDED) {
+            deposit.setPaymentStatus(PaymentStatus.REFUNDED);
+        }
+
         deposit = depositRepository.save(deposit);
 
         if (deposit.getUser() != null
@@ -223,6 +226,108 @@ public class DepositServiceImpl implements DepositService {
         }
 
         return mapToResponse(deposit);
+    }
+
+    @Override
+    @Transactional
+    public void refundPaidDeposit(Long depositId, RefundDepositRequest request, User user) {
+        Deposit deposit = depositRepository.findById(depositId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đặt cọc"));
+
+        if (deposit.getUser() == null || !deposit.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bạn không có quyền hoàn tiền đặt cọc này");
+        }
+
+        if (deposit.getStatus() != DepositStatus.PAID && deposit.getStatus() != DepositStatus.CONFIRMED) {
+            throw new RuntimeException("Chỉ hoàn tiền cho đặt cọc đã thanh toán");
+        }
+
+        if (deposit.getPaymentStatus() != PaymentStatus.PAID
+                && deposit.getPaymentStatus() != PaymentStatus.DEPOSIT_PAID) {
+            throw new RuntimeException("Đặt cọc này chưa ở trạng thái đã thanh toán");
+        }
+
+        if (request.getToBin() == null || request.getToBin().isBlank()) {
+            throw new RuntimeException("Thiếu mã ngân hàng nhận hoàn tiền");
+        }
+
+        if (request.getToAccountNumber() == null || request.getToAccountNumber().isBlank()) {
+            throw new RuntimeException("Thiếu số tài khoản nhận hoàn tiền");
+        }
+
+        String referenceId = "refund_" + deposit.getId() + "_" + System.currentTimeMillis();
+        String reason = (request.getReason() == null || request.getReason().isBlank())
+                ? "Khong co"
+                : request.getReason();
+
+        System.out.println("=== REFUND START ===");
+        System.out.println("depositId = " + deposit.getId());
+        System.out.println("depositCode = " + deposit.getDepositCode());
+        System.out.println("refund toBin = " + request.getToBin());
+        System.out.println("refund toAccountNumber = " + request.getToAccountNumber());
+        System.out.println("refund amount = " + deposit.getDepositAmount());
+
+//        payOSService.createRefundPayout(
+//                referenceId,
+//                deposit.getDepositAmount().longValue(),
+//                "Hoan tien " + deposit.getDepositCode(),
+//                request.getToBin(),
+//                request.getToAccountNumber()
+//        );
+
+        deposit.setStatus(DepositStatus.REFUNDED);
+        deposit.setPaymentStatus(PaymentStatus.REFUNDED);
+
+        String oldNote = deposit.getNote() == null ? "" : deposit.getNote() + "\n";
+        String refundNote = oldNote
+                + "Yeu cau hoan tien thanh cong. "
+                + "Ngan hang(BIN): " + request.getToBin()
+                + ", STK: " + request.getToAccountNumber()
+                + ", Ly do: " + reason;
+
+        deposit.setNote(refundNote);
+
+        deposit = depositRepository.save(deposit);
+
+        System.out.println("=== REFUND DONE ===");
+        System.out.println("refund referenceId = " + referenceId);
+        System.out.println("deposit status = " + deposit.getStatus());
+        System.out.println("payment status = " + deposit.getPaymentStatus());
+
+        if (deposit.getUser() != null
+                && deposit.getUser().getEmail() != null
+                && !deposit.getUser().getEmail().isBlank()) {
+
+            String html = """
+                <h3>Yêu cầu hoàn tiền đặt cọc đã được xử lý</h3>
+                <p><b>Mã đặt cọc:</b> %s</p>
+                <p><b>Xe:</b> %s</p>
+                <p><b>Số tiền hoàn:</b> %s</p>
+                <p><b>Ngân hàng nhận:</b> %s</p>
+                <p><b>Số tài khoản nhận:</b> %s</p>
+                <p><b>Lý do:</b> %s</p>
+                <p><b>Trạng thái:</b> %s</p>
+                """
+                    .formatted(
+                            deposit.getDepositCode(),
+                            deposit.getMotorbike() != null ? deposit.getMotorbike().getName() : "Không xác định",
+                            deposit.getDepositAmount(),
+                            request.getToBin(),
+                            request.getToAccountNumber(),
+                            reason,
+                            deposit.getStatus().name()
+                    );
+
+            try {
+                mailService.sendMail(
+                        deposit.getUser().getEmail(),
+                        "Hoàn tiền đặt cọc",
+                        html
+                );
+            } catch (Exception e) {
+                System.out.println("Gửi mail refund lỗi: " + e.getMessage());
+            }
+        }
     }
 
     private DepositResponse mapToResponse(Deposit deposit) {
@@ -268,7 +373,6 @@ public class DepositServiceImpl implements DepositService {
                 deposit.getPaidAt(),
                 deposit.getConfirmedAt(),
                 deposit.getCreatedAt(),
-
                 "MB",
                 "1234567899",
                 "MB BANK",
@@ -278,6 +382,5 @@ public class DepositServiceImpl implements DepositService {
                 deposit.getQrCode(),
                 deposit.getTransactionCode()
         );
-
     }
 }

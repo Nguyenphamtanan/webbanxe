@@ -85,4 +85,19 @@ public class Deposit {
 
     @Column(name = "transaction_code", length = 100)
     private String transactionCode;
+
+    @Column(name = "refund_reference_id", length = 100)
+    private String refundReferenceId;
+
+    @Column(name = "refund_reason", length = 500)
+    private String refundReason;
+
+    @Column(name = "refund_to_bin", length = 20)
+    private String refundToBin;
+
+    @Column(name = "refund_to_account_number", length = 50)
+    private String refundToAccountNumber;
+
+    @Column(name = "refund_status", length = 30)
+    private String refundStatus;
 }

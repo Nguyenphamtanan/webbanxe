@@ -17,30 +17,47 @@ public class DepositWebhookServiceImpl implements DepositWebhookService {
 
     private final DepositRepository depositRepository;
 
+
     @Override
     @SuppressWarnings("unchecked")
     public void handleWebhook(Map<String, Object> payload) {
-        Object success = payload.get("success");
-        if (!(success instanceof Boolean) || !((Boolean) success)) {
-            return;
+        System.out.println("=== HANDLE WEBHOOK START ===");
+        System.out.println("payload = " + payload);
+
+        Map<String, Object> data = null;
+
+        Object dataObj = payload.get("data");
+        if (dataObj instanceof Map) {
+            data = (Map<String, Object>) dataObj;
         }
 
-        Map<String, Object> data = (Map<String, Object>) payload.get("data");
         if (data == null) {
-            return;
+            throw new RuntimeException("Webhook không có trường data");
         }
 
-        Number orderCodeNumber = (Number) data.get("orderCode");
-        if (orderCodeNumber == null) {
-            return;
+        Object orderCodeObj = data.get("orderCode");
+        if (orderCodeObj == null) {
+            throw new RuntimeException("Webhook không có orderCode");
         }
 
-        Long orderCode = orderCodeNumber.longValue();
+        Long orderCode;
+        if (orderCodeObj instanceof Number) {
+            orderCode = ((Number) orderCodeObj).longValue();
+        } else {
+            orderCode = Long.valueOf(String.valueOf(orderCodeObj));
+        }
+
+        System.out.println("orderCode = " + orderCode);
 
         Deposit deposit = depositRepository.findByPayosOrderCode(orderCode)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy deposit theo payosOrderCode"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy deposit theo payosOrderCode: " + orderCode));
+
+        System.out.println("deposit id = " + deposit.getId());
+        System.out.println("old paymentStatus = " + deposit.getPaymentStatus());
+        System.out.println("old status = " + deposit.getStatus());
 
         if (deposit.getPaymentStatus() == PaymentStatus.PAID) {
+            System.out.println("Deposit đã PAID trước đó, bỏ qua");
             return;
         }
 
@@ -49,10 +66,18 @@ public class DepositWebhookServiceImpl implements DepositWebhookService {
         deposit.setPaidAt(LocalDateTime.now());
 
         Object reference = data.get("reference");
+        if (reference == null) {
+            reference = data.get("transactionCode");
+        }
+        if (reference == null) {
+            reference = data.get("paymentLinkId");
+        }
         if (reference != null) {
             deposit.setTransactionCode(String.valueOf(reference));
         }
 
         depositRepository.save(deposit);
+
+        System.out.println("=== HANDLE WEBHOOK SUCCESS ===");
     }
 }

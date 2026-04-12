@@ -257,10 +257,19 @@
       }
 
       const data = JSON.parse(text);
-      window.location.href = "/customer/deposits/" + data.id;
+      console.log("create deposit response =", data);
+
+      const depositId = data.depositId ?? data.id;
+      if (!depositId || isNaN(Number(depositId))) {
+          alert("Response tạo đặt cọc không trả về depositId hợp lệ");
+          return;
+      }
+
+      window.location.href = "/customer/deposits/" + depositId;
   }
 
   loadRequest();
 </script>
+<div th:replace="fragments/ai-chatbox :: aiChatbox"></div>
 </body>
 </html>

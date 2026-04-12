@@ -38,15 +38,64 @@
             linear-gradient(180deg, #070a10 0%, #0a0f18 40%, #070a10 100%);
     }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
+    a { text-decoration: none; color: inherit; }
 
     .page-shell {
         width: min(1200px, calc(100% - 40px));
         margin: 28px auto 0;
         padding-bottom: 40px;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .btn-lux,
+    .btn-second {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-weight: 700;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.04);
+        color: #fff;
+        transition: .25s ease;
+        cursor: pointer;
+    }
+
+    .btn-lux:hover,
+    .btn-second:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary-lux {
+        background: linear-gradient(135deg, var(--accent), #5e8fff);
+        border-color: transparent;
+        box-shadow: 0 12px 28px rgba(47,107,255,0.28);
+    }
+
+    .btn-primary-lux:hover {
+        background: linear-gradient(135deg, var(--accent-hover), #82adff);
+        border-color: transparent;
+    }
+
+    .btn-danger-lux {
+        background: rgba(239,68,68,0.12);
+        border-color: rgba(239,68,68,0.28);
+    }
+
+    .btn-danger-lux:hover {
+        background: rgba(239,68,68,0.18);
+        border-color: rgba(239,68,68,0.36);
     }
 
     .wrap {
@@ -70,11 +119,34 @@
         gap: 24px;
     }
 
-    .info p {
-        margin: 12px 0;
-        font-size: 16px;
-        color: #dfe7f2;
-        line-height: 1.8;
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 18px;
+    }
+
+    .info-box {
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+    }
+
+    .info-label {
+        color: var(--muted);
+        font-size: .9rem;
+        margin-bottom: 8px;
+    }
+
+    .info-value {
+        font-weight: 800;
+        line-height: 1.7;
+        word-break: break-word;
+    }
+
+    .full-box {
+        grid-column: 1 / -1;
     }
 
     .qr-box {
@@ -91,28 +163,6 @@
         background: #fff;
     }
 
-    .btn-lux {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        min-height: 48px;
-        margin-top: 16px;
-        padding: 12px 18px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--accent), #5e8fff);
-        color: #fff;
-        text-decoration: none;
-        font-weight: 700;
-        border: 0;
-        box-shadow: 0 12px 28px rgba(47,107,255,0.28);
-    }
-
-    .btn-lux:hover {
-        color: #fff;
-        opacity: 0.95;
-    }
-
     .status {
         display: inline-block;
         padding: 7px 12px;
@@ -123,27 +173,112 @@
     }
 
     .status.pending,
-    .status.waiting {
+    .status.waiting,
+    .status.unpaid {
         background: rgba(245, 158, 11, 0.12);
         color: #ffd76a;
         border-color: rgba(245, 158, 11, 0.25);
     }
 
     .status.paid,
-    .status.success,
-    .status.confirmed {
+    .status.confirmed,
+    .status.deposit_paid {
         background: rgba(34, 197, 94, 0.12);
         color: #9ef0b9;
         border-color: rgba(34, 197, 94, 0.25);
     }
 
     .status.cancelled,
-    .status.failed,
     .status.refunded,
-    .status.unpaid {
+    .status.failed {
         background: rgba(239, 68, 68, 0.12);
         color: #ffb3b5;
         border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .alert-box {
+        display: none;
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        font-size: 0.95rem;
+        border: 1px solid transparent;
+    }
+
+    .alert-error {
+        background: rgba(239,68,68,0.12);
+        color: #ffb4b4;
+        border-color: rgba(239,68,68,0.28);
+    }
+
+    .alert-success {
+        background: rgba(34,197,94,0.12);
+        color: #b7f7c7;
+        border-color: rgba(34,197,94,0.28);
+    }
+
+    .payment-alert {
+        margin-top: 16px;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 600;
+    }
+
+    .refund-box {
+        margin-top: 24px;
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid rgba(239,68,68,0.20);
+        background: rgba(239,68,68,0.05);
+    }
+
+    .refund-title {
+        font-size: 1.08rem;
+        font-weight: 900;
+        margin-bottom: 8px;
+    }
+
+    .refund-sub {
+        color: var(--muted);
+        line-height: 1.8;
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        color: #dbe4ee;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 50px;
+        border-radius: 14px;
+        background: #0d1319;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .form-control::placeholder {
+        color: #7f8a98;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: #0d1319;
+        color: #fff;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.18rem rgba(47,107,255,0.18);
+    }
+
+    .form-select option {
+        color: #fff;
+        background: #0d1319;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
     }
 
     .muted {
@@ -152,6 +287,10 @@
 
     @media (max-width: 991.98px) {
         .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -165,30 +304,153 @@
 </head>
 <body th:attr="data-deposit-id=${depositId}">
 
-<div th:replace="fragments/navbar :: navbar('requests')"></div>
+<div th:replace="~{fragments/navbar :: navbar('requests')}"></div>
 
 <div class="page-shell">
+  <div class="top-actions">
+    <a href="/customer/requests" class="btn-second">
+      <i class="bi bi-arrow-left"></i>
+      Quay lại yêu cầu
+    </a>
+    <a href="/customer/profile" class="btn-second">
+      <i class="bi bi-person-circle"></i>
+      Hồ sơ
+    </a>
+  </div>
+
+  <div id="errorBox" class="alert-box alert-error"></div>
+  <div id="successBox" class="alert-box alert-success"></div>
+
   <div class="wrap">
     <div class="title">Chi tiết đặt cọc</div>
 
     <div class="grid">
-      <div class="info">
-        <p><strong>Mã đặt cọc:</strong> <span id="depositCode">---</span></p>
-        <p><strong>Tên xe:</strong> <span id="motorbikeName">---</span></p>
-        <p><strong>Giá xe:</strong> <span id="quotedPrice">---</span></p>
-        <p><strong>Số tiền cọc:</strong> <span id="depositAmount">---</span></p>
-        <p><strong>Trạng thái cọc:</strong> <span id="depositStatus" class="status">---</span></p>
-        <p><strong>Trạng thái thanh toán:</strong> <span id="paymentStatus" class="status">---</span></p>
-        <p class="muted">Nếu đã tạo QR PayOS, anh có thể quét mã hoặc bấm nút thanh toán ở bên phải.</p>
+      <div>
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-label">Mã đặt cọc</div>
+            <div class="info-value" id="depositCode">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Mã yêu cầu</div>
+            <div class="info-value" id="requestCode">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Tên xe</div>
+            <div class="info-value" id="motorbikeName">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Giá báo</div>
+            <div class="info-value" id="quotedPrice">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Số tiền cọc</div>
+            <div class="info-value" id="depositAmount">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Phương thức thanh toán</div>
+            <div class="info-value" id="paymentMethod">---</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Trạng thái cọc</div>
+            <div class="info-value">
+              <span id="depositStatus" class="status">---</span>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">Trạng thái thanh toán</div>
+            <div class="info-value">
+              <span id="paymentStatus" class="status">---</span>
+            </div>
+          </div>
+
+          <div class="info-box full-box">
+            <div class="info-label">Ghi chú</div>
+            <div class="info-value" id="depositNote">---</div>
+          </div>
+        </div>
+
+        <div class="refund-box" id="refundSection" style="display:none;">
+          <div class="refund-title">Yêu cầu hoàn tiền</div>
+          <div class="refund-sub">
+            Dùng khi anh đã thanh toán cọc và muốn showroom hoàn lại tiền về tài khoản ngân hàng.
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Ngân hàng nhận hoàn</label>
+              <select id="refundBank" class="form-select">
+                <option value="">-- Chọn ngân hàng --</option>
+                <option value="970422">MB Bank</option>
+                <option value="970436">Vietcombank</option>
+                <option value="970418">BIDV</option>
+                <option value="970415">VietinBank</option>
+                <option value="970407">Techcombank</option>
+                <option value="970416">ACB</option>
+                <option value="970432">VPBank</option>
+                <option value="970423">TPBank</option>
+                <option value="970405">Agribank</option>
+                <option value="970448">OCB</option>
+                <option value="970437">HDBank</option>
+                <option value="970403">Sacombank</option>
+                <option value="970438">BaoViet Bank</option>
+                <option value="970454">VietCapital Bank</option>
+                <option value="970441">VIB</option>
+                <option value="970443">SHB</option>
+                <option value="970400">Saigonbank</option>
+                <option value="970409">Bac A Bank</option>
+                <option value="970412">PVcomBank</option>
+                <option value="970414">OceanBank</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Số tài khoản nhận hoàn</label>
+              <input id="refundToAccountNumber" class="form-control" placeholder="Nhập số tài khoản">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Lý do hoàn tiền</label>
+              <textarea id="refundReason" class="form-control" placeholder="Nhập lý do hoàn tiền"></textarea>
+            </div>
+
+            <div class="col-12 d-flex gap-2 flex-wrap">
+              <button class="btn-lux btn-danger-lux" type="button" onclick="refundPaidDeposit()">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Yêu cầu hoàn tiền
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="qr-box">
         <img id="qrImage" src="" alt="QR PayOS">
-        <div>
-          <a id="checkoutBtn" class="btn-lux" href="#" target="_blank">
+
+        <div class="mt-3">
+          <a id="checkoutBtn" class="btn-lux btn-primary-lux" href="#" target="_blank">
             <i class="bi bi-qr-code-scan"></i>
             Thanh toán với PayOS
           </a>
+        </div>
+
+        <div th:if="${payment == 'success'}" class="alert alert-success payment-alert">
+          Thanh toán đặt cọc thành công.
+        </div>
+
+        <div th:if="${payment == 'cancel'}" class="alert alert-warning payment-alert">
+          Bạn đã hủy hoặc chưa hoàn tất thanh toán.
+        </div>
+
+        <div class="muted mt-3" style="line-height:1.8;">
+          Nếu khoản cọc chưa thanh toán, anh có thể tiếp tục mở link PayOS để thanh toán.
         </div>
       </div>
     </div>
@@ -203,6 +465,22 @@
       window.location.href = "/login";
   }
 
+  function showError(message) {
+      const box = document.getElementById("errorBox");
+      document.getElementById("successBox").style.display = "none";
+      box.style.display = "block";
+      box.innerText = message;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function showSuccess(message) {
+      const box = document.getElementById("successBox");
+      document.getElementById("errorBox").style.display = "none";
+      box.style.display = "block";
+      box.innerText = message;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function formatMoney(value) {
       if (value == null) return "---";
       return Number(value).toLocaleString("vi-VN") + " đ";
@@ -213,6 +491,14 @@
       const normalized = text.toLowerCase();
       el.textContent = text;
       el.className = "status " + normalized;
+  }
+
+  function canRefund(depositStatus, paymentStatus) {
+      const ds = (depositStatus || "").toUpperCase();
+      const ps = (paymentStatus || "").toUpperCase();
+
+      return (ds === "PAID" || ds === "CONFIRMED") &&
+             (ps === "PAID" || ps === "DEPOSIT_PAID");
   }
 
   async function loadDeposit() {
@@ -238,15 +524,21 @@
           const d = await res.json();
 
           document.getElementById("depositCode").textContent = d.depositCode || "---";
+          document.getElementById("requestCode").textContent = d.requestCode || "---";
           document.getElementById("motorbikeName").textContent = d.motorbikeName || "---";
           document.getElementById("quotedPrice").textContent = formatMoney(d.quotedPrice);
           document.getElementById("depositAmount").textContent = formatMoney(d.depositAmount);
+          document.getElementById("paymentMethod").textContent = d.paymentMethod || "---";
+          document.getElementById("depositNote").textContent = d.note || "Không có ghi chú";
 
           applyStatus(document.getElementById("depositStatus"), d.status || "---");
           applyStatus(document.getElementById("paymentStatus"), d.paymentStatus || "---");
 
           if (d.qrCode) {
-              document.getElementById("qrImage").src = d.qrCode;
+              document.getElementById("qrImage").src =
+                  "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(d.qrCode);
+          } else {
+              document.getElementById("qrImage").style.display = "none";
           }
 
           if (d.checkoutUrl) {
@@ -255,9 +547,59 @@
               document.getElementById("checkoutBtn").style.pointerEvents = "none";
               document.getElementById("checkoutBtn").style.opacity = "0.5";
           }
+
+          if (canRefund(d.status, d.paymentStatus)) {
+              document.getElementById("refundSection").style.display = "block";
+          } else {
+              document.getElementById("refundSection").style.display = "none";
+          }
+
       } catch (err) {
           console.error(err);
-          alert("Không tải được thông tin đặt cọc");
+          showError("Không tải được thông tin đặt cọc");
+      }
+  }
+
+  async function refundPaidDeposit() {
+      const selectedBank = document.getElementById("refundBank");
+
+      const payload = {
+          toBin: selectedBank.value,
+          toAccountNumber: document.getElementById("refundToAccountNumber").value.trim(),
+          reason: document.getElementById("refundReason").value.trim()
+      };
+
+      if (!payload.toBin) {
+          showError("Vui lòng chọn ngân hàng nhận hoàn tiền");
+          return;
+      }
+
+      if (!payload.toAccountNumber) {
+          showError("Vui lòng nhập số tài khoản nhận hoàn tiền");
+          return;
+      }
+
+      try {
+          const res = await fetch(`/api/deposits/${depositId}/refund-paid`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token
+              },
+              body: JSON.stringify(payload)
+          });
+
+          const text = await res.text();
+
+          if (!res.ok) {
+              throw new Error(text || "Không thể gửi yêu cầu hoàn tiền");
+          }
+
+          showSuccess("Đã gửi yêu cầu hoàn tiền thành công");
+          await loadDeposit();
+      } catch (err) {
+          console.error(err);
+          showError(err.message || "Có lỗi xảy ra khi hoàn tiền");
       }
   }
 
